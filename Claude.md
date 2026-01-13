@@ -49,6 +49,63 @@ If something is unclear:
 
 ---
 
+## 🧱 ARCHITECTURE (MANDATORY — CLEAN ARCHITECTURE)
+
+This project MUST follow **Clean Architecture** principles.
+
+### Layers (STRICT)
+
+1. **Presentation**
+
+   - Flutter widgets
+   - UI-only logic
+   - Reads state from Riverpod providers
+   - ❌ No business logic
+   - ❌ No Supabase calls
+
+2. **Application (State / Use Cases)**
+
+   - Riverpod controllers/providers
+   - Orchestrates use cases
+   - Calls domain services
+   - Holds UI state (Freezed)
+
+3. **Domain**
+
+   - Freezed entities
+   - Business rules
+   - Repository interfaces (abstract classes)
+   - ❌ No framework imports
+   - ❌ No Supabase / Riverpod imports
+
+4. **Infrastructure / Data**
+   - Supabase implementations
+   - DTOs (Freezed)
+   - Repository implementations
+   - Platform / network code
+
+### Dependency Rule (NON-NEGOTIABLE)
+
+Dependencies must point **inward only**:
+
+```
+Presentation → Application → Domain ← Infrastructure
+```
+
+- Domain MUST NOT depend on any other layer
+- Application MUST NOT depend on Infrastructure directly
+- Infrastructure depends on Domain interfaces
+
+### Forbidden
+
+- Supabase calls inside widgets or providers
+- Business logic inside UI
+- Skipping layers “for speed”
+
+Clean Architecture violations are considered **task failure**.
+
+---
+
 ## 🧠 STATE MANAGEMENT (STRICT)
 
 ### Riverpod Version

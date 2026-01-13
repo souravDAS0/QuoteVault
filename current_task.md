@@ -1,25 +1,30 @@
-# Task: Authentication & User Accounts
+# Task: Project Setup — Typography & Color System
+
+## UI References
+
+/Users/souravdas/personalProjects/quote_vault/assets/ui_pages/typography_and_color_system_screen.png
 
 ## Scope
 
-Implement full authentication using Supabase Auth.
+Set up foundational design system for the app.
 
 ## Requirements
 
-- Email/password signup
-- Login/logout
-- Password reset flow
-- Session persistence
-- User profile fetch
+- Define color palette (primary, secondary, background, surface, text)
+- Define accent colors (Teal, Gold)
+- Define typography scale
+- Register font families (Jakarta, Serif, Mono)
+- Create reusable theme/constants file
 
 ## Acceptance Criteria
 
-- User stays logged in after app restart
-- Password reset email works
-- Auth errors handled gracefully
-- Profile screen shows correct user data
+- Colors match UI reference exactly
+- Typography scale usable across app
+- Dark and Light themes supported
+- No inline styles for colors or fonts
 
 ## Out of Scope
 
-- UI redesign
-- Social auth beyond Google/Apple
+- Screens
+- Components
+- Business logic
