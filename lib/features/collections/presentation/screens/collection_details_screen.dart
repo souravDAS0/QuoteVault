@@ -151,7 +151,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
           : RefreshIndicator(
               onRefresh: controller.refresh,
               child: ListView.builder(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
                 itemCount: state.quotes.length + (state.hasReachedEnd ? 0 : 1),
                 itemBuilder: (context, index) {
                   if (index == state.quotes.length) {
@@ -197,13 +197,21 @@ class CollectionDetailsScreen extends ConsumerWidget {
                   collectionId: collectionId,
                   onComplete: () {
                     ref
-                        .read(collectionDetailsControllerProvider(collectionId).notifier)
+                        .read(
+                          collectionDetailsControllerProvider(
+                            collectionId,
+                          ).notifier,
+                        )
                         .refresh();
                   },
                 );
                 if (result == true) {
                   ref
-                      .read(collectionDetailsControllerProvider(collectionId).notifier)
+                      .read(
+                        collectionDetailsControllerProvider(
+                          collectionId,
+                        ).notifier,
+                      )
                       .refresh();
                 }
               },
