@@ -87,7 +87,6 @@ class QuoteCard extends StatelessWidget {
                 ),
               ),
               const Divider(color: Colors.white24, height: 32),
-              // Author and actions row
               Row(
                 children: [
                   // Author avatar

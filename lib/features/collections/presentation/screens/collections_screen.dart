@@ -35,29 +35,13 @@ class CollectionsScreen extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        CollectionsConstants.myCollections,
-                        style: AppTypography.displayLarge(
-                          color: isDark
-                              ? AppColorsDark.textPrimary
-                              : AppColorsLight.textPrimary,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          // Settings action
-                        },
-                        icon: Icon(
-                          Icons.settings_outlined,
-                          color: isDark
-                              ? AppColorsDark.textPrimary
-                              : AppColorsLight.textPrimary,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    CollectionsConstants.myCollections,
+                    style: AppTypography.displayLarge(
+                      color: isDark
+                          ? AppColorsDark.textPrimary
+                          : AppColorsLight.textPrimary,
+                    ),
                   ),
                 ),
               ),
@@ -144,48 +128,41 @@ class CollectionsScreen extends ConsumerWidget {
                   sliver: SliverGrid(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 0.85,
-                    ),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        // Last item is always "New Collection" card
-                        if (index == state.collections.length) {
-                          return NewCollectionCard(
-                            onTap: () => _showCreateDialog(context, controller),
-                          );
-                        }
-
-                        final collection = state.collections[index];
-                        return CollectionCard(
-                          collection: collection,
-                          onTap: () {
-                            context.push(
-                              '/collections/${collection.id}',
-                            );
-                          },
-                          onLongPress: () {
-                            _showDeleteConfirmation(
-                              context,
-                              controller,
-                              collection.id,
-                              collection.name,
-                              isDark,
-                            );
-                          },
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.85,
+                        ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      // Last item is always "New Collection" card
+                      if (index == state.collections.length) {
+                        return NewCollectionCard(
+                          onTap: () => _showCreateDialog(context, controller),
                         );
-                      },
-                      childCount: state.collections.length + 1,
-                    ),
+                      }
+
+                      final collection = state.collections[index];
+                      return CollectionCard(
+                        collection: collection,
+                        onTap: () {
+                          context.push('/collections/${collection.id}');
+                        },
+                        onLongPress: () {
+                          _showDeleteConfirmation(
+                            context,
+                            controller,
+                            collection.id,
+                            collection.name,
+                            isDark,
+                          );
+                        },
+                      );
+                    }, childCount: state.collections.length + 1),
                   ),
                 ),
 
               // Bottom padding
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 100),
-              ),
+              const SliverToBoxAdapter(child: SizedBox(height: 100)),
             ],
           ),
         ),
@@ -193,8 +170,9 @@ class CollectionsScreen extends ConsumerWidget {
       // FAB for creating new collection
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCreateDialog(context, controller),
-        backgroundColor:
-            isDark ? AppColorsDark.secondary : AppColorsLight.secondary,
+        backgroundColor: isDark
+            ? AppColorsDark.secondary
+            : AppColorsLight.secondary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -220,8 +198,9 @@ class CollectionsScreen extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor:
-            isDark ? AppColorsDark.surface : AppColorsLight.surface,
+        backgroundColor: isDark
+            ? AppColorsDark.surface
+            : AppColorsLight.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           CollectionsConstants.deleteCollectionTitle,

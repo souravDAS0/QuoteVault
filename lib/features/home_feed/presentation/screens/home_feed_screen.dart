@@ -5,6 +5,7 @@ import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/home_feed_constants.dart';
 import '../../../auth/application/providers/auth_state_provider.dart';
 import '../../../collections/presentation/widgets/add_to_collection_sheet.dart';
+import '../../../sharing/presentation/screens/share_quote_sheet.dart';
 import '../../application/controllers/home_feed_controller.dart';
 import '../widgets/home_feed_header.dart';
 import '../widgets/search_bar_widget.dart';
@@ -234,7 +235,7 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                             );
                           },
                           onShare: () {
-                            // TODO: Share quote
+                            ShareQuoteSheet.show(context, quote: quote);
                           },
                           onCopy: () {
                             ScaffoldMessenger.of(context).showSnackBar(

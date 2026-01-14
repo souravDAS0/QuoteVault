@@ -11,6 +11,7 @@ import '../widgets/author_filter_sheet.dart';
 import '../widgets/category_chip.dart';
 import '../widgets/loading_indicator.dart';
 import '../widgets/search_bar_widget.dart';
+import '../../../sharing/presentation/screens/share_quote_sheet.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -278,7 +279,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               // TODO: Toggle favorite
                             },
                             onShare: () {
-                              // TODO: Share
+                              ShareQuoteSheet.show(context, quote: quote);
                             },
                           ),
                         );

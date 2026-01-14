@@ -12,9 +12,10 @@ Implement user profile screen.
 ## Requirements
 
 - Display avatar, name, email
-- Quotes saved count
+- Quotes favourites count
 - Collections count
-- Navigation to settings, authors
+- Navigation to settings
+- ignore the My Authors section from design for now
 
 ## Acceptance Criteria
 

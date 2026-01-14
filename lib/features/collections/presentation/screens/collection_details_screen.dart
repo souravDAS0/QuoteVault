@@ -7,6 +7,7 @@ import '../../../../core/constants/collections_constants.dart';
 import '../../application/controllers/collection_details_controller.dart';
 import '../widgets/collection_quote_card.dart';
 import '../widgets/add_quote_sheet.dart';
+import '../../../sharing/presentation/screens/share_quote_sheet.dart';
 
 /// Collection details screen showing quotes in a collection
 /// Also used for Favorites when [isFavorites] is true
@@ -94,7 +95,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
                       );
                     },
                     onShare: () {
-                      // Share functionality
+                      ShareQuoteSheet.show(context, quote: quote);
                     },
                     onDelete: null, // Can't delete from favorites here
                   );
@@ -174,7 +175,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
                       );
                     },
                     onShare: () {
-                      // Share functionality
+                      ShareQuoteSheet.show(context, quote: quote);
                     },
                     onDelete: () {
                       _showRemoveQuoteConfirmation(
@@ -255,6 +256,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
           ? const SizedBox.shrink()
           : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Row(
                   mainAxisSize: MainAxisSize.min,
