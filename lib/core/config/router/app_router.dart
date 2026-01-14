@@ -7,8 +7,10 @@ import '../../../features/auth/presentation/screens/reset_password_screen.dart';
 import '../../../features/auth/application/providers/auth_state_provider.dart';
 import '../../../features/home_feed/presentation/screens/main_shell.dart';
 import '../../../features/home_feed/presentation/screens/search_screen.dart';
+import '../../../features/collections/presentation/screens/collection_details_screen.dart';
 import '../../constants/auth_constants.dart';
 import '../../constants/home_feed_constants.dart';
+import '../../constants/collections_constants.dart';
 
 /// Provider for go_router configuration
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -67,6 +69,19 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: HomeFeedConstants.searchRoute,
         builder: (context, state) => const SearchScreen(),
+      ),
+      GoRoute(
+        path: '/collections/:id',
+        builder: (context, state) {
+          final collectionId = state.pathParameters['id']!;
+          return CollectionDetailsScreen(collectionId: collectionId);
+        },
+      ),
+      GoRoute(
+        path: CollectionsConstants.favoritesRoute,
+        builder: (context, state) => const CollectionDetailsScreen(
+          isFavorites: true,
+        ),
       ),
     ],
   );

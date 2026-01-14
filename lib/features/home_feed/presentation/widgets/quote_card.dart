@@ -12,6 +12,7 @@ class QuoteCard extends StatelessWidget {
   final VoidCallback? onCopy;
   final VoidCallback? onTap;
   final VoidCallback? onMore;
+  final VoidCallback? onAddToCollection;
 
   const QuoteCard({
     super.key,
@@ -21,6 +22,7 @@ class QuoteCard extends StatelessWidget {
     this.onCopy,
     this.onTap,
     this.onMore,
+    this.onAddToCollection,
   });
 
   @override
@@ -106,6 +108,18 @@ class QuoteCard extends StatelessWidget {
                       color: isDark
                           ? AppColorsDark.accentTeal
                           : AppColorsLight.accentTeal,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Add to collection
+                  GestureDetector(
+                    onTap: onAddToCollection,
+                    child: Icon(
+                      quote.isBookmarked
+                          ? Icons.bookmark
+                          : Icons.bookmark_border,
+                      color: Colors.white,
                       size: 20,
                     ),
                   ),

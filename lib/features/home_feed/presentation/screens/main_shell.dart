@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/home_feed_constants.dart';
+import '../../../collections/presentation/screens/collections_screen.dart';
 import 'home_feed_screen.dart';
 
 class MainShell extends StatefulWidget {
@@ -15,7 +16,7 @@ class _MainShellState extends State<MainShell> {
 
   final List<Widget> _screens = const [
     HomeFeedScreen(),
-    _PlaceholderScreen(title: 'Collections'),
+    CollectionsScreen(),
     _PlaceholderScreen(title: 'Profile'),
   ];
 
