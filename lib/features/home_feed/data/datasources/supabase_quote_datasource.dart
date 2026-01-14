@@ -1,0 +1,353 @@
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import '../models/quote_dto.dart';
+import '../models/category_dto.dart';
+import '../models/author_dto.dart';
+
+/// Wrapper around Supabase database methods for quotes
+/// Handles all Supabase quote-related operations
+class SupabaseQuoteDatasource {
+  final supabase.SupabaseClient _client;
+
+  SupabaseQuoteDatasource(this._client);
+
+  String? get _currentUserId => _client.auth.currentUser?.id;
+
+  /// Convert raw quote data with nested relations to flat DTO format
+  QuoteDto _mapToQuoteDto(Map<String, dynamic> data) {
+    // Handle nested author and category data from Supabase joins
+    final author = data['authors'] as Map<String, dynamic>?;
+    final category = data['categories'] as Map<String, dynamic>?;
+
+    return QuoteDto(
+      id: data['id']?.toString() ?? '',
+      text: data['text']?.toString() ?? data['content']?.toString() ?? '',
+      authorId:
+          data['author_id']?.toString() ?? author?['id']?.toString() ?? '',
+      authorName:
+          author?['name']?.toString() ??
+          data['author']?.toString() ??
+          'Unknown',
+      authorDescription: author?['description']?.toString(),
+      categoryId:
+          data['category_id']?.toString() ?? category?['id']?.toString() ?? '',
+      categoryName:
+          category?['name']?.toString() ??
+          data['category']?.toString() ??
+          'General',
+      likesCount: data['likes_count'] as int? ?? data['likes'] as int? ?? 0,
+      isFavorite: data['is_favorite'] as bool? ?? false,
+      isBookmarked: data['is_bookmarked'] as bool? ?? false,
+      isFeatured:
+          data['is_featured'] as bool? ?? data['featured'] as bool? ?? false,
+      imageUrl:
+          data['image_url']?.toString() ?? data['background_image']?.toString(),
+      createdAt: data['created_at'] != null
+          ? DateTime.tryParse(data['created_at'].toString())
+          : null,
+    );
+  }
+
+  /// Get paginated quotes from the feed
+  Future<List<QuoteDto>> getQuotes({
+    required int page,
+    int pageSize = 10,
+    String? categoryId,
+    String? authorId,
+  }) async {
+    try {
+      final userId = _currentUserId;
+
+      // First try with joins, fallback to simple query if it fails
+      try {
+        var query = _client
+            .from('quotes')
+            .select('*, authors(*), categories(*)');
+
+        if (categoryId != null) {
+          query = query.eq('category_id', categoryId);
+        }
+
+        if (authorId != null) {
+          query = query.eq('author_id', authorId);
+        }
+
+        final response = await query
+            .order('created_at', ascending: false)
+            .range(page * pageSize, (page + 1) * pageSize - 1);
+
+        print('Fetched ${(response as List).length} quotes with joins');
+
+        // Get user's favorites if logged in
+        Set<String> userFavorites = {};
+        if (userId != null) {
+          userFavorites = await _getUserFavoriteQuoteIds(userId);
+        }
+
+        return response.map((data) {
+          final quote = _mapToQuoteDto(data as Map<String, dynamic>);
+          return quote.copyWith(isFavorite: userFavorites.contains(quote.id));
+        }).toList();
+      } catch (joinError) {
+        print('Join query failed, trying simple query: $joinError');
+        // Fallback: query without joins
+        var query = _client.from('quotes').select();
+
+        if (categoryId != null) {
+          query = query.eq('category_id', categoryId);
+        }
+
+        if (authorId != null) {
+          query = query.eq('author_id', authorId);
+        }
+
+        final response = await query
+            .order('created_at', ascending: false)
+            .range(page * pageSize, (page + 1) * pageSize - 1);
+
+        print('Fetched ${(response as List).length} quotes without joins');
+
+        // Get user's favorites if logged in
+        Set<String> userFavorites = {};
+        if (userId != null) {
+          userFavorites = await _getUserFavoriteQuoteIds(userId);
+        }
+
+        return response.map((data) {
+          final quote = _mapToQuoteDto(data as Map<String, dynamic>);
+          return quote.copyWith(isFavorite: userFavorites.contains(quote.id));
+        }).toList();
+      }
+    } catch (e) {
+      print('Error fetching quotes: $e');
+      throw Exception('Failed to fetch quotes: $e');
+    }
+  }
+
+  /// Get all quote IDs that the user has favorited
+  Future<Set<String>> _getUserFavoriteQuoteIds(String userId) async {
+    try {
+      final response = await _client
+          .from('user_favorites')
+          .select('quote_id')
+          .eq('user_id', userId);
+
+      return (response as List)
+          .map((row) => row['quote_id'].toString())
+          .toSet();
+    } catch (e) {
+      print('Error fetching user favorites: $e');
+      return {};
+    }
+  }
+
+  /// Search quotes by text or author
+  Future<List<QuoteDto>> searchQuotes({
+    required String query,
+    required int page,
+    int pageSize = 10,
+    String? authorId,
+    String? categoryId,
+    String? sortBy,
+  }) async {
+    try {
+      final userId = _currentUserId;
+
+      var dbQuery = _client
+          .from('quotes')
+          .select('*, authors(*), categories(*)')
+          .or('text.ilike.%$query%,content.ilike.%$query%');
+
+      // Apply filters
+      if (authorId != null) {
+        dbQuery = dbQuery.eq('author_id', authorId);
+      }
+
+      if (categoryId != null) {
+        dbQuery = dbQuery.eq('category_id', categoryId);
+      }
+
+      // Determine sort order
+      final sortColumn = sortBy == 'popularity' ? 'likes_count' : 'created_at';
+
+      // Apply sorting and pagination
+      final response = await dbQuery
+          .order(sortColumn, ascending: false)
+          .range(page * pageSize, (page + 1) * pageSize - 1);
+
+      // Get user's favorites if logged in
+      Set<String> userFavorites = {};
+      if (userId != null) {
+        userFavorites = await _getUserFavoriteQuoteIds(userId);
+      }
+
+      return (response as List).map((data) {
+        final quote = _mapToQuoteDto(data as Map<String, dynamic>);
+        return quote.copyWith(isFavorite: userFavorites.contains(quote.id));
+      }).toList();
+    } catch (e) {
+      print('Error searching quotes: $e');
+      throw Exception('Failed to search quotes: $e');
+    }
+  }
+
+  /// Get total count for search results
+  Future<int> getSearchResultsCount({
+    required String query,
+    String? authorId,
+    String? categoryId,
+  }) async {
+    try {
+      var dbQuery = _client
+          .from('quotes')
+          .select()
+          .or('text.ilike.%$query%,content.ilike.%$query%');
+
+      if (authorId != null) {
+        dbQuery = dbQuery.eq('author_id', authorId);
+      }
+
+      if (categoryId != null) {
+        dbQuery = dbQuery.eq('category_id', categoryId);
+      }
+
+      final response = await dbQuery.count(supabase.CountOption.exact);
+      return response.count;
+    } catch (e) {
+      print('Error getting search count: $e');
+      throw Exception('Failed to get search count: $e');
+    }
+  }
+
+  /// Get all categories
+  Future<List<CategoryDto>> getCategories() async {
+    try {
+      final response = await _client
+          .from('categories')
+          .select()
+          .order('name', ascending: true);
+
+      return (response as List)
+          .map((json) => CategoryDto.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print('Error fetching categories: $e');
+      throw Exception('Failed to fetch categories: $e');
+    }
+  }
+
+  /// Get all authors
+  Future<List<AuthorDto>> getAuthors() async {
+    try {
+      final response = await _client
+          .from('authors')
+          .select()
+          .order('name', ascending: true);
+
+      return (response as List)
+          .map((json) => AuthorDto.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print('Error fetching authors: $e');
+      throw Exception('Failed to fetch authors: $e');
+    }
+  }
+
+  /// Search authors by name
+  Future<List<AuthorDto>> searchAuthors({required String query}) async {
+    try {
+      final response = await _client
+          .from('authors')
+          .select()
+          .ilike('name', '%$query%')
+          .order('name', ascending: true);
+
+      return (response as List)
+          .map((json) => AuthorDto.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print('Error searching authors: $e');
+      throw Exception('Failed to search authors: $e');
+    }
+  }
+
+  /// Toggle favorite status
+  Future<QuoteDto> toggleFavorite({required String quoteId}) async {
+    try {
+      final userId = _currentUserId;
+      if (userId == null) throw Exception('User not authenticated');
+
+      // Check if already favorited
+      final existing = await _client
+          .from('user_favorites')
+          .select()
+          .eq('user_id', userId)
+          .eq('quote_id', quoteId)
+          .maybeSingle();
+
+      if (existing != null) {
+        // Remove favorite
+        await _client
+            .from('user_favorites')
+            .delete()
+            .eq('user_id', userId)
+            .eq('quote_id', quoteId);
+      } else {
+        // Add favorite - handle potential duplicate key from race condition
+        try {
+          await _client.from('user_favorites').insert({
+            'user_id': userId,
+            'quote_id': quoteId,
+          });
+        } on supabase.PostgrestException catch (e) {
+          // If duplicate key error (code 23505), the favorite already exists
+          // This can happen due to race conditions - just ignore and continue
+          if (e.code != '23505') {
+            rethrow;
+          }
+          print('Favorite already exists, ignoring duplicate insert');
+        }
+      }
+
+      // Fetch the updated quote with favorite status
+      final isFavorited = await _checkIfFavorited(userId, quoteId);
+
+      // Return updated quote
+      final response = await _client
+          .from('quotes')
+          .select('*, authors(*), categories(*)')
+          .eq('id', quoteId)
+          .single();
+
+      final quote = _mapToQuoteDto(response);
+      return QuoteDto(
+        id: quote.id,
+        text: quote.text,
+        authorId: quote.authorId,
+        authorName: quote.authorName,
+        authorDescription: quote.authorDescription,
+        categoryId: quote.categoryId,
+        categoryName: quote.categoryName,
+        likesCount: quote.likesCount,
+        isFavorite: isFavorited,
+        isBookmarked: quote.isBookmarked,
+        isFeatured: quote.isFeatured,
+        imageUrl: quote.imageUrl,
+        createdAt: quote.createdAt,
+      );
+    } catch (e) {
+      print('Error toggling favorite: $e');
+      throw Exception('Failed to toggle favorite: $e');
+    }
+  }
+
+  /// Check if a quote is favorited by the user
+  Future<bool> _checkIfFavorited(String userId, String quoteId) async {
+    final result = await _client
+        .from('user_favorites')
+        .select()
+        .eq('user_id', userId)
+        .eq('quote_id', quoteId)
+        .maybeSingle();
+    return result != null;
+  }
+}

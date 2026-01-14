@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../features/auth/presentation/screens/sign_in_screen.dart';
@@ -6,7 +5,10 @@ import '../../../features/auth/presentation/screens/sign_up_screen.dart';
 import '../../../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../../../features/auth/presentation/screens/reset_password_screen.dart';
 import '../../../features/auth/application/providers/auth_state_provider.dart';
+import '../../../features/home_feed/presentation/screens/main_shell.dart';
+import '../../../features/home_feed/presentation/screens/search_screen.dart';
 import '../../constants/auth_constants.dart';
+import '../../constants/home_feed_constants.dart';
 
 /// Provider for go_router configuration
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -60,34 +62,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AuthConstants.homeRoute,
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => const MainShell(),
+      ),
+      GoRoute(
+        path: HomeFeedConstants.searchRoute,
+        builder: (context, state) => const SearchScreen(),
       ),
     ],
   );
 });
-
-/// Placeholder home screen (will be replaced by actual home feed)
-class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('QuoteVault'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              final repo = ref.read(authRepositoryProvider);
-              await repo.signOut();
-            },
-          ),
-        ],
-      ),
-      body: const Center(
-        child: Text('Home Feed - Coming Soon'),
-      ),
-    );
-  }
-}
