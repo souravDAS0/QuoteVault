@@ -68,6 +68,9 @@ dependencies:
   screenshot: ^3.0.0
   path_provider: ^2.1.5
 
+  # Image picker for avatar selection
+  image_picker: ^1.0.7
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
