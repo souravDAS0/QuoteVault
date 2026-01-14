@@ -58,4 +58,39 @@ class AuthRepositoryImpl implements AuthRepository {
   Stream<QvUser?> authStateChanges() {
     return _datasource.authStateChanges().map((userDto) => userDto?.toDomain());
   }
+
+  @override
+  Future<QvUser> updateDisplayName(String displayName) async {
+    final userDto = await _datasource.updateDisplayName(displayName);
+    return userDto.toDomain();
+  }
+
+  @override
+  Future<QvUser> updateAvatar(String filePath) async {
+    final currentUser = await getCurrentUser();
+    if (currentUser == null) {
+      throw Exception('User not authenticated');
+    }
+
+    final photoUrl = await _datasource.uploadAvatar(currentUser.id, filePath);
+    // Append timestamp to bust cache
+    final timestampedUrl =
+        '$photoUrl?t=${DateTime.now().millisecondsSinceEpoch}';
+    final userDto = await _datasource.updateUserProfile(
+      photoUrl: timestampedUrl,
+    );
+    return userDto.toDomain();
+  }
+
+  @override
+  Future<QvUser> updateUserProfile({
+    String? displayName,
+    String? photoUrl,
+  }) async {
+    final userDto = await _datasource.updateUserProfile(
+      displayName: displayName,
+      photoUrl: photoUrl,
+    );
+    return userDto.toDomain();
+  }
 }

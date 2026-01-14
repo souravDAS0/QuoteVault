@@ -42,7 +42,7 @@ final class ResetPasswordControllerProvider
 }
 
 String _$resetPasswordControllerHash() =>
-    r'f5764663a42237806cb9aa7472d136195b6e682a';
+    r'a88df439a84de7bcfa1745ebcadb58e2c4f3ca84';
 
 abstract class _$ResetPasswordController extends $Notifier<ResetPasswordState> {
   ResetPasswordState build();

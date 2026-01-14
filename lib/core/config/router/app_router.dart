@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import '../../../features/auth/presentation/screens/sign_in_screen.dart';
 import '../../../features/auth/presentation/screens/sign_up_screen.dart';
 import '../../../features/auth/presentation/screens/forgot_password_screen.dart';
@@ -24,11 +25,28 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         data: (user) {
           final isAuthRoute =
               state.matchedLocation == AuthConstants.signInRoute ||
-                  state.matchedLocation == AuthConstants.signUpRoute ||
-                  state.matchedLocation == AuthConstants.forgotPasswordRoute;
+              state.matchedLocation == AuthConstants.signUpRoute ||
+              state.matchedLocation == AuthConstants.forgotPasswordRoute;
+
+          final isResetPasswordRoute =
+              state.matchedLocation == AuthConstants.resetPasswordRoute;
+
+          // Check if user is in password recovery session
+          final session = supabase.Supabase.instance.client.auth.currentSession;
+          final isPasswordRecovery = session?.user.recoverySentAt != null;
+
+          // If user is authenticated and in password recovery, allow reset password screen
+          if (user != null && isPasswordRecovery && isResetPasswordRoute) {
+            return null; // Allow access to reset password screen
+          }
 
           // If user is authenticated and on auth route, redirect to home
           if (user != null && isAuthRoute) {
+            return AuthConstants.homeRoute;
+          }
+
+          // If user is authenticated but trying to access reset password without recovery, redirect to home
+          if (user != null && isResetPasswordRoute && !isPasswordRecovery) {
             return AuthConstants.homeRoute;
           }
 
@@ -79,9 +97,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: CollectionsConstants.favoritesRoute,
-        builder: (context, state) => const CollectionDetailsScreen(
-          isFavorites: true,
-        ),
+        builder: (context, state) =>
+            const CollectionDetailsScreen(isFavorites: true),
       ),
     ],
   );

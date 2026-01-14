@@ -49,8 +49,11 @@ class ResetPasswordScreen extends ConsumerWidget {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: (isDark ? AppColorsDark.surface : AppColorsLight.surface)
-                        .withValues(alpha: 0.5),
+                    color:
+                        (isDark
+                                ? AppColorsDark.surface
+                                : AppColorsLight.surface)
+                            .withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Icon(
@@ -74,10 +77,10 @@ class ResetPasswordScreen extends ConsumerWidget {
               Text(
                 AuthConstants.resetPasswordSubtitle,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: isDark
-                          ? AppColorsDark.textSecondary
-                          : AppColorsLight.textSecondary,
-                    ),
+                  color: isDark
+                      ? AppColorsDark.textSecondary
+                      : AppColorsLight.textSecondary,
+                ),
               ),
 
               const SizedBox(height: 32),
@@ -105,8 +108,7 @@ class ResetPasswordScreen extends ConsumerWidget {
                 hintText: 'Re-enter password',
                 onChanged: controller.updateConfirmPassword,
                 obscureText: state.obscureConfirmPassword,
-                onToggleVisibility:
-                    controller.toggleConfirmPasswordVisibility,
+                onToggleVisibility: controller.toggleConfirmPasswordVisibility,
                 prefixIcon: Icon(
                   Icons.lock_outline,
                   color: isDark
@@ -124,10 +126,10 @@ class ResetPasswordScreen extends ConsumerWidget {
                   child: Text(
                     AuthConstants.weakPassword,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: isDark
-                              ? AppColorsDark.error
-                              : AppColorsLight.error,
-                        ),
+                      color: isDark
+                          ? AppColorsDark.error
+                          : AppColorsLight.error,
+                    ),
                   ),
                 ),
 
@@ -147,10 +149,10 @@ class ResetPasswordScreen extends ConsumerWidget {
                   child: Text(
                     state.errorMessage!,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: isDark
-                              ? AppColorsDark.error
-                              : AppColorsLight.error,
-                        ),
+                      color: isDark
+                          ? AppColorsDark.error
+                          : AppColorsLight.error,
+                    ),
                   ),
                 ),
 
@@ -160,6 +162,9 @@ class ResetPasswordScreen extends ConsumerWidget {
                 onPressed: () async {
                   final success = await controller.updatePassword();
                   if (success && context.mounted) {
+                    // Sign out the user to clear the recovery session
+                    await controller.signOut();
+
                     // Show success message and navigate to sign in
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -182,10 +187,10 @@ class ResetPasswordScreen extends ConsumerWidget {
                 child: Text(
                   AuthConstants.protectedBy,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: isDark
-                            ? AppColorsDark.textTertiary
-                            : AppColorsLight.textTertiary,
-                      ),
+                    color: isDark
+                        ? AppColorsDark.textTertiary
+                        : AppColorsLight.textTertiary,
+                  ),
                 ),
               ),
             ],

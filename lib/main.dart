@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'core/config/theme/app_theme.dart';
 import 'core/config/theme/theme_provider.dart';
 import 'core/config/router/app_router.dart';
+import 'core/config/router/auth_state_navigation_listener.dart';
 import 'core/config/env/env_config.dart';
 
 void main() async {
@@ -22,11 +23,7 @@ void main() async {
     ),
   );
 
-  runApp(
-    const ProviderScope(
-      child: QuoteVaultApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: QuoteVaultApp()));
 }
 
 class QuoteVaultApp extends ConsumerWidget {
@@ -36,6 +33,9 @@ class QuoteVaultApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final router = ref.watch(goRouterProvider);
+
+    // Initialize auth state navigation listener
+    ref.watch(authStateNavigationListenerProvider);
 
     return MaterialApp.router(
       title: 'QuoteVault',

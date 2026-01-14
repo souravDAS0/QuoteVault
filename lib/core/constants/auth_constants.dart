@@ -6,7 +6,7 @@ class AuthConstants {
   static const String signUpRoute = '/sign-up';
   static const String forgotPasswordRoute = '/forgot-password';
   static const String resetPasswordRoute = '/reset-password';
-  static const String homeRoute = '/home';
+  static const String homeRoute = '/';
 
   // Strings (following UI reference images)
   static const String welcomeBack = 'Welcome back!';
@@ -20,7 +20,7 @@ class AuthConstants {
       'Don\'t worry! It happens. Enter your email to receive a reset link.';
   static const String forgotPasswordSubtitleAlt =
       'Enter your email address to receive a reset link.';
-  static const String resetPasswordTitle = 'Reset Your Key';
+  static const String resetPasswordTitle = 'Set New Password';
   static const String changePasswordTitle = 'Change Password';
   static const String resetPasswordSubtitle =
       'Choose a strong password to keep your quote collection safe.';

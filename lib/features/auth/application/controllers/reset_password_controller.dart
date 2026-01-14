@@ -35,10 +35,7 @@ class ResetPasswordController extends _$ResetPasswordController {
   }
 
   bool get passwordsMatch {
-    return Validators.passwordsMatch(
-      state.newPassword,
-      state.confirmPassword,
-    );
+    return Validators.passwordsMatch(state.newPassword, state.confirmPassword);
   }
 
   bool get isPasswordValid {
@@ -85,10 +82,7 @@ class ResetPasswordController extends _$ResetPasswordController {
       state = state.copyWith(isLoading: false);
       return true;
     } on QuoteVaultAuthException catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: e.message,
-      );
+      state = state.copyWith(isLoading: false, errorMessage: e.message);
       return false;
     } catch (e) {
       state = state.copyWith(
@@ -97,5 +91,10 @@ class ResetPasswordController extends _$ResetPasswordController {
       );
       return false;
     }
+  }
+
+  Future<void> signOut() async {
+    final repository = ref.read(authRepositoryProvider);
+    await repository.signOut();
   }
 }

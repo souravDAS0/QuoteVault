@@ -33,6 +33,18 @@ abstract class AuthRepository {
   /// Sign out current user
   Future<void> signOut();
 
+  /// Update user's display name
+  /// Throws AuthException on failure
+  Future<QvUser> updateDisplayName(String displayName);
+
+  /// Upload avatar and update user profile
+  /// Throws AuthException on failure
+  Future<QvUser> updateAvatar(String filePath);
+
+  /// Update user profile with optional display name and photo URL
+  /// Throws AuthException on failure
+  Future<QvUser> updateUserProfile({String? displayName, String? photoUrl});
+
   /// Stream of authentication state changes
   /// Emits User when authenticated, null when not
   Stream<QvUser?> authStateChanges();

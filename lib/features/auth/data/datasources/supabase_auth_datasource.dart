@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import '../../../../core/errors/auth_exceptions.dart';
 import '../models/user_dto.dart';
@@ -88,16 +90,16 @@ class SupabaseAuthDatasource {
       rethrow;
     } catch (e) {
       if (e.toString().contains('already registered')) {
-        throw QuoteVaultAuthException('An account with this email already exists');
+        throw QuoteVaultAuthException(
+          'An account with this email already exists',
+        );
       }
       throw QuoteVaultAuthException('Sign up failed: $e');
     }
   }
 
   /// Send password reset email
-  Future<void> sendPasswordResetEmail({
-    required String email,
-  }) async {
+  Future<void> sendPasswordResetEmail({required String email}) async {
     try {
       await _client.auth.resetPasswordForEmail(
         email.trim(),
@@ -111,9 +113,7 @@ class SupabaseAuthDatasource {
   }
 
   /// Update password (called after user clicks reset link)
-  Future<void> updatePassword({
-    required String newPassword,
-  }) async {
+  Future<void> updatePassword({required String newPassword}) async {
     try {
       await _client.auth.updateUser(
         supabase.UserAttributes(password: newPassword),
@@ -131,6 +131,99 @@ class SupabaseAuthDatasource {
       await _client.auth.signOut();
     } catch (e) {
       throw QuoteVaultAuthException('Sign out failed: $e');
+    }
+  }
+
+  /// Update user's display name in metadata
+  Future<UserDto> updateDisplayName(String displayName) async {
+    try {
+      final response = await _client.auth.updateUser(
+        supabase.UserAttributes(data: {'display_name': displayName}),
+      );
+
+      final supabaseUser = response.user;
+      if (supabaseUser == null) {
+        throw QuoteVaultAuthException(
+          'Failed to update display name: No user returned',
+        );
+      }
+
+      return UserDto(
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        displayName: supabaseUser.userMetadata?['display_name'],
+        photoUrl: supabaseUser.userMetadata?['photo_url'],
+        createdAt: DateTime.parse(supabaseUser.createdAt),
+      );
+    } on QuoteVaultAuthException {
+      rethrow;
+    } catch (e) {
+      throw QuoteVaultAuthException('Failed to update display name: $e');
+    }
+  }
+
+  /// Upload avatar to Supabase Storage and return public URL
+  Future<String> uploadAvatar(String userId, String filePath) async {
+    try {
+      final fileExt = filePath.split('.').last;
+      final fileName = 'avatar.$fileExt';
+      final path = '$userId/$fileName';
+
+      // Upload to avatars bucket
+      await _client.storage
+          .from('avatars')
+          .upload(
+            path,
+            File(filePath),
+            fileOptions: supabase.FileOptions(upsert: true),
+          );
+
+      // Get public URL
+      final publicUrl = _client.storage.from('avatars').getPublicUrl(path);
+      return publicUrl;
+    } on QuoteVaultAuthException {
+      rethrow;
+    } catch (e) {
+      throw QuoteVaultAuthException('Failed to upload avatar: $e');
+    }
+  }
+
+  /// Update user's avatar URL in metadata
+  Future<UserDto> updateUserProfile({
+    String? displayName,
+    String? photoUrl,
+  }) async {
+    try {
+      final Map<String, dynamic> data = {};
+      if (displayName != null) {
+        data['display_name'] = displayName;
+      }
+      if (photoUrl != null) {
+        data['photo_url'] = photoUrl;
+      }
+
+      final response = await _client.auth.updateUser(
+        supabase.UserAttributes(data: data),
+      );
+
+      final supabaseUser = response.user;
+      if (supabaseUser == null) {
+        throw QuoteVaultAuthException(
+          'Failed to update profile: No user returned',
+        );
+      }
+
+      return UserDto(
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        displayName: supabaseUser.userMetadata?['display_name'],
+        photoUrl: supabaseUser.userMetadata?['photo_url'],
+        createdAt: DateTime.parse(supabaseUser.createdAt),
+      );
+    } on QuoteVaultAuthException {
+      rethrow;
+    } catch (e) {
+      throw QuoteVaultAuthException('Failed to update profile: $e');
     }
   }
 
