@@ -42,6 +42,24 @@ dependencies:
   flutter_riverpod: ^3.0.3
   riverpod_annotation: ^3.0.3
 
+  # Supabase authentication
+  supabase_flutter: ^2.8.0
+
+  # Routing
+  go_router: ^14.6.2
+
+  # Environment variables
+  flutter_dotenv: ^5.2.1
+
+  # Email validation
+  email_validator: ^3.0.0
+
+  # JSON annotation (required by json_serializable)
+  json_annotation: ^4.9.0
+
+  # Freezed annotation (required by freezed)
+  freezed_annotation: ^3.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -59,7 +77,6 @@ dev_dependencies:
 
   # Freezed for immutable models
   freezed: ^3.0.0
-  freezed_annotation: ^3.0.0
 
   # JSON serialization
   json_serializable: ^6.8.0
@@ -76,9 +93,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - .env
+    - assets/ui_pages/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
