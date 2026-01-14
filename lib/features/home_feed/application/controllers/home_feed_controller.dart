@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../state/home_feed_state.dart';
 import '../providers/quote_providers.dart';
 import '../../domain/entities/category.dart';
+import '../../domain/entities/author.dart';
 
 part 'home_feed_controller.g.dart';
 
@@ -40,6 +41,15 @@ class HomeFeedController extends _$HomeFeedController {
         ...categories.map((cat) => cat.copyWith(isSelected: false)),
       ].toList();
 
+      // Load authors
+      List<Author> authors = [];
+      try {
+        authors = await repository.getAuthors();
+        print('Loaded ${authors.length} authors');
+      } catch (e) {
+        print('Failed to load authors: $e');
+      }
+
       // Load quotes
       List<dynamic> quotes = [];
       try {
@@ -52,6 +62,7 @@ class HomeFeedController extends _$HomeFeedController {
 
       state = state.copyWith(
         categories: categories,
+        authors: authors,
         quotes: quotes.cast(),
         isLoading: false,
         hasReachedEnd: quotes.length < _pageSize,
@@ -93,6 +104,7 @@ class HomeFeedController extends _$HomeFeedController {
         categoryId: state.selectedCategoryId == 'all'
             ? null
             : state.selectedCategoryId,
+        authorId: state.selectedAuthorId,
       );
 
       state = state.copyWith(
@@ -105,6 +117,41 @@ class HomeFeedController extends _$HomeFeedController {
       state = state.copyWith(
         isLoadingMore: false,
         errorMessage: 'Failed to load more quotes: $e',
+      );
+    }
+  }
+
+  Future<void> selectAuthor(String? authorId) async {
+    if (state.selectedAuthorId == authorId) return;
+
+    state = state.copyWith(
+      selectedAuthorId: authorId,
+      quotes: [],
+      currentPage: 0,
+      hasReachedEnd: false,
+      isLoading: true,
+    );
+
+    try {
+      final repository = ref.read(quoteRepositoryProvider);
+      final quotes = await repository.getQuotes(
+        page: 0,
+        pageSize: _pageSize,
+        categoryId: state.selectedCategoryId == 'all'
+            ? null
+            : state.selectedCategoryId,
+        authorId: authorId,
+      );
+
+      state = state.copyWith(
+        quotes: quotes.cast(),
+        isLoading: false,
+        hasReachedEnd: quotes.length < _pageSize,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: 'Failed to load author quotes: $e',
       );
     }
   }
@@ -135,6 +182,7 @@ class HomeFeedController extends _$HomeFeedController {
         page: 0,
         pageSize: _pageSize,
         categoryId: categoryId == 'all' ? null : categoryId,
+        authorId: state.selectedAuthorId,
       );
 
       state = state.copyWith(

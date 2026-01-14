@@ -152,27 +152,15 @@ class SupabaseQuoteDatasource {
     try {
       final userId = _currentUserId;
 
-      var dbQuery = _client
-          .from('quotes')
-          .select('*, authors(*), categories(*)')
-          .or('text.ilike.%$query%,content.ilike.%$query%');
+      final params = {
+        'query': query,
+        'author_id_filter': authorId,
+        'category_id_filter': categoryId,
+        'page_size': pageSize,
+        'page_number': page,
+      };
 
-      // Apply filters
-      if (authorId != null) {
-        dbQuery = dbQuery.eq('author_id', authorId);
-      }
-
-      if (categoryId != null) {
-        dbQuery = dbQuery.eq('category_id', categoryId);
-      }
-
-      // Determine sort order
-      final sortColumn = sortBy == 'popularity' ? 'likes_count' : 'created_at';
-
-      // Apply sorting and pagination
-      final response = await dbQuery
-          .order(sortColumn, ascending: false)
-          .range(page * pageSize, (page + 1) * pageSize - 1);
+      final response = await _client.rpc('search_quotes', params: params);
 
       // Get user's favorites if logged in
       Set<String> userFavorites = {};
@@ -197,21 +185,14 @@ class SupabaseQuoteDatasource {
     String? categoryId,
   }) async {
     try {
-      var dbQuery = _client
-          .from('quotes')
-          .select()
-          .or('text.ilike.%$query%,content.ilike.%$query%');
+      final params = {
+        'query': query,
+        'author_id_filter': authorId,
+        'category_id_filter': categoryId,
+      };
 
-      if (authorId != null) {
-        dbQuery = dbQuery.eq('author_id', authorId);
-      }
-
-      if (categoryId != null) {
-        dbQuery = dbQuery.eq('category_id', categoryId);
-      }
-
-      final response = await dbQuery.count(supabase.CountOption.exact);
-      return response.count;
+      final response = await _client.rpc('search_quotes_count', params: params);
+      return response as int;
     } catch (e) {
       print('Error getting search count: $e');
       throw Exception('Failed to get search count: $e');

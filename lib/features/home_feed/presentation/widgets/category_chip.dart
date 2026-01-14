@@ -32,16 +32,18 @@ class CategoryChip extends StatelessWidget {
                   color: isDark ? AppColorsDark.border : AppColorsLight.border,
                 ),
         ),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: isSelected
-                    ? Colors.white
-                    : (isDark
+        child: Center(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: isSelected
+                  ? Colors.white
+                  : (isDark
                         ? AppColorsDark.textPrimary
                         : AppColorsLight.textPrimary),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-              ),
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+            ),
+          ),
         ),
       ),
     );

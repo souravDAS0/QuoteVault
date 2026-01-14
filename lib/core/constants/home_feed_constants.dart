@@ -16,7 +16,7 @@ abstract class HomeFeedConstants {
   // Search
   static const String foundResults = 'Found';
   static const String resultsFor = 'results for';
-  static const String byAuthor = 'By Author';
+  static const String byAuthor = 'Authors';
   static const String byCategory = 'By Category';
   static const String byPopularity = 'By Popularity';
   static const String filterByAuthor = 'FILTER BY AUTHOR';

@@ -5,13 +5,10 @@ import 'package:quote_vault/features/home_feed/presentation/widgets/quote_card.d
 
 import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/home_feed_constants.dart';
+import '../../../sharing/presentation/screens/share_quote_sheet.dart';
 import '../../application/controllers/search_controller.dart';
-import '../../application/state/search_state.dart';
-import '../widgets/author_filter_sheet.dart';
-import '../widgets/category_chip.dart';
 import '../widgets/loading_indicator.dart';
 import '../widgets/search_bar_widget.dart';
-import '../../../sharing/presentation/screens/share_quote_sheet.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -49,38 +46,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         _scrollController.position.maxScrollExtent - 200) {
       ref.read(searchControllerProvider.notifier).loadMore();
     }
-  }
-
-  void _showAuthorFilter() {
-    final searchState = ref.read(searchControllerProvider);
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            String? tempSelectedAuthorId = searchState.selectedAuthorId;
-
-            return AuthorFilterSheet(
-              authors: searchState.authors,
-              selectedAuthorId: tempSelectedAuthorId,
-              onAuthorSelected: (authorId) {
-                setModalState(() {
-                  tempSelectedAuthorId = authorId;
-                });
-              },
-              onApply: () {
-                ref
-                    .read(searchControllerProvider.notifier)
-                    .setAuthorFilter(tempSelectedAuthorId);
-                Navigator.pop(context);
-              },
-            );
-          },
-        );
-      },
-    );
   }
 
   @override
@@ -122,60 +87,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 },
               ),
             ),
-            // Filter chips
-            SizedBox(
-              height: 40,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  CategoryChip(
-                    label: HomeFeedConstants.byAuthor,
-                    isSelected:
-                        searchState.activeFilter == SearchFilterType.author,
-                    onTap: () {
-                      if (searchState.activeFilter == SearchFilterType.author) {
-                        ref
-                            .read(searchControllerProvider.notifier)
-                            .setActiveFilter(null);
-                      } else {
-                        _showAuthorFilter();
-                      }
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  CategoryChip(
-                    label: HomeFeedConstants.byCategory,
-                    isSelected:
-                        searchState.activeFilter == SearchFilterType.category,
-                    onTap: () {
-                      ref
-                          .read(searchControllerProvider.notifier)
-                          .setActiveFilter(
-                            searchState.activeFilter ==
-                                    SearchFilterType.category
-                                ? null
-                                : SearchFilterType.category,
-                          );
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  CategoryChip(
-                    label: HomeFeedConstants.byPopularity,
-                    isSelected:
-                        searchState.activeFilter == SearchFilterType.popularity,
-                    onTap: () {
-                      final newSortBy = searchState.sortBy == 'popularity'
-                          ? null
-                          : 'popularity';
-                      ref
-                          .read(searchControllerProvider.notifier)
-                          .setSortBy(newSortBy);
-                    },
-                  ),
-                ],
-              ),
-            ),
+
             // Divider
             if (searchState.query.isNotEmpty)
               Padding(
@@ -186,7 +98,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 ),
               ),
             // Results count
-            if (searchState.query.isNotEmpty && searchState.totalResults > 0)
+            if (searchState.query.isNotEmpty && searchState.totalResults >= 0)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: RichText(

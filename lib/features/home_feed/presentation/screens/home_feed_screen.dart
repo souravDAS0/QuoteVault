@@ -12,6 +12,7 @@ import '../widgets/search_bar_widget.dart';
 import '../widgets/category_chip.dart';
 import '../widgets/quote_card.dart';
 import '../widgets/loading_indicator.dart';
+import '../widgets/author_filter_sheet.dart';
 
 class HomeFeedScreen extends ConsumerStatefulWidget {
   const HomeFeedScreen({super.key});
@@ -41,6 +42,37 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
         _scrollController.position.maxScrollExtent - 200) {
       ref.read(homeFeedControllerProvider.notifier).loadMore();
     }
+  }
+
+  void _showAuthorFilter() {
+    final feedState = ref.read(homeFeedControllerProvider);
+    String? tempSelectedAuthorId = feedState.selectedAuthorId;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return AuthorFilterSheet(
+              authors: feedState.authors,
+              selectedAuthorId: tempSelectedAuthorId,
+              onAuthorSelected: (authorId) {
+                setModalState(() {
+                  tempSelectedAuthorId = authorId;
+                });
+              },
+              onApply: () {
+                ref
+                    .read(homeFeedControllerProvider.notifier)
+                    .selectAuthor(tempSelectedAuthorId);
+                Navigator.pop(context);
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -91,10 +123,28 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: SearchBarWidget(
-                    onTap: () {
-                      context.push(HomeFeedConstants.searchRoute);
-                    },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SearchBarWidget(
+                          onTap: () {
+                            context.push(HomeFeedConstants.searchRoute);
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Author Filter Chip
+                      SizedBox(
+                        height: 48,
+                        child: CategoryChip(
+                          label: HomeFeedConstants.byAuthor,
+                          isSelected: feedState.selectedAuthorId != null,
+                          onTap: () {
+                            _showAuthorFilter();
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

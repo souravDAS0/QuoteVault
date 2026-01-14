@@ -10,18 +10,7 @@ class SearchController extends _$SearchController {
 
   @override
   SearchState build() {
-    _loadAuthors();
     return const SearchState();
-  }
-
-  Future<void> _loadAuthors() async {
-    try {
-      final repository = ref.read(quoteRepositoryProvider);
-      final authors = await repository.getAuthors();
-      state = state.copyWith(authors: authors);
-    } catch (e) {
-      // Silently fail, authors list will be empty
-    }
   }
 
   Future<void> search(String query) async {
@@ -49,19 +38,8 @@ class SearchController extends _$SearchController {
       final repository = ref.read(quoteRepositoryProvider);
 
       final results = await Future.wait([
-        repository.searchQuotes(
-          query: query,
-          page: 0,
-          pageSize: _pageSize,
-          authorId: state.selectedAuthorId,
-          categoryId: state.selectedCategoryId,
-          sortBy: state.sortBy,
-        ),
-        repository.getSearchResultsCount(
-          query: query,
-          authorId: state.selectedAuthorId,
-          categoryId: state.selectedCategoryId,
-        ),
+        repository.searchQuotes(query: query, page: 0, pageSize: _pageSize),
+        repository.getSearchResultsCount(query: query),
       ]);
 
       final quotes = results[0] as List<dynamic>;
@@ -96,9 +74,6 @@ class SearchController extends _$SearchController {
         query: state.query,
         page: nextPage,
         pageSize: _pageSize,
-        authorId: state.selectedAuthorId,
-        categoryId: state.selectedCategoryId,
-        sortBy: state.sortBy,
       );
 
       state = state.copyWith(
@@ -115,51 +90,7 @@ class SearchController extends _$SearchController {
     }
   }
 
-  void setActiveFilter(SearchFilterType? filter) {
-    state = state.copyWith(activeFilter: filter);
-  }
-
-  Future<void> setAuthorFilter(String? authorId) async {
-    state = state.copyWith(
-      selectedAuthorId: authorId,
-      activeFilter: null,
-    );
-
-    if (state.query.isNotEmpty) {
-      await search(state.query);
-    }
-  }
-
-  Future<void> setCategoryFilter(String? categoryId) async {
-    state = state.copyWith(
-      selectedCategoryId: categoryId,
-      activeFilter: null,
-    );
-
-    if (state.query.isNotEmpty) {
-      await search(state.query);
-    }
-  }
-
-  Future<void> setSortBy(String? sortBy) async {
-    state = state.copyWith(
-      sortBy: sortBy,
-      activeFilter: null,
-    );
-
-    if (state.query.isNotEmpty) {
-      await search(state.query);
-    }
-  }
-
   void clearFilters() {
-    state = state.copyWith(
-      selectedAuthorId: null,
-      selectedCategoryId: null,
-      sortBy: null,
-      activeFilter: null,
-    );
-
     if (state.query.isNotEmpty) {
       search(state.query);
     }
@@ -167,7 +98,6 @@ class SearchController extends _$SearchController {
 
   void clearSearch() {
     state = const SearchState();
-    _loadAuthors();
   }
 
   void clearError() {
