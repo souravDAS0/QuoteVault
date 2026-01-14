@@ -55,6 +55,9 @@ class SearchBarWidget extends StatelessWidget {
                     focusNode: focusNode,
                     readOnly: readOnly,
                     enabled: !readOnly,
+                    cursorColor: isDark
+                        ? AppColorsDark.accentTeal
+                        : AppColorsLight.accentTeal,
                     onChanged: onChanged,
                     onSubmitted: onSubmitted,
                     onTapOutside: (event) => focusNode?.unfocus(),

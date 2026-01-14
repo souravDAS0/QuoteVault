@@ -45,6 +45,9 @@ class PasswordTextField extends StatelessWidget {
         TextField(
           focusNode: focusNode,
           controller: controller,
+          cursorColor: isDark
+              ? AppColorsDark.accentTeal
+              : AppColorsLight.accentTeal,
           onChanged: onChanged,
           obscureText: obscureText,
           onTapOutside: (event) => FocusScope.of(context).unfocus(),

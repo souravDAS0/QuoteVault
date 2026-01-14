@@ -45,6 +45,9 @@ class AuthTextField extends StatelessWidget {
         TextField(
           focusNode: focusNode,
           controller: controller,
+          cursorColor: isDark
+              ? AppColorsDark.accentTeal
+              : AppColorsLight.accentTeal,
           onChanged: onChanged,
           keyboardType: keyboardType,
           onTapOutside: (event) => FocusScope.of(context).unfocus(),
