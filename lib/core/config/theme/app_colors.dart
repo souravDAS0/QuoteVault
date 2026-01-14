@@ -18,6 +18,7 @@ abstract class AppColorsLight {
 
   // Semantic colors
   static const Color error = Color(0xFFDC2626);
+  static const Color errorContainer = Color.fromARGB(255, 243, 149, 125);
   static const Color success = Color(0xFF059669);
   static const Color warning = Color(0xFFF59E0B);
   static const Color info = Color(0xFF3B82F6);
@@ -45,6 +46,7 @@ abstract class AppColorsDark {
 
   // Semantic colors
   static const Color error = Color(0xFFEF4444);
+  static const Color errorContainer = Color.fromARGB(255, 243, 149, 125);
   static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFFBBF24);
   static const Color info = Color(0xFF60A5FA);

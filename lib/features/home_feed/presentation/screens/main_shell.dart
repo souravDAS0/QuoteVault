@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/home_feed_constants.dart';
 import '../../../collections/presentation/screens/collections_screen.dart';
+import '../../../profile/presentation/screens/profile_screen.dart';
 import 'home_feed_screen.dart';
 
 class MainShell extends StatefulWidget {
@@ -17,7 +18,7 @@ class _MainShellState extends State<MainShell> {
   final List<Widget> _screens = const [
     HomeFeedScreen(),
     CollectionsScreen(),
-    _PlaceholderScreen(title: 'Profile'),
+    ProfileScreen(),
   ];
 
   @override
@@ -25,10 +26,7 @@ class _MainShellState extends State<MainShell> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
@@ -111,45 +109,29 @@ class _MainShellState extends State<MainShell> {
             Icon(
               isSelected ? selectedIcon : icon,
               color: isSelected
-                  ? (isDark ? AppColorsDark.accentTeal : AppColorsLight.accentTeal)
+                  ? (isDark
+                        ? AppColorsDark.accentTeal
+                        : AppColorsLight.accentTeal)
                   : (isDark
-                      ? AppColorsDark.textTertiary
-                      : AppColorsLight.textTertiary),
+                        ? AppColorsDark.textTertiary
+                        : AppColorsLight.textTertiary),
               size: 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: isSelected
-                        ? (isDark
-                            ? AppColorsDark.accentTeal
-                            : AppColorsLight.accentTeal)
-                        : (isDark
-                            ? AppColorsDark.textTertiary
-                            : AppColorsLight.textTertiary),
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  ),
+                color: isSelected
+                    ? (isDark
+                          ? AppColorsDark.accentTeal
+                          : AppColorsLight.accentTeal)
+                    : (isDark
+                          ? AppColorsDark.textTertiary
+                          : AppColorsLight.textTertiary),
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+              ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PlaceholderScreen extends StatelessWidget {
-  final String title;
-
-  const _PlaceholderScreen({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text(
-          '$title - Coming Soon',
-          style: Theme.of(context).textTheme.headlineMedium,
         ),
       ),
     );

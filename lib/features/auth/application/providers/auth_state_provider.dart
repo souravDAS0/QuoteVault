@@ -30,6 +30,15 @@ Stream<QvUser?> authStateChanges(Ref ref) {
 /// Provider for current user
 @riverpod
 FutureOr<QvUser?> currentUser(Ref ref) async {
+  // Watch auth state changes to react to updates (sign in, sign out, user update)
+  final authState = ref.watch(authStateChangesProvider);
+
+  // If we have a user from the stream, return it
+  if (authState.hasValue) {
+    return authState.value;
+  }
+
+  // Fallback to fetching current user directly
   final repository = ref.watch(authRepositoryProvider);
   return repository.getCurrentUser();
 }
