@@ -35,9 +35,7 @@ abstract class AppTheme {
         titleTextStyle: AppTypography.headlineMedium(
           color: AppColorsLight.textPrimary,
         ),
-        iconTheme: const IconThemeData(
-          color: AppColorsLight.textPrimary,
-        ),
+        iconTheme: const IconThemeData(color: AppColorsLight.textPrimary),
       ),
 
       // Text theme
@@ -47,9 +45,7 @@ abstract class AppTheme {
       cardTheme: CardThemeData(
         color: AppColorsLight.surface,
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
 
       // Input decoration theme
@@ -58,15 +54,11 @@ abstract class AppTheme {
         fillColor: AppColorsLight.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            color: AppColorsLight.border,
-          ),
+          borderSide: const BorderSide(color: AppColorsLight.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            color: AppColorsLight.border,
-          ),
+          borderSide: const BorderSide(color: AppColorsLight.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -77,9 +69,7 @@ abstract class AppTheme {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            color: AppColorsLight.error,
-          ),
+          borderSide: const BorderSide(color: AppColorsLight.error),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -92,16 +82,9 @@ abstract class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColorsLight.primaryNavy,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 12,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          textStyle: AppTypography.bodyLarge(
-            color: Colors.white,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          textStyle: AppTypography.bodyLarge(color: Colors.white),
         ),
       ),
 
@@ -145,9 +128,7 @@ abstract class AppTheme {
         titleTextStyle: AppTypography.headlineMedium(
           color: AppColorsDark.textPrimary,
         ),
-        iconTheme: const IconThemeData(
-          color: AppColorsDark.textPrimary,
-        ),
+        iconTheme: const IconThemeData(color: AppColorsDark.textPrimary),
       ),
 
       // Text theme
@@ -157,9 +138,7 @@ abstract class AppTheme {
       cardTheme: CardThemeData(
         color: AppColorsDark.surface,
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
 
       // Input decoration theme
@@ -168,15 +147,11 @@ abstract class AppTheme {
         fillColor: AppColorsDark.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            color: AppColorsDark.border,
-          ),
+          borderSide: const BorderSide(color: AppColorsDark.border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            color: AppColorsDark.border,
-          ),
+          borderSide: const BorderSide(color: AppColorsDark.border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -187,9 +162,7 @@ abstract class AppTheme {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(
-            color: AppColorsDark.error,
-          ),
+          borderSide: const BorderSide(color: AppColorsDark.error),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -202,16 +175,9 @@ abstract class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColorsDark.accentTeal,
           foregroundColor: AppColorsDark.primaryNavy,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 12,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          textStyle: AppTypography.bodyLarge(
-            color: AppColorsDark.primaryNavy,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          textStyle: AppTypography.bodyLarge(color: AppColorsDark.primaryNavy),
         ),
       ),
 
