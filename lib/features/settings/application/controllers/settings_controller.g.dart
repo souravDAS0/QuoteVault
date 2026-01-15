@@ -45,7 +45,7 @@ final class SettingsControllerProvider
 }
 
 String _$settingsControllerHash() =>
-    r'0d34d8c81220110e1d399f1f7e33ce2d3bde4a2b';
+    r'07fff33c3ad8cb8fa3a2cbd5d3cb53952b13e069';
 
 /// Controller for settings/personalization screen
 

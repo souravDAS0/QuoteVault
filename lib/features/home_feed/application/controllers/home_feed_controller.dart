@@ -5,6 +5,9 @@ import '../../domain/entities/category.dart';
 import '../../domain/entities/author.dart';
 import '../../domain/entities/quote.dart';
 
+import '../../../../core/domain/entities/retryable_operation.dart';
+import '../../../../core/mixins/offline_aware_mixin.dart';
+
 part 'home_feed_controller.g.dart';
 
 @riverpod
@@ -254,35 +257,37 @@ class HomeFeedController extends _$HomeFeedController {
       state = state.copyWith(quotes: optimisticQuotes);
     }
 
-    try {
-      final repository = ref.read(quoteRepositoryProvider);
-      final updatedQuote = await repository.toggleFavorite(quoteId: quoteId);
+    // Use offline-aware execution
+    final success = await ref.offlineAware.executeWithOfflineHandling(
+      operation: () async {
+        final repository = ref.read(quoteRepositoryProvider);
+        final updatedQuote = await repository.toggleFavorite(quoteId: quoteId);
 
-      // Update with server response
-      if (isDailyQuote) {
-        state = state.copyWith(dailyQuote: updatedQuote);
-      } else {
-        final updatedQuotes = state.quotes.map((q) {
-          return q.id == quoteId ? updatedQuote : q;
-        }).toList();
-        state = state.copyWith(quotes: updatedQuotes);
-      }
-    } catch (e) {
-      // Revert optimistic update on error
-      if (isDailyQuote) {
-        state = state.copyWith(dailyQuote: currentQuote);
-      } else {
-        final revertedQuotes = state.quotes.map((q) {
-          return q.id == quoteId ? currentQuote : q;
-        }).toList();
-        state = state.copyWith(
-          quotes: revertedQuotes,
-          errorMessage: 'Failed to update favorite: $e',
-        );
-      }
-    } finally {
+        // Update with server response
+        if (isDailyQuote) {
+          state = state.copyWith(dailyQuote: updatedQuote);
+        } else {
+          final updatedQuotes = state.quotes.map((q) {
+            return q.id == quoteId ? updatedQuote : q;
+          }).toList();
+          state = state.copyWith(quotes: updatedQuotes);
+        }
+      },
+      operationType: OperationType.toggleFavorite,
+      payload: {'quoteId': quoteId},
+      operationId: 'toggle_favorite_$quoteId',
+      onQueued: () {
+        // Keep optimistic update - will sync when online
+      },
+    );
+
+    if (!success) {
+      // Operation was queued, optimistic update is kept
       _togglingFavorites.remove(quoteId);
+      return;
     }
+
+    _togglingFavorites.remove(quoteId);
   }
 
   void clearError() {

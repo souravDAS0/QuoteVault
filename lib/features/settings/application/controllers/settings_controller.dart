@@ -1,7 +1,9 @@
 import 'package:quote_vault/features/home_feed/application/providers/quote_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:workmanager/workmanager.dart';
 
 import '../../../../core/providers/notification_manager_provider.dart';
+import '../../../../core/services/daily_quote_worker.dart';
 import '../../domain/entities/user_settings.dart';
 import '../providers/settings_providers.dart';
 import '../state/settings_state.dart';
@@ -146,11 +148,46 @@ class SettingsController extends _$SettingsController {
             'Notification scheduled for ${settings.notificationHour}:${settings.notificationMinute}',
           );
         }
+
+        // Register WorkManager task to update quote at midnight
+        await _registerDailyQuoteTask();
       } else {
         await notificationService.cancelDailyNotification();
+
+        // Cancel WorkManager task when notifications are disabled
+        await Workmanager().cancelByUniqueName(dailyQuoteTaskName);
+        print('WorkManager task cancelled');
       }
     } catch (e) {
       print('Error rescheduling notifications: $e');
+    }
+  }
+
+  /// Register WorkManager periodic task to update daily quote at midnight
+  Future<void> _registerDailyQuoteTask() async {
+    try {
+      // Cancel any existing task first
+      await Workmanager().cancelByUniqueName(dailyQuoteTaskName);
+
+      // Calculate time until next midnight
+      final now = DateTime.now();
+      final nextMidnight = DateTime(now.year, now.month, now.day + 1, 0, 20, 0);
+      final initialDelay = nextMidnight.difference(now);
+
+      // Register periodic task that runs daily at midnight
+      await Workmanager().registerPeriodicTask(
+        dailyQuoteTaskName,
+        dailyQuoteTaskName,
+        frequency: const Duration(hours: 24),
+        initialDelay: initialDelay,
+        constraints: Constraints(
+          networkType: NetworkType.connected, // Require network to fetch quote
+        ),
+      );
+
+      print('WorkManager task registered. Next run at: $nextMidnight');
+    } catch (e) {
+      print('Error registering WorkManager task: $e');
     }
   }
 
