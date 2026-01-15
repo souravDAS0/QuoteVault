@@ -219,10 +219,11 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                     ),
                   ],
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Transform.scale(
-                    scale: 0.95,
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: SizedBox(
+                    width: 400,
+                    height: 500,
                     child: _selectedTemplate != null
                         ? _buildPreviewWidget(_selectedTemplate!, isDark)
                         : const SizedBox.shrink(),
