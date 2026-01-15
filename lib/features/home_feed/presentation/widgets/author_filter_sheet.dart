@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/home_feed_constants.dart';
 import '../../domain/entities/author.dart';
 

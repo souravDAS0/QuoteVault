@@ -15,6 +15,42 @@ class LocalNotificationService implements NotificationService {
     // Initialize timezone data
     tz.initializeTimeZones();
 
+    // Set the local timezone based on device offset
+    // Using a simple map to avoid memory issues from iterating all timezones
+    final offset = DateTime.now().timeZoneOffset;
+    final offsetMinutes = offset.inMinutes;
+
+    try {
+      // Map common timezone offsets to locations
+      String locationName;
+
+      if (offsetMinutes == 330) {
+        locationName = 'Asia/Kolkata'; // GMT+5:30 (IST)
+      } else if (offsetMinutes == 0) {
+        locationName = 'UTC'; // GMT+0
+      } else if (offsetMinutes == -300) {
+        locationName = 'America/New_York'; // GMT-5 (EST)
+      } else if (offsetMinutes == -480) {
+        locationName = 'America/Los_Angeles'; // GMT-8 (PST)
+      } else if (offsetMinutes == 60) {
+        locationName = 'Europe/London'; // GMT+1 (BST)
+      } else if (offsetMinutes == 480) {
+        locationName = 'Asia/Shanghai'; // GMT+8
+      } else if (offsetMinutes == 540) {
+        locationName = 'Asia/Tokyo'; // GMT+9
+      } else {
+        // Fallback: use UTC for unknown offsets
+        locationName = 'UTC';
+        print('Unknown timezone offset: $offsetMinutes minutes, using UTC');
+      }
+
+      tz.setLocalLocation(tz.getLocation(locationName));
+      print('Timezone set to: ${tz.local.name} (offset: $offset)');
+    } catch (e) {
+      print('Error setting timezone: $e, using UTC');
+      tz.setLocalLocation(tz.getLocation('UTC'));
+    }
+
     // Android initialization settings
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
@@ -33,18 +69,42 @@ class LocalNotificationService implements NotificationService {
     );
 
     await _notifications.initialize(initSettings);
+
+    // Create notification channel for Android
+    const androidChannel = AndroidNotificationChannel(
+      'daily_quote_channel',
+      'Quote of the Day',
+      description: 'Daily inspirational quote notification',
+      importance: Importance.high,
+      playSound: true,
+      enableVibration: true,
+    );
+
+    await _notifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(androidChannel);
   }
 
   @override
   Future<bool> requestPermission() async {
     // Request permissions on iOS
-    final result = await _notifications
+    final iosResult = await _notifications
         .resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin
         >()
         ?.requestPermissions(alert: true, badge: true, sound: true);
 
-    return result ?? true; // Android doesn't need runtime permission request
+    // Request permissions on Android (for Android 13+)
+    final androidResult = await _notifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
+
+    // Return true if either returns true, or if both are null (older Android versions)
+    return iosResult ?? androidResult ?? true;
   }
 
   @override
@@ -57,12 +117,17 @@ class LocalNotificationService implements NotificationService {
     // Cancel existing daily notification first
     await cancelDailyNotification();
 
+    final scheduledTime = _nextInstanceOfTime(hour, minute);
+    print(
+      'Scheduling notification for: $scheduledTime (timezone: ${tz.local.name})',
+    );
+
     // Schedule new notification
     await _notifications.zonedSchedule(
       _dailyQuoteNotificationId,
       title,
       body,
-      _nextInstanceOfTime(hour, minute),
+      scheduledTime,
       NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_quote_channel',
@@ -77,6 +142,30 @@ class LocalNotificationService implements NotificationService {
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
+    );
+
+    print('Notification scheduled successfully');
+  }
+
+  @override
+  Future<void> showImmediateNotification({
+    required String title,
+    required String body,
+  }) async {
+    await _notifications.show(
+      999, // Use a different ID for test notifications
+      title,
+      body,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'daily_quote_channel',
+          'Quote of the Day',
+          channelDescription: 'Daily inspirational quote notification',
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+        iOS: DarwinNotificationDetails(),
+      ),
     );
   }
 

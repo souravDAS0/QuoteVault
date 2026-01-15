@@ -37,7 +37,7 @@ class SearchBarWidget extends StatelessWidget {
         if (showBackButton) ...[
           IconButton(
             onPressed: onBack,
-            icon: Icon(Icons.arrow_back, color: colorScheme.onBackground),
+            icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
           ),
           const SizedBox(width: 8),
         ],

@@ -1,30 +1,18 @@
-# Task: Project Setup — Typography & Color System
-
-## UI References
-
-/Users/souravdas/personalProjects/quote_vault/assets/ui_pages/typography_and_color_system_screen.png
+# Task: Daily Quote & Notifications
 
 ## Scope
 
-Set up foundational design system for the app.
+Implement daily quote logic and notifications.
 
 ## Requirements
 
-- Define color palette (primary, secondary, background, surface, text)
-- Define accent colors (Teal, Gold)
-- Define typography scale
-- Register font families (Jakarta, Serif, Mono)
-- Create reusable theme/constants file
+- "Quote of the Day" prominently displayed on home screen
+- Quote of the day changes daily on supabase
+- Local push notification for at user-preferred time
+- No push notification if disabled
 
 ## Acceptance Criteria
 
-- Colors match UI reference exactly
-- Typography scale usable across app
-- Dark and Light themes supported
-- No inline styles for colors or fonts
-
-## Out of Scope
-
-- Screens
-- Components
-- Business logic
+- Notification fires at selected time
+- "Quote of the Day" updates daily
+- Disabled notifications do not fire

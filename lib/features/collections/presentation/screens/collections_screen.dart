@@ -66,7 +66,7 @@ class CollectionsScreen extends ConsumerWidget {
                       Text(
                         CollectionsConstants.customCollections,
                         style: AppTypography.headlineMedium(
-                          color: colorScheme.onBackground,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       SortByButton(

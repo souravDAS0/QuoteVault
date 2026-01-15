@@ -122,6 +122,14 @@ class SettingsController extends _$SettingsController {
       final notificationService = ref.read(notificationServiceProvider);
 
       if (settings.notificationsEnabled) {
+        // Request permission first
+        final permissionGranted = await notificationService.requestPermission();
+
+        if (!permissionGranted) {
+          print('Notification permission denied');
+          return;
+        }
+
         // Get daily quote for notification content
         final repository = ref.read(quoteRepositoryProvider);
         final dailyQuote = await repository.getDailyQuote();
@@ -134,6 +142,9 @@ class SettingsController extends _$SettingsController {
             title: 'Quote of the Day ☀️',
             body: '"${dailyQuote.text}" - ${dailyQuote.authorName}',
           );
+          print(
+            'Notification scheduled for ${settings.notificationHour}:${settings.notificationMinute}',
+          );
         }
       } else {
         await notificationService.cancelDailyNotification();
@@ -145,6 +156,8 @@ class SettingsController extends _$SettingsController {
 
   /// Schedule initial notifications on app startup
   Future<void> scheduleInitialNotifications() async {
+    // Don't refresh from cloud here - settings are already loaded when this is called
+    // Refreshing would trigger the listener again causing infinite loop
     if (state.settings.notificationsEnabled) {
       await _rescheduleNotifications(state.settings);
     }

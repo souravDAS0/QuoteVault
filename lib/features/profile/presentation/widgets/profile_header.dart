@@ -76,13 +76,13 @@ class ProfileHeader extends StatelessWidget {
           // Display name
           Text(
             displayName,
-            style: AppTypography.displayLarge(color: colorScheme.onBackground),
+            style: AppTypography.displayLarge(color: colorScheme.onSurface),
           ),
           // Email
           Text(
             email,
             style: AppTypography.bodyMedium(
-              color: colorScheme.onBackground.withValues(alpha: 0.7),
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 24),

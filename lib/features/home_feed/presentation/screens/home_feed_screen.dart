@@ -240,14 +240,14 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                           Text(
                             'Error loading quotes',
                             style: theme.textTheme.headlineMedium?.copyWith(
-                              color: colorScheme.onBackground,
+                              color: colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             feedState.errorMessage!,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onBackground.withValues(
+                              color: colorScheme.onSurface.withValues(
                                 alpha: 0.7,
                               ),
                             ),

@@ -88,7 +88,7 @@ class SupabaseQuoteDatasource {
         }
 
         return response.map((data) {
-          final quote = _mapToQuoteDto(data as Map<String, dynamic>);
+          final quote = _mapToQuoteDto(data);
           return quote.copyWith(isFavorite: userFavorites.contains(quote.id));
         }).toList();
       } catch (joinError) {
@@ -117,7 +117,7 @@ class SupabaseQuoteDatasource {
         }
 
         return response.map((data) {
-          final quote = _mapToQuoteDto(data as Map<String, dynamic>);
+          final quote = _mapToQuoteDto(data);
           return quote.copyWith(isFavorite: userFavorites.contains(quote.id));
         }).toList();
       }

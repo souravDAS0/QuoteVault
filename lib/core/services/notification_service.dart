@@ -22,6 +22,12 @@ abstract class NotificationService {
   /// Cancel all scheduled notifications
   Future<void> cancelAllNotifications();
 
+  /// Show an immediate notification for testing
+  Future<void> showImmediateNotification({
+    required String title,
+    required String body,
+  });
+
   /// Cancel only the daily quote notification
   Future<void> cancelDailyNotification();
 }

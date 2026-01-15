@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/quote.dart';
-import '../../domain/entities/author.dart';
 
 part 'search_state.freezed.dart';
 

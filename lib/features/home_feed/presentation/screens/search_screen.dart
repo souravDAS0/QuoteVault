@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:quote_vault/features/collections/presentation/widgets/add_to_collection_sheet.dart';
+import 'package:quote_vault/features/home_feed/application/controllers/home_feed_controller.dart';
 import 'package:quote_vault/features/home_feed/presentation/widgets/quote_card.dart';
 
 import '../../../../core/constants/home_feed_constants.dart';
@@ -54,7 +56,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final searchState = ref.watch(searchControllerProvider);
 
     return Scaffold(
-      backgroundColor: colorScheme.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,10 +180,26 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           child: QuoteCard(
                             quote: quote,
                             onFavorite: () {
-                              // TODO: Toggle favorite
+                              ref
+                                  .read(homeFeedControllerProvider.notifier)
+                                  .toggleFavorite(quote.id);
+                            },
+                            onAddToCollection: () {
+                              AddToCollectionSheet.show(
+                                context,
+                                quoteId: quote.id,
+                              );
                             },
                             onShare: () {
                               ShareQuoteSheet.show(context, quote: quote);
+                            },
+                            onCopy: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Quote copied to clipboard'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
                             },
                           ),
                         );
