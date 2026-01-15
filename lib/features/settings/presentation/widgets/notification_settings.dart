@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/settings_constants.dart';
 import '../../application/controllers/settings_controller.dart';
 
@@ -14,13 +13,14 @@ class NotificationSettings extends ConsumerWidget {
     final settingsState = ref.watch(settingsControllerProvider);
     final settings = settingsState.settings;
     final controller = ref.read(settingsControllerProvider.notifier);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Theme.of(context).primaryColor;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final primaryColor = colorScheme.primary;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -37,9 +37,7 @@ class NotificationSettings extends ConsumerWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: isDark
-                            ? AppColorsDark.textPrimary
-                            : AppColorsLight.textPrimary,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -47,9 +45,7 @@ class NotificationSettings extends ConsumerWidget {
                       SettingsConstants.dailyQuoteDescription,
                       style: TextStyle(
                         fontSize: 13,
-                        color: isDark
-                            ? AppColorsDark.textSecondary
-                            : AppColorsLight.textSecondary,
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -98,9 +94,23 @@ class _TimePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final isAM = hour < 12;
     final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+
+    // Text styles for picker
+    final selectedStyle = TextStyle(
+      fontSize: 28,
+      fontWeight: FontWeight.w600,
+      color: colorScheme.onSurface,
+    );
+
+    final unselectedStyle = TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w400,
+      color: colorScheme.onSurface.withValues(alpha: 0.3),
+    );
 
     return SizedBox(
       height: 150,
@@ -138,19 +148,7 @@ class _TimePicker extends StatelessWidget {
                 return Center(
                   child: Text(
                     h.toString().padLeft(2, '0'),
-                    style: TextStyle(
-                      fontSize: isSelected ? 28 : 20,
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.w400,
-                      color: isSelected
-                          ? (isDark
-                                ? AppColorsDark.textPrimary
-                                : AppColorsLight.textPrimary)
-                          : (isDark
-                                ? AppColorsDark.textTertiary
-                                : AppColorsLight.textTertiary),
-                    ),
+                    style: isSelected ? selectedStyle : unselectedStyle,
                   ),
                 );
               }),
@@ -183,19 +181,7 @@ class _TimePicker extends StatelessWidget {
                 return Center(
                   child: Text(
                     m.toString().padLeft(2, '0'),
-                    style: TextStyle(
-                      fontSize: isSelected ? 28 : 20,
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.w400,
-                      color: isSelected
-                          ? (isDark
-                                ? AppColorsDark.textPrimary
-                                : AppColorsLight.textPrimary)
-                          : (isDark
-                                ? AppColorsDark.textTertiary
-                                : AppColorsLight.textTertiary),
-                    ),
+                    style: isSelected ? selectedStyle : unselectedStyle,
                   ),
                 );
               }),
@@ -239,33 +225,13 @@ class _TimePicker extends StatelessWidget {
                 Center(
                   child: Text(
                     SettingsConstants.amLabel,
-                    style: TextStyle(
-                      fontSize: isAM ? 28 : 20,
-                      fontWeight: isAM ? FontWeight.w600 : FontWeight.w400,
-                      color: isAM
-                          ? (isDark
-                                ? AppColorsDark.textPrimary
-                                : AppColorsLight.textPrimary)
-                          : (isDark
-                                ? AppColorsDark.textTertiary
-                                : AppColorsLight.textTertiary),
-                    ),
+                    style: isAM ? selectedStyle : unselectedStyle,
                   ),
                 ),
                 Center(
                   child: Text(
                     SettingsConstants.pmLabel,
-                    style: TextStyle(
-                      fontSize: !isAM ? 28 : 20,
-                      fontWeight: !isAM ? FontWeight.w600 : FontWeight.w400,
-                      color: !isAM
-                          ? (isDark
-                                ? AppColorsDark.textPrimary
-                                : AppColorsLight.textPrimary)
-                          : (isDark
-                                ? AppColorsDark.textTertiary
-                                : AppColorsLight.textTertiary),
-                    ),
+                    style: !isAM ? selectedStyle : unselectedStyle,
                   ),
                 ),
               ],

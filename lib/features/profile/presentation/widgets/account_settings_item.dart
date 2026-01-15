@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
 
 /// List item for account settings options
 class AccountSettingsItem extends StatelessWidget {
@@ -24,7 +23,8 @@ class AccountSettingsItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return InkWell(
       onTap: onTap,
@@ -33,21 +33,13 @@ class AccountSettingsItem extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: isDark
-                ? isLogout
-                      ? AppColorsDark.error.withValues(alpha: 0.3)
-                      : AppColorsDark.surface
-                : isLogout
-                ? AppColorsLight.error.withValues(alpha: 0.3)
-                : AppColorsLight.surface,
+            color: isLogout
+                ? colorScheme.error.withValues(alpha: 0.3)
+                : colorScheme.primary.withValues(alpha: 0.4),
           ),
-          color: isDark
-              ? isLogout
-                    ? AppColorsDark.errorContainer.withValues(alpha: 0.1)
-                    : AppColorsDark.surface
-              : isLogout
-              ? AppColorsLight.errorContainer.withValues(alpha: 0.1)
-              : AppColorsLight.surface,
+          color: isLogout
+              ? colorScheme.errorContainer.withValues(alpha: 0.1)
+              : colorScheme.surface,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
@@ -58,19 +50,13 @@ class AccountSettingsItem extends StatelessWidget {
               decoration: BoxDecoration(
                 color:
                     iconColor?.withValues(alpha: 0.1) ??
-                    (isDark
-                        ? AppColorsDark.accentTeal.withValues(alpha: 0.1)
-                        : AppColorsLight.accentTeal.withValues(alpha: 0.1)),
+                    colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 icon,
                 size: 20,
-                color:
-                    iconColor ??
-                    (isDark
-                        ? AppColorsDark.accentTeal
-                        : AppColorsLight.accentTeal),
+                color: iconColor ?? colorScheme.primary.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(width: 16),
@@ -79,21 +65,12 @@ class AccountSettingsItem extends StatelessWidget {
                 title,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w500,
-                  color:
-                      textColor ??
-                      (isDark
-                          ? AppColorsDark.textPrimary
-                          : AppColorsLight.textPrimary),
+                  color: textColor ?? colorScheme.onSurface,
                 ),
               ),
             ),
             if (showTrailingIcon)
-              Icon(
-                Icons.chevron_right,
-                color: isDark
-                    ? AppColorsDark.textTertiary
-                    : AppColorsLight.textTertiary,
-              ),
+              Icon(Icons.chevron_right, color: colorScheme.onSurface),
           ],
         ),
       ),

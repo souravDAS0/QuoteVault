@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/config/theme/app_typography.dart';
 import '../../domain/entities/quote.dart';
 
@@ -26,8 +25,10 @@ class QuoteCard extends StatelessWidget {
   });
 
   @override
+  @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return GestureDetector(
       onTap: onTap,
@@ -39,10 +40,8 @@ class QuoteCard extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              isDark
-                  ? AppColorsDark.primaryNavy.withValues(alpha: 0.8)
-                  : AppColorsLight.primaryNavy.withValues(alpha: 0.8),
-              isDark ? AppColorsDark.primaryNavy : AppColorsLight.primaryNavy,
+              colorScheme.surface.withValues(alpha: 0.8),
+              colorScheme.surface,
             ],
           ),
           image: quote.imageUrl != null
@@ -68,9 +67,7 @@ class QuoteCard extends StatelessWidget {
                   Icon(
                     Icons.format_quote_rounded,
                     size: 36,
-                    color: isDark
-                        ? AppColorsDark.accentTeal
-                        : AppColorsLight.accentTeal,
+                    color: colorScheme.tertiary,
                   ),
                   _buildCategoryTag(context),
                 ],
@@ -81,12 +78,17 @@ class QuoteCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   quote.text,
-                  style: AppTypography.headlineLarge(color: Colors.white),
+                  style: AppTypography.headlineLarge(
+                    color: colorScheme.onSurface,
+                  ),
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Divider(color: Colors.white24, height: 32),
+              Divider(
+                color: colorScheme.onSurface.withValues(alpha: 0.24),
+                height: 32,
+              ),
               Row(
                 children: [
                   // Author avatar
@@ -96,7 +98,9 @@ class QuoteCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       quote.authorName,
-                      style: AppTypography.bodyLarge(color: Colors.white),
+                      style: AppTypography.bodyLarge(
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                   ),
                   // Like count
@@ -104,9 +108,7 @@ class QuoteCard extends StatelessWidget {
                     onTap: onFavorite,
                     child: Icon(
                       quote.isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.accentTeal,
+                      color: colorScheme.tertiary,
                       size: 20,
                     ),
                   ),
@@ -118,7 +120,7 @@ class QuoteCard extends StatelessWidget {
                       quote.isBookmarked
                           ? Icons.bookmark
                           : Icons.bookmark_border,
-                      color: Colors.white,
+                      color: colorScheme.onSurface,
                       size: 20,
                     ),
                   ),
@@ -126,9 +128,9 @@ class QuoteCard extends StatelessWidget {
                   // Share
                   GestureDetector(
                     onTap: onShare,
-                    child: const Icon(
+                    child: Icon(
                       Icons.share,
-                      color: Colors.white,
+                      color: colorScheme.onSurface,
                       size: 20,
                     ),
                   ),
@@ -146,9 +148,7 @@ class QuoteCard extends StatelessWidget {
                     },
                     child: Icon(
                       Icons.copy,
-                      color: isDark
-                          ? AppColorsDark.textTertiary
-                          : AppColorsLight.textTertiary,
+                      color: colorScheme.onSurface.withValues(alpha: 0.7),
                       size: 20,
                     ),
                   ),
@@ -162,20 +162,19 @@ class QuoteCard extends StatelessWidget {
   }
 
   Widget _buildCategoryTag(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: isDark
-            ? AppColorsDark.accentTeal.withValues(alpha: 0.2)
-            : AppColorsLight.accentTeal.withValues(alpha: 0.2),
+        color: colorScheme.tertiary.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         quote.categoryName,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: isDark ? AppColorsDark.accentTeal : AppColorsLight.accentTeal,
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: colorScheme.tertiary,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -183,7 +182,9 @@ class QuoteCard extends StatelessWidget {
   }
 
   Widget _buildAuthorAvatar(BuildContext context, {bool light = false}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final initials = quote.authorName
         .split(' ')
         .take(2)
@@ -195,24 +196,20 @@ class QuoteCard extends StatelessWidget {
       height: 36,
       decoration: BoxDecoration(
         color: light
-            ? Colors.white.withValues(alpha: 0.2)
-            : (isDark ? AppColorsDark.surface : AppColorsLight.surface),
+            ? colorScheme.onSurface.withValues(alpha: 0.2)
+            : colorScheme.primary,
         shape: BoxShape.circle,
         border: Border.all(
           color: light
-              ? Colors.white30
-              : (isDark ? AppColorsDark.border : AppColorsLight.border),
+              ? colorScheme.onSurface.withValues(alpha: 0.3)
+              : colorScheme.outline,
         ),
       ),
       child: Center(
         child: Text(
           initials,
           style: AppTypography.caption(
-            color: light
-                ? Colors.white
-                : (isDark
-                      ? AppColorsDark.textPrimary
-                      : AppColorsLight.textPrimary),
+            color: light ? colorScheme.onSurface : colorScheme.onPrimary,
           ).copyWith(fontWeight: FontWeight.w600),
         ),
       ),

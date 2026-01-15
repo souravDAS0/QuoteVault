@@ -19,12 +19,13 @@ class AuthorFilterSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+        color: colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -37,7 +38,7 @@ class AuthorFilterSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: isDark ? AppColorsDark.border : AppColorsLight.border,
+                color: colorScheme.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -47,9 +48,7 @@ class AuthorFilterSheet extends StatelessWidget {
           Text(
             HomeFeedConstants.filterByAuthor,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: isDark
-                  ? AppColorsDark.textSecondary
-                  : AppColorsLight.textSecondary,
+              color: colorScheme.onSurfaceVariant,
               letterSpacing: 1.2,
             ),
           ),
@@ -66,9 +65,7 @@ class AuthorFilterSheet extends StatelessWidget {
               child: Text(
                 HomeFeedConstants.applyFilters,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: isDark
-                      ? AppColorsDark.accentTeal
-                      : AppColorsLight.accentTeal,
+                  color: colorScheme.primary,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
                 ),
@@ -81,7 +78,8 @@ class AuthorFilterSheet extends StatelessWidget {
   }
 
   Widget _buildAuthorList(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Column(
       children: [
@@ -91,7 +89,7 @@ class AuthorFilterSheet extends StatelessWidget {
           id: null,
           name: HomeFeedConstants.allAuthors,
           initials: 'ALL',
-          isDark: isDark,
+          colorScheme: colorScheme,
         ),
         // Author list
         ...authors.map((author) {
@@ -101,7 +99,7 @@ class AuthorFilterSheet extends StatelessWidget {
             name: author.name,
             initials: _getInitials(author.name),
             color: _getAuthorColor(author.id),
-            isDark: isDark,
+            colorScheme: colorScheme,
           );
         }),
       ],
@@ -114,7 +112,7 @@ class AuthorFilterSheet extends StatelessWidget {
     required String name,
     required String initials,
     Color? color,
-    required bool isDark,
+    required ColorScheme colorScheme,
   }) {
     final isSelected = selectedAuthorId == id;
 
@@ -131,18 +129,10 @@ class AuthorFilterSheet extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected
-                      ? (isDark
-                            ? AppColorsDark.accentTeal
-                            : AppColorsLight.accentTeal)
-                      : (isDark ? AppColorsDark.border : AppColorsLight.border),
+                  color: isSelected ? colorScheme.primary : colorScheme.outline,
                   width: 2,
                 ),
-                color: isSelected
-                    ? (isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.accentTeal)
-                    : Colors.transparent,
+                color: isSelected ? colorScheme.tertiary : Colors.transparent,
               ),
               child: isSelected
                   ? const Icon(Icons.check, size: 16, color: Colors.white)
@@ -154,9 +144,7 @@ class AuthorFilterSheet extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color:
-                    color ??
-                    (isDark ? AppColorsDark.border : AppColorsLight.border),
+                color: color ?? colorScheme.outline,
                 shape: BoxShape.circle,
               ),
               child: Center(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
-import 'core/config/theme/app_theme.dart';
 import 'core/config/theme/theme_provider.dart';
 import 'core/config/router/app_router.dart';
 import 'core/config/router/auth_state_navigation_listener.dart';

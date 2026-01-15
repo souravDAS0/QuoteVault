@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../../core/constants/collections_constants.dart';
 import '../../application/controllers/collections_controller.dart';
@@ -19,16 +19,15 @@ class CollectionsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(collectionsControllerProvider);
     final controller = ref.read(collectionsControllerProvider.notifier);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.background
-          : AppColorsLight.background,
+      backgroundColor: colorScheme.surface,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: controller.refresh,
-          color: isDark ? AppColorsDark.accentTeal : AppColorsLight.accentTeal,
+          color: colorScheme.primary,
           child: CustomScrollView(
             slivers: [
               // Header
@@ -38,9 +37,7 @@ class CollectionsScreen extends ConsumerWidget {
                   child: Text(
                     CollectionsConstants.myCollections,
                     style: AppTypography.displayLarge(
-                      color: isDark
-                          ? AppColorsDark.textPrimary
-                          : AppColorsLight.textPrimary,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -69,9 +66,7 @@ class CollectionsScreen extends ConsumerWidget {
                       Text(
                         CollectionsConstants.customCollections,
                         style: AppTypography.headlineMedium(
-                          color: isDark
-                              ? AppColorsDark.textPrimary
-                              : AppColorsLight.textPrimary,
+                          color: colorScheme.onBackground,
                         ),
                       ),
                       SortByButton(
@@ -98,17 +93,13 @@ class CollectionsScreen extends ConsumerWidget {
                         Icon(
                           Icons.error_outline,
                           size: 48,
-                          color: isDark
-                              ? AppColorsDark.error
-                              : AppColorsLight.error,
+                          color: colorScheme.error,
                         ),
                         const SizedBox(height: 16),
                         Text(
                           state.errorMessage!,
                           style: AppTypography.bodyMedium(
-                            color: isDark
-                                ? AppColorsDark.textSecondary
-                                : AppColorsLight.textSecondary,
+                            color: colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -153,7 +144,7 @@ class CollectionsScreen extends ConsumerWidget {
                             controller,
                             collection.id,
                             collection.name,
-                            isDark,
+                            colorScheme,
                           );
                         },
                       );
@@ -170,10 +161,8 @@ class CollectionsScreen extends ConsumerWidget {
       // FAB for creating new collection
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCreateDialog(context, controller),
-        backgroundColor: isDark
-            ? AppColorsDark.secondary
-            : AppColorsLight.secondary,
-        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: colorScheme.secondary,
+        child: Icon(Icons.add, color: colorScheme.onSecondary),
       ),
     );
   }
@@ -193,29 +182,21 @@ class CollectionsScreen extends ConsumerWidget {
     CollectionsController controller,
     String collectionId,
     String collectionName,
-    bool isDark,
+    ColorScheme colorScheme,
   ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: isDark
-            ? AppColorsDark.surface
-            : AppColorsLight.surface,
+        backgroundColor: colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           CollectionsConstants.deleteCollectionTitle,
-          style: AppTypography.headlineLarge(
-            color: isDark
-                ? AppColorsDark.textPrimary
-                : AppColorsLight.textPrimary,
-          ),
+          style: AppTypography.headlineLarge(color: colorScheme.onSurface),
         ),
         content: Text(
           CollectionsConstants.deleteCollectionMessage,
           style: AppTypography.bodyMedium(
-            color: isDark
-                ? AppColorsDark.textSecondary
-                : AppColorsLight.textSecondary,
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         actions: [
@@ -224,9 +205,7 @@ class CollectionsScreen extends ConsumerWidget {
             child: Text(
               CollectionsConstants.cancel,
               style: AppTypography.bodyMedium(
-                color: isDark
-                    ? AppColorsDark.textSecondary
-                    : AppColorsLight.textSecondary,
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -236,16 +215,14 @@ class CollectionsScreen extends ConsumerWidget {
               controller.deleteCollection(collectionId);
             },
             style: FilledButton.styleFrom(
-              backgroundColor: isDark
-                  ? AppColorsDark.error
-                  : AppColorsLight.error,
+              backgroundColor: colorScheme.error,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             child: Text(
               CollectionsConstants.delete,
-              style: AppTypography.bodyMedium(color: Colors.white),
+              style: AppTypography.bodyMedium(color: colorScheme.onError),
             ),
           ),
         ],

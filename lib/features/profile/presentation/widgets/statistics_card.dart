@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
 
 /// Reusable statistics card widget
 class StatisticsCard extends StatelessWidget {
@@ -18,7 +17,8 @@ class StatisticsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Expanded(
       child: InkWell(
@@ -26,8 +26,11 @@ class StatisticsCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+            color: colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: colorScheme.primary.withValues(alpha: 0.4),
+            ),
           ),
           child: Column(
             children: [
@@ -37,17 +40,13 @@ class StatisticsCard extends StatelessWidget {
                   Icon(
                     icon,
                     size: 20,
-                    color: isDark
-                        ? AppColorsDark.accentTeal
-                        : AppColorsLight.accentTeal,
+                    color: colorScheme.tertiary.withValues(alpha: 0.8),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     label,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: isDark
-                          ? AppColorsDark.textSecondary
-                          : AppColorsLight.textSecondary,
+                      color: colorScheme.tertiary.withValues(alpha: 0.8),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -58,9 +57,7 @@ class StatisticsCard extends StatelessWidget {
                 count.toString(),
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: isDark
-                      ? AppColorsDark.textPrimary
-                      : AppColorsLight.textPrimary,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ],

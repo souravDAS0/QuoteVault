@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../../core/constants/collections_constants.dart';
 import '../../application/state/collections_state.dart';
@@ -17,7 +17,8 @@ class SortByButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return TextButton(
       onPressed: () => _showSortOptions(context),
@@ -27,19 +28,19 @@ class SortByButton extends StatelessWidget {
       child: Text(
         CollectionsConstants.sortBy,
         style: AppTypography.bodyMedium(
-          color: isDark ? AppColorsDark.accentTeal : AppColorsLight.accentTeal,
+          color: colorScheme.secondary,
         ).copyWith(fontWeight: FontWeight.w500),
       ),
     );
   }
 
   void _showSortOptions(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor:
-          isDark ? AppColorsDark.surface : AppColorsLight.surface,
+      backgroundColor: colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -55,9 +56,7 @@ class SortByButton extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? AppColorsDark.divider
-                        : AppColorsLight.divider,
+                    color: colorScheme.outlineVariant,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -66,9 +65,7 @@ class SortByButton extends StatelessWidget {
                 Text(
                   CollectionsConstants.sortBy,
                   style: AppTypography.headlineMedium(
-                    color: isDark
-                        ? AppColorsDark.textPrimary
-                        : AppColorsLight.textPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -80,7 +77,7 @@ class SortByButton extends StatelessWidget {
                     Navigator.pop(context);
                     onSortChanged(CollectionSortBy.name);
                   },
-                  isDark: isDark,
+                  colorScheme: colorScheme,
                 ),
                 _SortOption(
                   label: CollectionsConstants.sortByDate,
@@ -89,7 +86,7 @@ class SortByButton extends StatelessWidget {
                     Navigator.pop(context);
                     onSortChanged(CollectionSortBy.dateCreated);
                   },
-                  isDark: isDark,
+                  colorScheme: colorScheme,
                 ),
                 _SortOption(
                   label: CollectionsConstants.sortByCount,
@@ -98,7 +95,7 @@ class SortByButton extends StatelessWidget {
                     Navigator.pop(context);
                     onSortChanged(CollectionSortBy.quoteCount);
                   },
-                  isDark: isDark,
+                  colorScheme: colorScheme,
                 ),
               ],
             ),
@@ -113,13 +110,13 @@ class _SortOption extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
-  final bool isDark;
+  final ColorScheme colorScheme;
 
   const _SortOption({
     required this.label,
     required this.isSelected,
     required this.onTap,
-    required this.isDark,
+    required this.colorScheme,
   });
 
   @override
@@ -128,17 +125,10 @@ class _SortOption extends StatelessWidget {
       onTap: onTap,
       title: Text(
         label,
-        style: AppTypography.bodyLarge(
-          color: isDark ? AppColorsDark.textPrimary : AppColorsLight.textPrimary,
-        ),
+        style: AppTypography.bodyLarge(color: colorScheme.onSurface),
       ),
       trailing: isSelected
-          ? Icon(
-              Icons.check,
-              color: isDark
-                  ? AppColorsDark.accentTeal
-                  : AppColorsLight.accentTeal,
-            )
+          ? Icon(Icons.check, color: colorScheme.secondary)
           : null,
     );
   }

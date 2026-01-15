@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../../core/constants/collections_constants.dart';
 
@@ -7,14 +7,12 @@ import '../../../../core/constants/collections_constants.dart';
 class NewCollectionCard extends StatelessWidget {
   final VoidCallback? onTap;
 
-  const NewCollectionCard({
-    super.key,
-    this.onTap,
-  });
+  const NewCollectionCard({super.key, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return GestureDetector(
       onTap: onTap,
@@ -22,16 +20,14 @@ class NewCollectionCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark
-                ? AppColorsDark.border
-                : AppColorsLight.border,
+            color: colorScheme.outline.withValues(alpha: 0.5),
             width: 2,
             strokeAlign: BorderSide.strokeAlignInside,
           ),
         ),
         child: CustomPaint(
           painter: _DashedBorderPainter(
-            color: isDark ? AppColorsDark.border : AppColorsLight.border,
+            color: colorScheme.outline.withValues(alpha: 0.5),
             strokeWidth: 2,
             gap: 6,
             radius: 16,
@@ -44,21 +40,15 @@ class NewCollectionCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColorsDark.surface
-                      : AppColorsLight.surface,
+                  color: colorScheme.surface,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: isDark
-                        ? AppColorsDark.border
-                        : AppColorsLight.border,
+                    color: colorScheme.outline.withValues(alpha: 0.5),
                   ),
                 ),
                 child: Icon(
                   Icons.add,
-                  color: isDark
-                      ? AppColorsDark.textSecondary
-                      : AppColorsLight.textSecondary,
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                   size: 24,
                 ),
               ),
@@ -67,9 +57,7 @@ class NewCollectionCard extends StatelessWidget {
               Text(
                 CollectionsConstants.newCollection,
                 style: AppTypography.headlineMedium(
-                  color: isDark
-                      ? AppColorsDark.textPrimary
-                      : AppColorsLight.textPrimary,
+                  color: colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 4),
@@ -77,9 +65,7 @@ class NewCollectionCard extends StatelessWidget {
               Text(
                 CollectionsConstants.createNow,
                 style: AppTypography.bodyMedium(
-                  color: isDark
-                      ? AppColorsDark.textSecondary
-                      : AppColorsLight.textSecondary,
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
             ],

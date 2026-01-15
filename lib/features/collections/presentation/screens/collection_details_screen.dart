@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../../core/constants/collections_constants.dart';
 import '../../application/controllers/collection_details_controller.dart';
@@ -23,35 +23,41 @@ class CollectionDetailsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     // Use different controller for favorites vs regular collections
     if (isFavorites) {
-      return _buildFavoritesScreen(context, ref, isDark);
+      return _buildFavoritesScreen(context, ref, colorScheme);
     }
 
     if (collectionId == null) {
       return const Scaffold(body: Center(child: Text('Collection not found')));
     }
 
-    return _buildCollectionScreen(context, ref, isDark, collectionId!);
+    return _buildCollectionScreen(
+      context,
+      ref,
+      colorScheme,
+      collectionId!,
+      isDark,
+    );
   }
 
   Widget _buildFavoritesScreen(
     BuildContext context,
     WidgetRef ref,
-    bool isDark,
+    ColorScheme colorScheme,
   ) {
     final state = ref.watch(favoritesControllerProvider);
     final controller = ref.read(favoritesControllerProvider.notifier);
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.background
-          : AppColorsLight.background,
+      backgroundColor: colorScheme.surfaceContainer,
       appBar: _buildAppBar(
         context,
-        isDark,
+        colorScheme,
         title: CollectionsConstants.favorites,
         subtitle: '${state.totalCount} ${CollectionsConstants.quotes}',
         showEditButton: false,
@@ -62,12 +68,16 @@ class CollectionDetailsScreen extends ConsumerWidget {
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.errorMessage != null
-          ? _buildErrorState(state.errorMessage!, controller.refresh, isDark)
+          ? _buildErrorState(
+              state.errorMessage!,
+              controller.refresh,
+              colorScheme,
+            )
           : state.quotes.isEmpty
           ? _buildEmptyState(
               CollectionsConstants.noFavorites,
               CollectionsConstants.startFavoriting,
-              isDark,
+              colorScheme,
             )
           : RefreshIndicator(
               onRefresh: controller.refresh,
@@ -108,8 +118,9 @@ class CollectionDetailsScreen extends ConsumerWidget {
   Widget _buildCollectionScreen(
     BuildContext context,
     WidgetRef ref,
-    bool isDark,
+    ColorScheme colorScheme,
     String collectionId,
+    bool isDark,
   ) {
     final state = ref.watch(collectionDetailsControllerProvider(collectionId));
     final controller = ref.read(
@@ -121,12 +132,10 @@ class CollectionDetailsScreen extends ConsumerWidget {
         : '';
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.background
-          : AppColorsLight.background,
+      backgroundColor: colorScheme.surfaceContainer,
       appBar: _buildAppBar(
         context,
-        isDark,
+        colorScheme,
         title: state.collection?.name ?? '',
         subtitle:
             '${state.collection?.quoteCount ?? 0} ${CollectionsConstants.quotes} \u2022 ${CollectionsConstants.createdOn} $createdDate',
@@ -142,12 +151,16 @@ class CollectionDetailsScreen extends ConsumerWidget {
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : state.errorMessage != null
-          ? _buildErrorState(state.errorMessage!, controller.refresh, isDark)
+          ? _buildErrorState(
+              state.errorMessage!,
+              controller.refresh,
+              colorScheme,
+            )
           : state.quotes.isEmpty
           ? _buildEmptyState(
               CollectionsConstants.noQuotesInCollection,
               CollectionsConstants.addQuotesToCollection,
-              isDark,
+              colorScheme,
             )
           : RefreshIndicator(
               onRefresh: controller.refresh,
@@ -182,7 +195,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
                         context,
                         controller,
                         quote.id,
-                        isDark,
+                        colorScheme,
                       );
                     },
                   );
@@ -216,13 +229,11 @@ class CollectionDetailsScreen extends ConsumerWidget {
                       .refresh();
                 }
               },
-              backgroundColor: isDark
-                  ? AppColorsDark.accentTeal
-                  : AppColorsLight.accentTeal,
-              icon: const Icon(Icons.add, color: Colors.white),
+              backgroundColor: colorScheme.secondary,
+              icon: Icon(Icons.add, color: colorScheme.onSecondary),
               label: Text(
                 CollectionsConstants.addQuote,
-                style: AppTypography.bodyMedium(color: Colors.white),
+                style: AppTypography.bodyMedium(color: colorScheme.onSecondary),
               ),
             ),
     );
@@ -230,7 +241,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
 
   PreferredSizeWidget _buildAppBar(
     BuildContext context,
-    bool isDark, {
+    ColorScheme colorScheme, {
     required String title,
     required String subtitle,
     required bool showEditButton,
@@ -239,17 +250,10 @@ class CollectionDetailsScreen extends ConsumerWidget {
     required bool isLoading,
   }) {
     return AppBar(
-      backgroundColor: isDark
-          ? AppColorsDark.background
-          : AppColorsLight.background,
+      backgroundColor: colorScheme.surfaceContainer,
       elevation: 0,
       leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back,
-          color: isDark
-              ? AppColorsDark.textPrimary
-              : AppColorsLight.textPrimary,
-        ),
+        icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),
         onPressed: () => Navigator.pop(context),
       ),
       title: (!isFavourites && isLoading)
@@ -265,9 +269,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
                       child: Text(
                         title,
                         style: AppTypography.headlineLarge(
-                          color: isDark
-                              ? AppColorsDark.textPrimary
-                              : AppColorsLight.textPrimary,
+                          color: colorScheme.onSurface,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -279,9 +281,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
                         child: Icon(
                           Icons.edit_outlined,
                           size: 20,
-                          color: isDark
-                              ? AppColorsDark.accentTeal
-                              : AppColorsLight.accentTeal,
+                          color: colorScheme.tertiary,
                         ),
                       ),
                     ],
@@ -291,9 +291,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
                     ? Text(
                         subtitle,
                         style: AppTypography.caption(
-                          color: isDark
-                              ? AppColorsDark.textSecondary
-                              : AppColorsLight.textSecondary,
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       )
                     : const SizedBox.shrink(),
@@ -303,9 +301,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
         // IconButton(
         //   icon: Icon(
         //     Icons.more_vert,
-        //     color: isDark
-        //         ? AppColorsDark.textPrimary
-        //         : AppColorsLight.textPrimary,
+        //     color: colorScheme.onBackground,
         //   ),
         //   onPressed: () {
         //     // More options menu
@@ -315,23 +311,21 @@ class CollectionDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorState(String error, VoidCallback onRetry, bool isDark) {
+  Widget _buildErrorState(
+    String error,
+    VoidCallback onRetry,
+    ColorScheme colorScheme,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 48,
-            color: isDark ? AppColorsDark.error : AppColorsLight.error,
-          ),
+          Icon(Icons.error_outline, size: 48, color: colorScheme.error),
           const SizedBox(height: 16),
           Text(
             error,
             style: AppTypography.bodyMedium(
-              color: isDark
-                  ? AppColorsDark.textSecondary
-                  : AppColorsLight.textSecondary,
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -342,7 +336,11 @@ class CollectionDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(String title, String subtitle, bool isDark) {
+  Widget _buildEmptyState(
+    String title,
+    String subtitle,
+    ColorScheme colorScheme,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -350,26 +348,18 @@ class CollectionDetailsScreen extends ConsumerWidget {
           Icon(
             Icons.collections_bookmark_outlined,
             size: 64,
-            color: isDark
-                ? AppColorsDark.textTertiary
-                : AppColorsLight.textTertiary,
+            color: colorScheme.tertiary.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
             title,
-            style: AppTypography.headlineMedium(
-              color: isDark
-                  ? AppColorsDark.textPrimary
-                  : AppColorsLight.textPrimary,
-            ),
+            style: AppTypography.headlineMedium(color: colorScheme.onSurface),
           ),
           const SizedBox(height: 8),
           Text(
             subtitle,
             style: AppTypography.bodyMedium(
-              color: isDark
-                  ? AppColorsDark.textSecondary
-                  : AppColorsLight.textSecondary,
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -383,48 +373,32 @@ class CollectionDetailsScreen extends ConsumerWidget {
     CollectionDetailsController controller,
     String currentName,
   ) async {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final textController = TextEditingController(text: currentName);
 
     final newName = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: isDark
-            ? AppColorsDark.surface
-            : AppColorsLight.surface,
+        backgroundColor: colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           CollectionsConstants.renameCollection,
-          style: AppTypography.headlineLarge(
-            color: isDark
-                ? AppColorsDark.textPrimary
-                : AppColorsLight.textPrimary,
-          ),
+          style: AppTypography.headlineLarge(color: colorScheme.onSurface),
         ),
         content: TextField(
           controller: textController,
           autofocus: true,
-          style: AppTypography.bodyLarge(
-            color: isDark
-                ? AppColorsDark.textPrimary
-                : AppColorsLight.textPrimary,
-          ),
+          style: AppTypography.bodyLarge(color: colorScheme.onSurface),
           decoration: InputDecoration(
             labelText: CollectionsConstants.collectionName,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: isDark ? AppColorsDark.border : AppColorsLight.border,
-              ),
+              borderSide: BorderSide(color: colorScheme.outline),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: isDark
-                    ? AppColorsDark.accentTeal
-                    : AppColorsLight.accentTeal,
-                width: 2,
-              ),
+              borderSide: BorderSide(color: colorScheme.primary, width: 2),
             ),
           ),
         ),
@@ -434,25 +408,21 @@ class CollectionDetailsScreen extends ConsumerWidget {
             child: Text(
               CollectionsConstants.cancel,
               style: AppTypography.bodyMedium(
-                color: isDark
-                    ? AppColorsDark.textSecondary
-                    : AppColorsLight.textSecondary,
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, textController.text),
             style: FilledButton.styleFrom(
-              backgroundColor: isDark
-                  ? AppColorsDark.accentTeal
-                  : AppColorsLight.secondary,
+              backgroundColor: colorScheme.secondary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             child: Text(
               CollectionsConstants.save,
-              style: AppTypography.bodyMedium(color: Colors.white),
+              style: AppTypography.bodyMedium(color: colorScheme.onSecondary),
             ),
           ),
         ],
@@ -468,29 +438,21 @@ class CollectionDetailsScreen extends ConsumerWidget {
     BuildContext context,
     CollectionDetailsController controller,
     String quoteId,
-    bool isDark,
+    ColorScheme colorScheme,
   ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: isDark
-            ? AppColorsDark.surface
-            : AppColorsLight.surface,
+        backgroundColor: colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           CollectionsConstants.removeQuoteTitle,
-          style: AppTypography.headlineLarge(
-            color: isDark
-                ? AppColorsDark.textPrimary
-                : AppColorsLight.textPrimary,
-          ),
+          style: AppTypography.headlineLarge(color: colorScheme.onSurface),
         ),
         content: Text(
           CollectionsConstants.removeQuoteMessage,
           style: AppTypography.bodyMedium(
-            color: isDark
-                ? AppColorsDark.textSecondary
-                : AppColorsLight.textSecondary,
+            color: colorScheme.onSurface.withValues(alpha: 0.7),
           ),
         ),
         actions: [
@@ -499,9 +461,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
             child: Text(
               CollectionsConstants.cancel,
               style: AppTypography.bodyMedium(
-                color: isDark
-                    ? AppColorsDark.textSecondary
-                    : AppColorsLight.textSecondary,
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -511,16 +471,14 @@ class CollectionDetailsScreen extends ConsumerWidget {
               controller.removeQuote(quoteId);
             },
             style: FilledButton.styleFrom(
-              backgroundColor: isDark
-                  ? AppColorsDark.error
-                  : AppColorsLight.error,
+              backgroundColor: colorScheme.error,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
             child: Text(
               CollectionsConstants.delete,
-              style: AppTypography.bodyMedium(color: Colors.white),
+              style: AppTypography.bodyMedium(color: colorScheme.onError),
             ),
           ),
         ],

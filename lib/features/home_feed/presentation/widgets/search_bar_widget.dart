@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/constants/home_feed_constants.dart';
 
 class SearchBarWidget extends StatelessWidget {
@@ -28,19 +28,16 @@ class SearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final primaryColor = colorScheme.primary;
 
     return Row(
       children: [
         if (showBackButton) ...[
           IconButton(
             onPressed: onBack,
-            icon: Icon(
-              Icons.arrow_back,
-              color: isDark
-                  ? AppColorsDark.textPrimary
-                  : AppColorsLight.textPrimary,
-            ),
+            icon: Icon(Icons.arrow_back, color: colorScheme.onBackground),
           ),
           const SizedBox(width: 8),
         ],
@@ -55,30 +52,22 @@ class SearchBarWidget extends StatelessWidget {
                     focusNode: focusNode,
                     readOnly: readOnly,
                     enabled: !readOnly,
-                    cursorColor: isDark
-                        ? AppColorsDark.accentTeal
-                        : AppColorsLight.accentTeal,
+                    cursorColor: primaryColor,
                     onChanged: onChanged,
                     onSubmitted: onSubmitted,
                     onTapOutside: (event) => focusNode?.unfocus(),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: isDark
-                          ? AppColorsDark.textPrimary
-                          : AppColorsLight.textPrimary,
+                      color: colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
                       hintText: HomeFeedConstants.searchHint,
                       hintStyle: Theme.of(context).textTheme.bodyMedium
                           ?.copyWith(
-                            color: isDark
-                                ? AppColorsDark.textTertiary
-                                : AppColorsLight.textTertiary,
+                            color: colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                       prefixIcon: Icon(
                         Icons.search,
-                        color: isDark
-                            ? AppColorsDark.textTertiary
-                            : AppColorsLight.textTertiary,
+                        color: colorScheme.onSurface.withValues(alpha: 0.5),
                         size: 20,
                       ),
                       suffixIcon:
@@ -87,50 +76,37 @@ class SearchBarWidget extends StatelessWidget {
                               onTap: onClear,
                               child: Icon(
                                 Icons.close,
-                                color: isDark
-                                    ? AppColorsDark.textTertiary
-                                    : AppColorsLight.textTertiary,
+                                color: colorScheme.onSurface.withValues(
+                                  alpha: 0.5,
+                                ),
                                 size: 20,
                               ),
                             )
                           : null,
                       filled: true,
-                      fillColor: isDark
-                          ? AppColorsDark.surface
-                          : AppColorsLight.surface,
+                      fillColor: colorScheme.surface,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide(
-                          color: isDark
-                              ? AppColorsDark.border
-                              : AppColorsLight.border,
+                          color: colorScheme.outline.withValues(alpha: 0.5),
                           width: 1.5,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide(
-                          color: isDark
-                              ? AppColorsDark.border
-                              : AppColorsLight.border,
+                          color: colorScheme.outline.withValues(alpha: 0.5),
                           width: 1.5,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide(
-                          color: isDark
-                              ? AppColorsDark.accentTeal
-                              : AppColorsLight.accentTeal,
-                          width: 2,
-                        ),
+                        borderSide: BorderSide(color: primaryColor, width: 2),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide(
-                          color: isDark
-                              ? AppColorsDark.error
-                              : AppColorsLight.error,
+                          color: colorScheme.error,
                           width: 1.5,
                         ),
                       ),

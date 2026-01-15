@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/settings_constants.dart';
 import '../../domain/entities/user_settings.dart';
 import '../../application/controllers/settings_controller.dart';
@@ -11,16 +10,18 @@ class TypographySelector extends ConsumerWidget {
   const TypographySelector({super.key});
 
   @override
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settingsState = ref.watch(settingsControllerProvider);
     final settings = settingsState.settings;
     final controller = ref.read(settingsControllerProvider.notifier);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -75,9 +76,7 @@ class TypographySelector extends ConsumerWidget {
               fontSize: 12,
               fontWeight: FontWeight.w500,
               letterSpacing: 0.5,
-              color: isDark
-                  ? AppColorsDark.textSecondary
-                  : AppColorsLight.textSecondary,
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 12),
@@ -133,34 +132,35 @@ class _FontFamilyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Theme.of(context).primaryColor;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final primaryColor = colorScheme.primary;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: isDark ? AppColorsDark.background : AppColorsLight.background,
+          color: theme.brightness == Brightness.dark
+              ? colorScheme.surface
+              : colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
                 ? primaryColor
-                : (isDark ? AppColorsDark.border : AppColorsLight.border),
+                : colorScheme.outline.withValues(alpha: 0.5),
             width: isSelected ? 2 : 1,
           ),
         ),
         child: Column(
           children: [
-            Text('Aa', style: _getFontStyle(fontFamily, isDark)),
+            Text('Aa', style: _getFontStyle(fontFamily, colorScheme)),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: isDark
-                    ? AppColorsDark.textSecondary
-                    : AppColorsLight.textSecondary,
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -169,10 +169,8 @@ class _FontFamilyButton extends StatelessWidget {
     );
   }
 
-  TextStyle _getFontStyle(FontFamily family, bool isDark) {
-    final color = isDark
-        ? AppColorsDark.textPrimary
-        : AppColorsLight.textPrimary;
+  TextStyle _getFontStyle(FontFamily family, ColorScheme colorScheme) {
+    final color = colorScheme.onSurface;
 
     switch (family) {
       case FontFamily.jakarta:
@@ -213,8 +211,8 @@ class _FontSizeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final primaryColor = theme.primaryColor;
+    final colorScheme = theme.colorScheme;
+    final primaryColor = colorScheme.primary;
 
     return GestureDetector(
       onTap: onTap,
@@ -236,9 +234,7 @@ class _FontSizeButton extends StatelessWidget {
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               color: isSelected
                   ? primaryColor
-                  : (isDark
-                        ? AppColorsDark.textSecondary
-                        : AppColorsLight.textSecondary),
+                  : colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
         ),

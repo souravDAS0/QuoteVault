@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/constants/home_feed_constants.dart';
 import '../../../collections/presentation/screens/collections_screen.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
@@ -23,13 +23,14 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+          color: colorScheme.surface,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -50,7 +51,7 @@ class _MainShellState extends State<MainShell> {
                   icon: Icons.home_outlined,
                   selectedIcon: Icons.home,
                   label: HomeFeedConstants.home,
-                  isDark: isDark,
+                  colorScheme: colorScheme,
                 ),
                 _buildNavItem(
                   context,
@@ -58,7 +59,7 @@ class _MainShellState extends State<MainShell> {
                   icon: Icons.collections_bookmark_outlined,
                   selectedIcon: Icons.collections_bookmark,
                   label: HomeFeedConstants.collections,
-                  isDark: isDark,
+                  colorScheme: colorScheme,
                 ),
                 _buildNavItem(
                   context,
@@ -66,7 +67,7 @@ class _MainShellState extends State<MainShell> {
                   icon: Icons.person_outline,
                   selectedIcon: Icons.person,
                   label: HomeFeedConstants.profile,
-                  isDark: isDark,
+                  colorScheme: colorScheme,
                 ),
               ],
             ),
@@ -82,9 +83,11 @@ class _MainShellState extends State<MainShell> {
     required IconData icon,
     required IconData selectedIcon,
     required String label,
-    required bool isDark,
+    required ColorScheme colorScheme,
   }) {
     final isSelected = _currentIndex == index;
+    final primaryColor = colorScheme.primary;
+    final unselectedColor = colorScheme.onSurface.withValues(alpha: 0.6);
 
     return GestureDetector(
       onTap: () {
@@ -97,9 +100,7 @@ class _MainShellState extends State<MainShell> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: isSelected
             ? BoxDecoration(
-                color: isDark
-                    ? AppColorsDark.accentTeal.withValues(alpha: 0.1)
-                    : AppColorsLight.accentTeal.withValues(alpha: 0.1),
+                color: primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(24),
               )
             : null,
@@ -108,26 +109,14 @@ class _MainShellState extends State<MainShell> {
           children: [
             Icon(
               isSelected ? selectedIcon : icon,
-              color: isSelected
-                  ? (isDark
-                        ? AppColorsDark.accentTeal
-                        : AppColorsLight.accentTeal)
-                  : (isDark
-                        ? AppColorsDark.textTertiary
-                        : AppColorsLight.textTertiary),
+              color: isSelected ? primaryColor : unselectedColor,
               size: 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: isSelected
-                    ? (isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.accentTeal)
-                    : (isDark
-                          ? AppColorsDark.textTertiary
-                          : AppColorsLight.textTertiary),
+                color: isSelected ? primaryColor : unselectedColor,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),

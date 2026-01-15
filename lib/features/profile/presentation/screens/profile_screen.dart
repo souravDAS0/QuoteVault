@@ -5,32 +5,30 @@ import 'package:quote_vault/core/config/theme/app_typography.dart';
 import 'package:quote_vault/core/constants/collections_constants.dart';
 import 'package:quote_vault/core/constants/settings_constants.dart';
 import 'package:quote_vault/features/auth/domain/entities/qv_user.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/constants/profile_constants.dart';
 import '../../../auth/application/providers/auth_state_provider.dart';
 import '../../application/controllers/profile_controller.dart';
-import '../widgets/profile_header.dart';
-import '../widgets/statistics_card.dart';
 import '../widgets/account_settings_item.dart';
 import '../widgets/edit_profile_sheet.dart';
+import '../widgets/profile_header.dart';
+import '../widgets/statistics_card.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final currentUserAsync = ref.watch(currentUserProvider);
     final profileState = ref.watch(profileControllerProvider);
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.background
-          : AppColorsLight.background,
+      backgroundColor: colorScheme.surface,
+
       appBar: AppBar(
-        backgroundColor: isDark
-            ? AppColorsDark.background
-            : AppColorsLight.background,
+        backgroundColor: colorScheme.surface,
         elevation: 0,
 
         centerTitle: true,
@@ -65,7 +63,7 @@ class ProfileScreen extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: profileState.isLoading
-                          ? _buildLoadingStatistics(context, isDark)
+                          ? _buildLoadingStatistics(context, colorScheme)
                           : Row(
                               children: [
                                 StatisticsCard(
@@ -95,7 +93,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
 
                     const SizedBox(height: 32),
-                    _buildAccountSettingSection(context, isDark, ref),
+                    _buildAccountSettingSection(context, colorScheme, ref),
                     const SizedBox(height: 24),
                   ],
                 ),
@@ -112,7 +110,7 @@ class ProfileScreen extends ConsumerWidget {
 
   Widget _buildAccountSettingSection(
     BuildContext context,
-    bool isDark,
+    ColorScheme colorScheme,
     WidgetRef ref,
   ) {
     return Padding(
@@ -124,9 +122,7 @@ class ProfileScreen extends ConsumerWidget {
           Text(
             ProfileConstants.account,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: isDark
-                  ? AppColorsDark.textTertiary
-                  : AppColorsLight.textTertiary,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
             ),
@@ -164,8 +160,8 @@ class ProfileScreen extends ConsumerWidget {
           AccountSettingsItem(
             icon: Icons.logout,
             title: ProfileConstants.logout,
-            iconColor: isDark ? AppColorsDark.error : AppColorsLight.error,
-            textColor: isDark ? AppColorsDark.error : AppColorsLight.error,
+            iconColor: colorScheme.error,
+            textColor: colorScheme.error,
             showTrailingIcon: false,
             onTap: () => _handleLogout(context, ref),
             isLogout: true,
@@ -175,14 +171,17 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLoadingStatistics(BuildContext context, bool isDark) {
+  Widget _buildLoadingStatistics(
+    BuildContext context,
+    ColorScheme colorScheme,
+  ) {
     return Row(
       children: [
         Expanded(
           child: Container(
             height: 80,
             decoration: BoxDecoration(
-              color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Center(child: CircularProgressIndicator()),
@@ -193,7 +192,7 @@ class ProfileScreen extends ConsumerWidget {
           child: Container(
             height: 80,
             decoration: BoxDecoration(
-              color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Center(child: CircularProgressIndicator()),
@@ -215,7 +214,8 @@ class ProfileScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) async {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     await showModalBottomSheet(
       context: context,
@@ -223,7 +223,7 @@ class ProfileScreen extends ConsumerWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           decoration: BoxDecoration(
-            color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+            color: colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
@@ -236,9 +236,7 @@ class ProfileScreen extends ConsumerWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: isDark
-                        ? AppColorsDark.divider
-                        : AppColorsLight.divider,
+                    color: colorScheme.outline,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -248,9 +246,7 @@ class ProfileScreen extends ConsumerWidget {
                 child: Text(
                   'Are you sure you want to logout?',
                   style: AppTypography.headlineMedium(
-                    color: isDark
-                        ? AppColorsDark.textPrimary
-                        : AppColorsLight.textPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -264,11 +260,7 @@ class ProfileScreen extends ConsumerWidget {
                           Navigator.of(dialogContext).pop();
                         },
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            color: isDark
-                                ? AppColorsDark.border
-                                : AppColorsLight.border,
-                          ),
+                          side: BorderSide(color: colorScheme.outline),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -276,9 +268,7 @@ class ProfileScreen extends ConsumerWidget {
                         child: Text(
                           'Cancel',
                           style: AppTypography.bodyLarge(
-                            color: isDark
-                                ? AppColorsDark.textSecondary
-                                : AppColorsLight.textSecondary,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                       ),
@@ -294,9 +284,7 @@ class ProfileScreen extends ConsumerWidget {
                           _performLogout(context, ref);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark
-                              ? const Color.fromARGB(255, 235, 105, 73)
-                              : const Color.fromARGB(255, 235, 105, 73),
+                          backgroundColor: colorScheme.errorContainer,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -304,7 +292,7 @@ class ProfileScreen extends ConsumerWidget {
                         child: Text(
                           'Confirm',
                           style: AppTypography.bodyLarge(
-                            color: isDark ? Colors.white : Colors.white,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                       ),

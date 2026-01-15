@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/home_feed_constants.dart';
 import '../../../auth/application/providers/auth_state_provider.dart';
 import '../../../collections/presentation/widgets/add_to_collection_sheet.dart';
@@ -77,7 +76,8 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final feedState = ref.watch(homeFeedControllerProvider);
     final currentUser = ref.watch(currentUserProvider);
 
@@ -94,15 +94,13 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
     );
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.background
-          : AppColorsLight.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
             await ref.read(homeFeedControllerProvider.notifier).refresh();
           },
-          color: isDark ? AppColorsDark.accentTeal : AppColorsLight.accentTeal,
+          color: colorScheme.tertiary,
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [
@@ -194,29 +192,23 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                           Icon(
                             Icons.error_outline,
                             size: 64,
-                            color: isDark
-                                ? AppColorsDark.error
-                                : AppColorsLight.error,
+                            color: colorScheme.error,
                           ),
                           const SizedBox(height: 16),
                           Text(
                             'Error loading quotes',
-                            style: Theme.of(context).textTheme.headlineMedium
-                                ?.copyWith(
-                                  color: isDark
-                                      ? AppColorsDark.textPrimary
-                                      : AppColorsLight.textPrimary,
-                                ),
+                            style: theme.textTheme.headlineMedium?.copyWith(
+                              color: colorScheme.onBackground,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             feedState.errorMessage!,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(
-                                  color: isDark
-                                      ? AppColorsDark.textSecondary
-                                      : AppColorsLight.textSecondary,
-                                ),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onBackground.withValues(
+                                alpha: 0.7,
+                              ),
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 24),
@@ -243,19 +235,14 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                         Icon(
                           Icons.format_quote,
                           size: 64,
-                          color: isDark
-                              ? AppColorsDark.textTertiary
-                              : AppColorsLight.textTertiary,
+                          color: colorScheme.onSurface.withValues(alpha: 0.3),
                         ),
                         const SizedBox(height: 16),
                         Text(
                           HomeFeedConstants.noQuotesFound,
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(
-                                color: isDark
-                                    ? AppColorsDark.textSecondary
-                                    : AppColorsLight.textSecondary,
-                              ),
+                          style: theme.textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
                         ),
                       ],
                     ),

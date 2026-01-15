@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quote_vault/features/home_feed/presentation/widgets/quote_card.dart';
 
-import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/home_feed_constants.dart';
 import '../../../sharing/presentation/screens/share_quote_sheet.dart';
 import '../../application/controllers/search_controller.dart';
@@ -50,13 +49,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final searchState = ref.watch(searchControllerProvider);
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.background
-          : AppColorsLight.background,
+      backgroundColor: colorScheme.background,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +91,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Divider(
-                  color: isDark ? AppColorsDark.border : AppColorsLight.border,
+                  color: colorScheme.outline.withValues(alpha: 0.5),
                   height: 1,
                 ),
               ),
@@ -104,9 +102,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 child: RichText(
                   text: TextSpan(
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: isDark
-                          ? AppColorsDark.textSecondary
-                          : AppColorsLight.textSecondary,
+                      color: colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                     children: [
                       const TextSpan(
@@ -121,9 +117,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         text: '"${searchState.query}"',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? AppColorsDark.textPrimary
-                              : AppColorsLight.textPrimary,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ],
@@ -142,18 +136,16 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           Icon(
                             Icons.search_off,
                             size: 64,
-                            color: isDark
-                                ? AppColorsDark.textTertiary
-                                : AppColorsLight.textTertiary,
+                            color: colorScheme.tertiary.withValues(alpha: 0.5),
                           ),
                           const SizedBox(height: 16),
                           Text(
                             HomeFeedConstants.noQuotesFound,
                             style: Theme.of(context).textTheme.bodyLarge
                                 ?.copyWith(
-                                  color: isDark
-                                      ? AppColorsDark.textSecondary
-                                      : AppColorsLight.textSecondary,
+                                  color: colorScheme.onSurface.withValues(
+                                    alpha: 0.7,
+                                  ),
                                 ),
                           ),
                         ],
@@ -164,9 +156,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       child: Text(
                         'Search for quotes or authors',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: isDark
-                              ? AppColorsDark.textSecondary
-                              : AppColorsLight.textSecondary,
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     )

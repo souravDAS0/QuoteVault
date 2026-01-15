@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/constants/home_feed_constants.dart';
 
 class HomeFeedHeader extends StatelessWidget {
@@ -18,7 +18,8 @@ class HomeFeedHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Row(
       children: [
@@ -30,23 +31,18 @@ class HomeFeedHeader extends StatelessWidget {
             height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+              color: colorScheme.surface,
               border: Border.all(
-                color: isDark ? AppColorsDark.border : AppColorsLight.border,
+                color: colorScheme.outline.withValues(alpha: 0.5),
               ),
             ),
             child: userPhotoUrl != null
                 ? ClipOval(
-                    child: Image.network(
-                      userPhotoUrl!,
-                      fit: BoxFit.cover,
-                    ),
+                    child: Image.network(userPhotoUrl!, fit: BoxFit.cover),
                   )
                 : Icon(
                     Icons.person,
-                    color: isDark
-                        ? AppColorsDark.textSecondary
-                        : AppColorsLight.textSecondary,
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
           ),
         ),
@@ -59,16 +55,15 @@ class HomeFeedHeader extends StatelessWidget {
               Text(
                 HomeFeedConstants.welcomeBack,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: isDark
-                          ? AppColorsDark.textSecondary
-                          : AppColorsLight.textSecondary,
-                    ),
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
               ),
               Text(
                 userName ?? 'User',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ],
           ),
@@ -81,12 +76,11 @@ class HomeFeedHeader extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+              color: colorScheme.surface,
             ),
             child: Icon(
               Icons.notifications_outlined,
-              color:
-                  isDark ? AppColorsDark.textPrimary : AppColorsLight.textPrimary,
+              color: colorScheme.onSurface,
             ),
           ),
         ),

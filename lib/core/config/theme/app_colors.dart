@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 /// Light mode color palette
 abstract class AppColorsLight {
   // Brand colors
-  static const Color primaryNavy = Color(0xFF061E29);
+  static const Color primaryNavy = Color.fromARGB(255, 6, 30, 41);
   static const Color secondary = Color(0xFF10646D);
   static const Color accentTeal = Color(0xFF5F9598);
 
   // Background colors
   static const Color background = Color(0xFFF3F4F4);
   static const Color surface = Color(0xFFFFFFFF);
+  static const Color surfaceContainer = Color.fromARGB(255, 225, 225, 225);
+  static const Color outlineVariant = Color.fromARGB(255, 32, 55, 66);
 
   // Text colors
   static const Color textPrimary = Color(0xFF061E29);
@@ -31,13 +33,15 @@ abstract class AppColorsLight {
 /// Dark mode color palette
 abstract class AppColorsDark {
   // Brand colors (adjusted for dark mode)
-  static const Color primaryNavy = Color(0xFF0A2A38);
-  static const Color secondary = Color(0xFF1A7A87);
+  static const Color secondary = Color(0xFF0A2A38);
+  static const Color primaryNavy = Color(0xFF1A7A87);
   static const Color accentTeal = Color(0xFF7FADB0);
 
   // Background colors
   static const Color background = Color(0xFF0F1419);
   static const Color surface = Color(0xFF1A1F24);
+  static const Color surfaceContainer = Color.fromARGB(255, 43, 51, 59);
+  static const Color outlineVariant = Color.fromARGB(255, 32, 55, 66);
 
   // Text colors
   static const Color textPrimary = Color(0xFFF3F4F4);
@@ -65,6 +69,8 @@ abstract class AppColorsBlue {
 
   static const Color background = Color(0xFF1A1F2E);
   static const Color surface = Color(0xFF242B3D);
+  static const Color surfaceContainer = Color.fromARGB(255, 65, 76, 104);
+  static const Color outlineVariant = Color.fromARGB(255, 179, 66, 224);
 
   static const Color textPrimary = Color(0xFFF5F5F7);
   static const Color textSecondary = Color(0xFFB8C0D4);
@@ -74,6 +80,7 @@ abstract class AppColorsBlue {
 
   // Reuse semantic colors from Dark mainly or define specific if needed
   static const Color error = Color(0xFFEF4444);
+  static const Color errorContainer = Color.fromARGB(255, 243, 149, 125);
   static const Color success = Color(0xFF10B981);
 }
 
@@ -86,6 +93,8 @@ abstract class AppColorsViolet {
 
   static const Color background = Color(0xFF1E1A2E);
   static const Color surface = Color(0xFF2A2640);
+  static const Color surfaceContainer = Color.fromARGB(255, 64, 57, 100);
+  static const Color outlineVariant = Color.fromARGB(255, 140, 110, 190);
 
   static const Color textPrimary = Color(0xFFF8F7FA);
   static const Color textSecondary = Color(0xFFC4BED4);
@@ -94,5 +103,6 @@ abstract class AppColorsViolet {
   static const Color divider = Color(0xFF4B4366);
 
   static const Color error = Color(0xFFEF4444);
+  static const Color errorContainer = Color.fromARGB(255, 243, 149, 125);
   static const Color success = Color(0xFF10B981);
 }

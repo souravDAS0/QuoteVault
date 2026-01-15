@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:quote_vault/core/config/theme/app_typography.dart';
-import '../../../../core/config/theme/app_colors.dart';
 
 /// Widget displaying user profile header with avatar, name, and email
 class ProfileHeader extends StatelessWidget {
@@ -18,8 +17,10 @@ class ProfileHeader extends StatelessWidget {
   });
 
   @override
+  @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return SizedBox(
       width: double.infinity,
@@ -35,9 +36,7 @@ class ProfileHeader extends StatelessWidget {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isDark
-                      ? AppColorsDark.accentTeal.withValues(alpha: 0.2)
-                      : AppColorsLight.accentTeal.withValues(alpha: 0.2),
+                  color: colorScheme.tertiary.withValues(alpha: 0.2),
                 ),
                 child: photoUrl != null
                     ? ClipOval(
@@ -45,10 +44,10 @@ class ProfileHeader extends StatelessWidget {
                           photoUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                              _buildDefaultAvatar(isDark),
+                              _buildDefaultAvatar(colorScheme),
                         ),
                       )
-                    : _buildDefaultAvatar(isDark),
+                    : _buildDefaultAvatar(colorScheme),
               ),
               Positioned(
                 right: 0,
@@ -60,22 +59,13 @@ class ProfileHeader extends StatelessWidget {
                     height: 32,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.accentTeal,
-                      border: Border.all(
-                        color: isDark
-                            ? AppColorsDark.surface
-                            : AppColorsLight.surface,
-                        width: 3,
-                      ),
+                      color: colorScheme.tertiary,
+                      border: Border.all(color: colorScheme.surface, width: 3),
                     ),
                     child: Icon(
                       Icons.edit,
                       size: 16,
-                      color: isDark
-                          ? AppColorsDark.surface
-                          : AppColorsLight.surface,
+                      color: colorScheme.surface,
                     ),
                   ),
                 ),
@@ -86,19 +76,13 @@ class ProfileHeader extends StatelessWidget {
           // Display name
           Text(
             displayName,
-            style: AppTypography.displayLarge(
-              color: isDark
-                  ? AppColorsDark.textPrimary
-                  : AppColorsLight.textPrimary,
-            ),
+            style: AppTypography.displayLarge(color: colorScheme.onBackground),
           ),
           // Email
           Text(
             email,
             style: AppTypography.bodyMedium(
-              color: isDark
-                  ? AppColorsDark.textSecondary
-                  : AppColorsLight.textSecondary,
+              color: colorScheme.onBackground.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 24),
@@ -107,13 +91,9 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildDefaultAvatar(bool isDark) {
+  Widget _buildDefaultAvatar(ColorScheme colorScheme) {
     return Center(
-      child: Icon(
-        Icons.person,
-        size: 50,
-        color: isDark ? AppColorsDark.accentTeal : AppColorsLight.accentTeal,
-      ),
+      child: Icon(Icons.person, size: 50, color: colorScheme.tertiary),
     );
   }
 }

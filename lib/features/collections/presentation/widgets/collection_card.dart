@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../domain/entities/collection.dart';
 
@@ -18,14 +18,16 @@ class CollectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -44,9 +46,7 @@ class CollectionCard extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColorsDark.primaryNavy.withValues(alpha: 0.3)
-                      : AppColorsLight.primaryNavy.withValues(alpha: 0.1),
+                  color: colorScheme.secondary.withValues(alpha: 0.1),
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(16),
                   ),
@@ -60,11 +60,11 @@ class CollectionCard extends StatelessWidget {
                           collection.imageUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
-                            return _buildPlaceholderImage(context, isDark);
+                            return _buildPlaceholderImage(context, colorScheme);
                           },
                         ),
                       )
-                    : _buildPlaceholderImage(context, isDark),
+                    : _buildPlaceholderImage(context, colorScheme),
               ),
             ),
             // Text section
@@ -79,9 +79,7 @@ class CollectionCard extends StatelessWidget {
                     Text(
                       collection.name,
                       style: AppTypography.headlineMedium(
-                        color: isDark
-                            ? AppColorsDark.textPrimary
-                            : AppColorsLight.textPrimary,
+                        color: colorScheme.onSurface,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -90,9 +88,7 @@ class CollectionCard extends StatelessWidget {
                     Text(
                       '${collection.quoteCount} quotes',
                       style: AppTypography.bodyMedium(
-                        color: isDark
-                            ? AppColorsDark.textSecondary
-                            : AppColorsLight.textSecondary,
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -105,14 +101,12 @@ class CollectionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaceholderImage(BuildContext context, bool isDark) {
+  Widget _buildPlaceholderImage(BuildContext context, ColorScheme colorScheme) {
     return Center(
       child: Icon(
         Icons.collections_bookmark_outlined,
         size: 40,
-        color: isDark
-            ? AppColorsDark.textTertiary
-            : AppColorsLight.textTertiary,
+        color: colorScheme.tertiary.withValues(alpha: 0.5),
       ),
     );
   }

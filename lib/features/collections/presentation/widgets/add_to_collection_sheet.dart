@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../../core/constants/collections_constants.dart';
 import '../../application/controllers/collections_controller.dart';
@@ -72,7 +72,8 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final collectionsState = ref.watch(collectionsControllerProvider);
     final collectionsController = ref.read(
       collectionsControllerProvider.notifier,
@@ -83,7 +84,7 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
         maxHeight: MediaQuery.of(context).size.height * 0.7,
       ),
       decoration: BoxDecoration(
-        color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+        color: colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -96,7 +97,7 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: isDark ? AppColorsDark.divider : AppColorsLight.divider,
+                color: colorScheme.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -111,9 +112,7 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
                 Text(
                   'Add to Collection',
                   style: AppTypography.headlineLarge(
-                    color: isDark
-                        ? AppColorsDark.textPrimary
-                        : AppColorsLight.textPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 // Create new collection button
@@ -124,19 +123,11 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
                       await collectionsController.createCollection(name: name);
                     }
                   },
-                  icon: Icon(
-                    Icons.add,
-                    size: 18,
-                    color: isDark
-                        ? AppColorsDark.accentTeal
-                        : AppColorsLight.accentTeal,
-                  ),
+                  icon: Icon(Icons.add, size: 18, color: colorScheme.secondary),
                   label: Text(
                     'New',
                     style: AppTypography.bodyMedium(
-                      color: isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.accentTeal,
+                      color: colorScheme.secondary,
                     ),
                   ),
                 ),
@@ -149,14 +140,14 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
             child: _isLoading || collectionsState.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : collectionsState.collections.isEmpty
-                ? _buildEmptyState(isDark)
+                ? _buildEmptyState(colorScheme)
                 : ListView.builder(
                     shrinkWrap: true,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     itemCount: collectionsState.collections.length,
                     itemBuilder: (context, index) {
                       final collection = collectionsState.collections[index];
-                      return _buildCollectionTile(collection, isDark);
+                      return _buildCollectionTile(collection, colorScheme);
                     },
                   ),
           ),
@@ -176,11 +167,7 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
                     onPressed: () => Navigator.pop(context, false),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      side: BorderSide(
-                        color: isDark
-                            ? AppColorsDark.border
-                            : AppColorsLight.border,
-                      ),
+                      side: BorderSide(color: colorScheme.outline),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -188,9 +175,7 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
                     child: Text(
                       CollectionsConstants.cancel,
                       style: AppTypography.bodyMedium(
-                        color: isDark
-                            ? AppColorsDark.textSecondary
-                            : AppColorsLight.textSecondary,
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ),
@@ -201,26 +186,24 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
                     onPressed: _isSaving ? null : _saveSelections,
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      backgroundColor: isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.secondary,
+                      backgroundColor: colorScheme.secondary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: _isSaving
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: colorScheme.onSecondary,
                             ),
                           )
                         : Text(
                             CollectionsConstants.save,
                             style: AppTypography.bodyMedium(
-                              color: Colors.white,
+                              color: colorScheme.onSecondary,
                             ),
                           ),
                   ),
@@ -233,7 +216,7 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
     );
   }
 
-  Widget _buildCollectionTile(Collection collection, bool isDark) {
+  Widget _buildCollectionTile(Collection collection, ColorScheme colorScheme) {
     final isSelected = _selectedCollections.contains(collection.id);
 
     return ListTile(
@@ -242,32 +225,22 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: isDark
-              ? AppColorsDark.primaryNavy.withValues(alpha: 0.3)
-              : AppColorsLight.primaryNavy.withValues(alpha: 0.1),
+          color: colorScheme.secondary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           Icons.collections_bookmark_outlined,
-          color: isDark
-              ? AppColorsDark.textTertiary
-              : AppColorsLight.textTertiary,
+          color: colorScheme.secondary,
         ),
       ),
       title: Text(
         collection.name,
-        style: AppTypography.bodyLarge(
-          color: isDark
-              ? AppColorsDark.textPrimary
-              : AppColorsLight.textPrimary,
-        ),
+        style: AppTypography.bodyLarge(color: colorScheme.onSurface),
       ),
       subtitle: Text(
         '${collection.quoteCount} quotes',
         style: AppTypography.caption(
-          color: isDark
-              ? AppColorsDark.textSecondary
-              : AppColorsLight.textSecondary,
+          color: colorScheme.onSurface.withValues(alpha: 0.7),
         ),
       ),
       trailing: Checkbox(
@@ -281,9 +254,7 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
             }
           });
         },
-        activeColor: isDark
-            ? AppColorsDark.accentTeal
-            : AppColorsLight.secondary,
+        activeColor: colorScheme.secondary,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
       onTap: () {
@@ -298,7 +269,7 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
     );
   }
 
-  Widget _buildEmptyState(bool isDark) {
+  Widget _buildEmptyState(ColorScheme colorScheme) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -308,26 +279,18 @@ class _AddToCollectionSheetState extends ConsumerState<AddToCollectionSheet> {
             Icon(
               Icons.collections_bookmark_outlined,
               size: 48,
-              color: isDark
-                  ? AppColorsDark.textTertiary
-                  : AppColorsLight.textTertiary,
+              color: colorScheme.tertiary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
               CollectionsConstants.noCollections,
-              style: AppTypography.headlineMedium(
-                color: isDark
-                    ? AppColorsDark.textPrimary
-                    : AppColorsLight.textPrimary,
-              ),
+              style: AppTypography.headlineMedium(color: colorScheme.onSurface),
             ),
             const SizedBox(height: 8),
             Text(
               'Create a collection first',
               style: AppTypography.bodyMedium(
-                color: isDark
-                    ? AppColorsDark.textSecondary
-                    : AppColorsLight.textSecondary,
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ],

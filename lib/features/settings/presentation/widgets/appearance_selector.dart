@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/settings_constants.dart';
 import '../../domain/entities/user_settings.dart';
 import '../../application/controllers/settings_controller.dart';
@@ -14,12 +13,13 @@ class AppearanceSelector extends ConsumerWidget {
     final settingsState = ref.watch(settingsControllerProvider);
     final settings = settingsState.settings;
     final controller = ref.read(settingsControllerProvider.notifier);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -81,7 +81,9 @@ class _ColorThemeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: onTap,
@@ -89,9 +91,7 @@ class _ColorThemeButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isDark
-                    ? AppColorsDark.surface.withValues(alpha: 0.5)
-                    : AppColorsLight.surface.withValues(alpha: 0.5))
+              ? colorScheme.surface.withValues(alpha: 0.5)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: isSelected
@@ -128,8 +128,8 @@ class _ColorThemeButton extends StatelessWidget {
                 color: isSelected
                     ? color
                     : (isDark
-                          ? AppColorsDark.textSecondary
-                          : AppColorsLight.textSecondary),
+                          ? colorScheme.onSurface.withValues(alpha: 0.7)
+                          : colorScheme.onSurface.withValues(alpha: 0.7)),
               ),
             ),
           ],
@@ -154,7 +154,10 @@ class _ThemeModeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    // For icon and text color in unselected state
+    final unselectedColor = colorScheme.onSurface.withValues(alpha: 0.7);
 
     return GestureDetector(
       onTap: onTap,
@@ -162,9 +165,8 @@ class _ThemeModeButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isDark
-                    ? AppColorsDark.primaryNavy
-                    : AppColorsLight.primaryNavy)
+              ? colorScheme
+                    .primary // Use primary color for selected state
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
@@ -173,11 +175,7 @@ class _ThemeModeButton extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected
-                  ? Colors.white
-                  : (isDark
-                        ? AppColorsDark.textSecondary
-                        : AppColorsLight.textSecondary),
+              color: isSelected ? colorScheme.onPrimary : unselectedColor,
               size: 22,
             ),
             const SizedBox(height: 4),
@@ -186,11 +184,7 @@ class _ThemeModeButton extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected
-                    ? Colors.white
-                    : (isDark
-                          ? AppColorsDark.textSecondary
-                          : AppColorsLight.textSecondary),
+                color: isSelected ? colorScheme.onPrimary : unselectedColor,
               ),
             ),
           ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../../core/constants/collections_constants.dart';
 
@@ -33,18 +33,15 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return AlertDialog(
-      backgroundColor: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+      backgroundColor: colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: Text(
         CollectionsConstants.createCollection,
-        style: AppTypography.headlineLarge(
-          color: isDark
-              ? AppColorsDark.textPrimary
-              : AppColorsLight.textPrimary,
-        ),
+        style: AppTypography.headlineLarge(color: colorScheme.onSurface),
       ),
       content: Form(
         key: _formKey,
@@ -55,53 +52,31 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
             TextFormField(
               controller: _nameController,
               autofocus: true,
-              style: AppTypography.bodyLarge(
-                color: isDark
-                    ? AppColorsDark.textPrimary
-                    : AppColorsLight.textPrimary,
-              ),
+              style: AppTypography.bodyLarge(color: colorScheme.onSurface),
               decoration: InputDecoration(
                 labelText: CollectionsConstants.collectionName,
                 hintText: CollectionsConstants.collectionNameHint,
                 labelStyle: AppTypography.bodyMedium(
-                  color: isDark
-                      ? AppColorsDark.textSecondary
-                      : AppColorsLight.textSecondary,
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 hintStyle: AppTypography.bodyMedium(
-                  color: isDark
-                      ? AppColorsDark.textTertiary
-                      : AppColorsLight.textTertiary,
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: isDark
-                        ? AppColorsDark.border
-                        : AppColorsLight.border,
-                  ),
+                  borderSide: BorderSide(color: colorScheme.outline),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: isDark
-                        ? AppColorsDark.accentTeal
-                        : AppColorsLight.accentTeal,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: isDark ? AppColorsDark.error : AppColorsLight.error,
-                  ),
+                  borderSide: BorderSide(color: colorScheme.error),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: isDark ? AppColorsDark.error : AppColorsLight.error,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: colorScheme.error, width: 2),
                 ),
               ),
               validator: (value) {
@@ -116,40 +91,23 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
             TextFormField(
               controller: _descriptionController,
               maxLines: 2,
-              style: AppTypography.bodyLarge(
-                color: isDark
-                    ? AppColorsDark.textPrimary
-                    : AppColorsLight.textPrimary,
-              ),
+              style: AppTypography.bodyLarge(color: colorScheme.onSurface),
               decoration: InputDecoration(
                 labelText: CollectionsConstants.descriptionOptional,
                 hintText: CollectionsConstants.descriptionHint,
                 labelStyle: AppTypography.bodyMedium(
-                  color: isDark
-                      ? AppColorsDark.textSecondary
-                      : AppColorsLight.textSecondary,
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 hintStyle: AppTypography.bodyMedium(
-                  color: isDark
-                      ? AppColorsDark.textTertiary
-                      : AppColorsLight.textTertiary,
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: isDark
-                        ? AppColorsDark.border
-                        : AppColorsLight.border,
-                  ),
+                  borderSide: BorderSide(color: colorScheme.outline),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: isDark
-                        ? AppColorsDark.accentTeal
-                        : AppColorsLight.accentTeal,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
                 ),
               ),
             ),
@@ -162,25 +120,21 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
           child: Text(
             CollectionsConstants.cancel,
             style: AppTypography.bodyMedium(
-              color: isDark
-                  ? AppColorsDark.textSecondary
-                  : AppColorsLight.textSecondary,
+              color: colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
         ),
         FilledButton(
           onPressed: _handleCreate,
           style: FilledButton.styleFrom(
-            backgroundColor: isDark
-                ? AppColorsDark.accentTeal
-                : AppColorsLight.secondary,
+            backgroundColor: colorScheme.secondary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
           ),
           child: Text(
             CollectionsConstants.create,
-            style: AppTypography.bodyMedium(color: Colors.white),
+            style: AppTypography.bodyMedium(color: colorScheme.onSecondary),
           ),
         ),
       ],

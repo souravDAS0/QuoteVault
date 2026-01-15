@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../../core/constants/collections_constants.dart';
 import '../../../home_feed/domain/entities/quote.dart';
@@ -13,11 +13,7 @@ class AddQuoteSheet extends ConsumerStatefulWidget {
   final String collectionId;
   final VoidCallback? onComplete;
 
-  const AddQuoteSheet({
-    super.key,
-    required this.collectionId,
-    this.onComplete,
-  });
+  const AddQuoteSheet({super.key, required this.collectionId, this.onComplete});
 
   /// Shows the sheet and returns true if quotes were added
   static Future<bool?> show(
@@ -29,10 +25,8 @@ class AddQuoteSheet extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => AddQuoteSheet(
-        collectionId: collectionId,
-        onComplete: onComplete,
-      ),
+      builder: (context) =>
+          AddQuoteSheet(collectionId: collectionId, onComplete: onComplete),
     );
   }
 
@@ -55,7 +49,9 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
   @override
   void initState() {
     super.initState();
-    _quoteDatasource = SupabaseQuoteDatasource(supabase.Supabase.instance.client);
+    _quoteDatasource = SupabaseQuoteDatasource(
+      supabase.Supabase.instance.client,
+    );
     _loadQuotes();
   }
 
@@ -105,14 +101,15 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       decoration: BoxDecoration(
-        color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+        color: colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -125,7 +122,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: isDark ? AppColorsDark.divider : AppColorsLight.divider,
+                color: colorScheme.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -140,9 +137,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
                 Text(
                   CollectionsConstants.addQuote,
                   style: AppTypography.headlineLarge(
-                    color: isDark
-                        ? AppColorsDark.textPrimary
-                        : AppColorsLight.textPrimary,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -150,28 +145,20 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
                 TextField(
                   controller: _searchController,
                   onChanged: _onSearchChanged,
-                  style: AppTypography.bodyMedium(
-                    color: isDark
-                        ? AppColorsDark.textPrimary
-                        : AppColorsLight.textPrimary,
-                  ),
+                  style: AppTypography.bodyMedium(color: colorScheme.onSurface),
                   decoration: InputDecoration(
                     hintText: 'Search quotes...',
                     hintStyle: AppTypography.bodyMedium(
-                      color: isDark
-                          ? AppColorsDark.textTertiary
-                          : AppColorsLight.textTertiary,
+                      color: colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                     prefixIcon: Icon(
                       Icons.search,
-                      color: isDark
-                          ? AppColorsDark.textTertiary
-                          : AppColorsLight.textTertiary,
+                      color: colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                     filled: true,
-                    fillColor: isDark
-                        ? AppColorsDark.background
-                        : AppColorsLight.background,
+                    fillColor: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.3,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -191,16 +178,16 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _availableQuotes.isEmpty
-                    ? _buildEmptyState(isDark)
-                    : ListView.builder(
-                        shrinkWrap: true,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        itemCount: _availableQuotes.length,
-                        itemBuilder: (context, index) {
-                          final quote = _availableQuotes[index];
-                          return _buildQuoteTile(quote, isDark);
-                        },
-                      ),
+                ? _buildEmptyState(colorScheme)
+                : ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: _availableQuotes.length,
+                    itemBuilder: (context, index) {
+                      final quote = _availableQuotes[index];
+                      return _buildQuoteTile(quote, colorScheme);
+                    },
+                  ),
           ),
 
           // Selected count and action buttons
@@ -208,21 +195,15 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
-                color: isDark
-                    ? AppColorsDark.background
-                    : AppColorsLight.background,
+                color: colorScheme.surface,
                 border: Border(
-                  top: BorderSide(
-                    color: isDark ? AppColorsDark.border : AppColorsLight.border,
-                  ),
+                  top: BorderSide(color: colorScheme.outlineVariant),
                 ),
               ),
               child: Text(
                 '${_selectedQuotes.length} quote${_selectedQuotes.length > 1 ? 's' : ''} selected',
                 style: AppTypography.bodyMedium(
-                  color: isDark
-                      ? AppColorsDark.textSecondary
-                      : AppColorsLight.textSecondary,
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
             ),
@@ -242,11 +223,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
                     onPressed: () => Navigator.pop(context, false),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      side: BorderSide(
-                        color: isDark
-                            ? AppColorsDark.border
-                            : AppColorsLight.border,
-                      ),
+                      side: BorderSide(color: colorScheme.outline),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -254,9 +231,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
                     child: Text(
                       CollectionsConstants.cancel,
                       style: AppTypography.bodyMedium(
-                        color: isDark
-                            ? AppColorsDark.textSecondary
-                            : AppColorsLight.textSecondary,
+                        color: colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ),
@@ -269,28 +244,27 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
                         : _addSelectedQuotes,
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      backgroundColor: isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.secondary,
-                      disabledBackgroundColor: isDark
-                          ? AppColorsDark.border
-                          : AppColorsLight.border,
+                      backgroundColor: colorScheme.secondary,
+                      disabledBackgroundColor:
+                          colorScheme.surfaceContainerHighest,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: _isSaving
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: colorScheme.onSecondary,
                             ),
                           )
                         : Text(
                             'Add ${_selectedQuotes.isNotEmpty ? '(${_selectedQuotes.length})' : ''}',
-                            style: AppTypography.bodyMedium(color: Colors.white),
+                            style: AppTypography.bodyMedium(
+                              color: colorScheme.onSecondary,
+                            ),
                           ),
                   ),
                 ),
@@ -302,7 +276,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
     );
   }
 
-  Widget _buildQuoteTile(Quote quote, bool isDark) {
+  Widget _buildQuoteTile(Quote quote, ColorScheme colorScheme) {
     final isSelected = _selectedQuotes.contains(quote.id);
     final alreadyInCollection = _existingQuotes.contains(quote.id);
 
@@ -312,28 +286,22 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isDark
-                  ? AppColorsDark.accentTeal.withValues(alpha: 0.1)
-                  : AppColorsLight.accentTeal.withValues(alpha: 0.1))
-              : (isDark ? AppColorsDark.background : AppColorsLight.background),
+              ? colorScheme.secondary.withValues(alpha: 0.1)
+              : colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected
-                ? (isDark ? AppColorsDark.accentTeal : AppColorsLight.accentTeal)
-                : Colors.transparent,
+            color: isSelected ? colorScheme.secondary : Colors.transparent,
             width: 2,
           ),
         ),
         child: ListTile(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
           title: Text(
             quote.text,
-            style: AppTypography.bodyMedium(
-              color: isDark
-                  ? AppColorsDark.textPrimary
-                  : AppColorsLight.textPrimary,
-            ),
+            style: AppTypography.bodyMedium(color: colorScheme.onSurface),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -342,18 +310,15 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
             child: Text(
               '— ${quote.authorName}',
               style: AppTypography.caption(
-                color: isDark
-                    ? AppColorsDark.textSecondary
-                    : AppColorsLight.textSecondary,
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ),
           trailing: alreadyInCollection
               ? Icon(
                   Icons.check_circle,
-                  color: isDark
-                      ? AppColorsDark.success
-                      : AppColorsLight.success,
+                  color: Colors
+                      .green, // Fixed success color or use custom success if available
                 )
               : Checkbox(
                   value: isSelected,
@@ -366,9 +331,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
                       }
                     });
                   },
-                  activeColor: isDark
-                      ? AppColorsDark.accentTeal
-                      : AppColorsLight.secondary,
+                  activeColor: colorScheme.secondary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -389,7 +352,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
     );
   }
 
-  Widget _buildEmptyState(bool isDark) {
+  Widget _buildEmptyState(ColorScheme colorScheme) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -399,26 +362,18 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
             Icon(
               Icons.format_quote,
               size: 48,
-              color: isDark
-                  ? AppColorsDark.textTertiary
-                  : AppColorsLight.textTertiary,
+              color: colorScheme.tertiary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
               'No quotes found',
-              style: AppTypography.headlineMedium(
-                color: isDark
-                    ? AppColorsDark.textPrimary
-                    : AppColorsLight.textPrimary,
-              ),
+              style: AppTypography.headlineMedium(color: colorScheme.onSurface),
             ),
             const SizedBox(height: 8),
             Text(
               'Try a different search',
               style: AppTypography.bodyMedium(
-                color: isDark
-                    ? AppColorsDark.textSecondary
-                    : AppColorsLight.textSecondary,
+                color: colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -465,9 +420,9 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add quotes: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to add quotes: $e')));
       }
     } finally {
       if (mounted) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../../core/constants/collections_constants.dart';
 
@@ -8,15 +8,12 @@ class FavoritesCard extends StatelessWidget {
   final int quoteCount;
   final VoidCallback? onTap;
 
-  const FavoritesCard({
-    super.key,
-    required this.quoteCount,
-    this.onTap,
-  });
+  const FavoritesCard({super.key, required this.quoteCount, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return GestureDetector(
       onTap: onTap,
@@ -29,10 +26,8 @@ class FavoritesCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              isDark
-                  ? AppColorsDark.primaryNavy.withValues(alpha: 0.9)
-                  : AppColorsLight.primaryNavy.withValues(alpha: 0.9),
-              isDark ? AppColorsDark.primaryNavy : AppColorsLight.primaryNavy,
+              colorScheme.primary.withValues(alpha: 0.8),
+              colorScheme.primary,
             ],
           ),
         ),
@@ -45,7 +40,7 @@ class FavoritesCard extends StatelessWidget {
               child: Icon(
                 Icons.favorite,
                 size: 200,
-                color: Colors.red.withValues(alpha: 0.15),
+                color: colorScheme.onPrimary.withValues(alpha: 0.1),
               ),
             ),
             // Content
@@ -60,9 +55,7 @@ class FavoritesCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.favorite,
-                        color: isDark
-                            ? AppColorsDark.accentTeal
-                            : AppColorsLight.accentTeal,
+                        color: colorScheme.onPrimary,
                         size: 20,
                       ),
                       const SizedBox(width: 8),
@@ -72,17 +65,13 @@ class FavoritesCard extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: isDark
-                              ? AppColorsDark.accentTeal.withValues(alpha: 0.2)
-                              : AppColorsLight.accentTeal.withValues(alpha: 0.2),
+                          color: colorScheme.onPrimary.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           CollectionsConstants.featured,
                           style: AppTypography.labelSmall(
-                            color: isDark
-                                ? AppColorsDark.accentTeal
-                                : AppColorsLight.accentTeal,
+                            color: colorScheme.onPrimary,
                           ).copyWith(fontWeight: FontWeight.w600),
                         ),
                       ),
@@ -92,14 +81,16 @@ class FavoritesCard extends StatelessWidget {
                   // Title
                   Text(
                     CollectionsConstants.favorites,
-                    style: AppTypography.displayLarge(color: Colors.white),
+                    style: AppTypography.displayLarge(
+                      color: colorScheme.onPrimary,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   // Quote count
                   Text(
                     '$quoteCount ${CollectionsConstants.savedQuotes}',
                     style: AppTypography.bodyMedium(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: colorScheme.onPrimary.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -113,14 +104,12 @@ class FavoritesCard extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorScheme.onPrimary,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.arrow_forward,
-                  color: isDark
-                      ? AppColorsDark.primaryNavy
-                      : AppColorsLight.primaryNavy,
+                  color: colorScheme.primary,
                   size: 20,
                 ),
               ),

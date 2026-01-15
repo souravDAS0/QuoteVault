@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../auth/domain/entities/qv_user.dart';
 import '../../application/controllers/profile_controller.dart';
@@ -69,32 +69,23 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
     }
   }
 
-  void _showImageSourceSelector(bool isDark) {
+  void _showImageSourceSelector(ColorScheme colorScheme) {
     showModalBottomSheet(
       context: context,
       builder: (context) => Container(
         padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+          color: colorScheme.surface,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(
-                Icons.photo_library,
-                color: isDark
-                    ? AppColorsDark.accentTeal
-                    : AppColorsLight.accentTeal,
-              ),
+              leading: Icon(Icons.photo_library, color: colorScheme.tertiary),
               title: Text(
                 'Choose from Gallery',
-                style: AppTypography.bodyLarge(
-                  color: isDark
-                      ? AppColorsDark.textPrimary
-                      : AppColorsLight.textPrimary,
-                ),
+                style: AppTypography.bodyLarge(color: colorScheme.onSurface),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -102,19 +93,10 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
               },
             ),
             ListTile(
-              leading: Icon(
-                Icons.camera_alt,
-                color: isDark
-                    ? AppColorsDark.accentTeal
-                    : AppColorsLight.accentTeal,
-              ),
+              leading: Icon(Icons.camera_alt, color: colorScheme.tertiary),
               title: Text(
                 'Take Photo',
-                style: AppTypography.bodyLarge(
-                  color: isDark
-                      ? AppColorsDark.textPrimary
-                      : AppColorsLight.textPrimary,
-                ),
+                style: AppTypography.bodyLarge(color: colorScheme.onSurface),
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -151,7 +133,8 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final profileState = ref.watch(profileControllerProvider);
 
     return Container(
@@ -162,7 +145,7 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
         bottom: MediaQuery.of(context).viewInsets.bottom + 36,
       ),
       decoration: BoxDecoration(
-        color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+        color: colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -173,7 +156,7 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: isDark ? AppColorsDark.divider : AppColorsLight.divider,
+              color: colorScheme.outline,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -182,11 +165,7 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
           // Title
           Text(
             'Edit Profile',
-            style: AppTypography.headlineMedium(
-              color: isDark
-                  ? AppColorsDark.textPrimary
-                  : AppColorsLight.textPrimary,
-            ),
+            style: AppTypography.headlineMedium(color: colorScheme.onSurface),
           ),
           const SizedBox(height: 32),
 
@@ -198,9 +177,7 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isDark
-                      ? AppColorsDark.accentTeal.withValues(alpha: 0.2)
-                      : AppColorsLight.accentTeal.withValues(alpha: 0.2),
+                  color: colorScheme.tertiary.withValues(alpha: 0.2),
                 ),
                 child: _selectedImage != null
                     ? ClipOval(
@@ -212,37 +189,28 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
                           widget.user.photoUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                              _buildDefaultAvatar(isDark),
+                              _buildDefaultAvatar(colorScheme),
                         ),
                       )
-                    : _buildDefaultAvatar(isDark),
+                    : _buildDefaultAvatar(colorScheme),
               ),
               Positioned(
                 right: 0,
                 bottom: 0,
                 child: GestureDetector(
-                  onTap: () => _showImageSourceSelector(isDark),
+                  onTap: () => _showImageSourceSelector(colorScheme),
                   child: Container(
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.accentTeal,
-                      border: Border.all(
-                        color: isDark
-                            ? AppColorsDark.surface
-                            : AppColorsLight.surface,
-                        width: 3,
-                      ),
+                      color: colorScheme.tertiary,
+                      border: Border.all(color: colorScheme.surface, width: 3),
                     ),
                     child: Icon(
                       Icons.camera_alt,
                       size: 16,
-                      color: isDark
-                          ? AppColorsDark.surface
-                          : AppColorsLight.surface,
+                      color: colorScheme.surface,
                     ),
                   ),
                 ),
@@ -254,45 +222,26 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
           // Display Name Field
           TextField(
             controller: _nameController,
-            style: AppTypography.bodyLarge(
-              color: isDark
-                  ? AppColorsDark.textPrimary
-                  : AppColorsLight.textPrimary,
-            ),
-            cursorColor: isDark
-                ? AppColorsDark.accentTeal
-                : AppColorsLight.accentTeal,
+            style: AppTypography.bodyLarge(color: colorScheme.onSurface),
+            cursorColor: colorScheme.tertiary,
             decoration: InputDecoration(
               labelText: 'Display Name',
               labelStyle: AppTypography.bodyMedium(
-                color: isDark
-                    ? AppColorsDark.textSecondary
-                    : AppColorsLight.textSecondary,
+                color: colorScheme.onSurfaceVariant,
               ),
               filled: true,
-              fillColor: isDark
-                  ? AppColorsDark.background
-                  : AppColorsLight.background,
+              fillColor: colorScheme.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: isDark ? AppColorsDark.border : AppColorsLight.border,
-                ),
+                borderSide: BorderSide(color: colorScheme.outline),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: isDark ? AppColorsDark.border : AppColorsLight.border,
-                ),
+                borderSide: BorderSide(color: colorScheme.outline),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(
-                  color: isDark
-                      ? AppColorsDark.accentTeal
-                      : AppColorsLight.accentTeal,
-                  width: 2,
-                ),
+                borderSide: BorderSide(color: colorScheme.tertiary, width: 2),
               ),
             ),
           ),
@@ -302,9 +251,7 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
             const SizedBox(height: 16),
             Text(
               profileState.updateError!,
-              style: AppTypography.caption(
-                color: isDark ? AppColorsDark.error : AppColorsLight.error,
-              ),
+              style: AppTypography.caption(color: colorScheme.error),
             ),
           ],
 
@@ -321,11 +268,7 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
                         ? null
                         : () => Navigator.of(context).pop(),
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: isDark
-                            ? AppColorsDark.border
-                            : AppColorsLight.border,
-                      ),
+                      side: BorderSide(color: colorScheme.outline),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -333,9 +276,7 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
                     child: Text(
                       'Cancel',
                       style: AppTypography.bodyLarge(
-                        color: isDark
-                            ? AppColorsDark.textSecondary
-                            : AppColorsLight.textSecondary,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -350,12 +291,8 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
                         ? _handleSave
                         : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.accentTeal,
-                      disabledBackgroundColor: isDark
-                          ? AppColorsDark.border
-                          : AppColorsLight.border,
+                      backgroundColor: colorScheme.tertiary,
+                      disabledBackgroundColor: colorScheme.outline,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -367,18 +304,14 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                isDark
-                                    ? AppColorsDark.surface
-                                    : AppColorsLight.surface,
+                                colorScheme.surface,
                               ),
                             ),
                           )
                         : Text(
                             'Save',
                             style: AppTypography.bodyLarge(
-                              color: isDark
-                                  ? AppColorsDark.surface
-                                  : AppColorsLight.surface,
+                              color: colorScheme.surface,
                             ),
                           ),
                   ),
@@ -391,13 +324,9 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
     );
   }
 
-  Widget _buildDefaultAvatar(bool isDark) {
+  Widget _buildDefaultAvatar(ColorScheme colorScheme) {
     return Center(
-      child: Icon(
-        Icons.person,
-        size: 50,
-        color: isDark ? AppColorsDark.accentTeal : AppColorsLight.accentTeal,
-      ),
+      child: Icon(Icons.person, size: 50, color: colorScheme.tertiary),
     );
   }
 }
