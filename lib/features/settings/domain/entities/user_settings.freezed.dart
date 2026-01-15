@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserSettings {
 
- AppThemeMode get themeMode; FontSizePreset get fontSizePreset; FontFamily get fontFamily; bool get notificationsEnabled; int get notificationHour; int get notificationMinute;
+ AppThemeMode get themeMode; FontSizePreset get fontSizePreset; bool get notificationsEnabled; int get notificationHour; int get notificationMinute;
 /// Create a copy of UserSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $UserSettingsCopyWith<UserSettings> get copyWith => _$UserSettingsCopyWithImpl<U
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserSettings&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.fontSizePreset, fontSizePreset) || other.fontSizePreset == fontSizePreset)&&(identical(other.fontFamily, fontFamily) || other.fontFamily == fontFamily)&&(identical(other.notificationsEnabled, notificationsEnabled) || other.notificationsEnabled == notificationsEnabled)&&(identical(other.notificationHour, notificationHour) || other.notificationHour == notificationHour)&&(identical(other.notificationMinute, notificationMinute) || other.notificationMinute == notificationMinute));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserSettings&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.fontSizePreset, fontSizePreset) || other.fontSizePreset == fontSizePreset)&&(identical(other.notificationsEnabled, notificationsEnabled) || other.notificationsEnabled == notificationsEnabled)&&(identical(other.notificationHour, notificationHour) || other.notificationHour == notificationHour)&&(identical(other.notificationMinute, notificationMinute) || other.notificationMinute == notificationMinute));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,themeMode,fontSizePreset,fontFamily,notificationsEnabled,notificationHour,notificationMinute);
+int get hashCode => Object.hash(runtimeType,themeMode,fontSizePreset,notificationsEnabled,notificationHour,notificationMinute);
 
 @override
 String toString() {
-  return 'UserSettings(themeMode: $themeMode, fontSizePreset: $fontSizePreset, fontFamily: $fontFamily, notificationsEnabled: $notificationsEnabled, notificationHour: $notificationHour, notificationMinute: $notificationMinute)';
+  return 'UserSettings(themeMode: $themeMode, fontSizePreset: $fontSizePreset, notificationsEnabled: $notificationsEnabled, notificationHour: $notificationHour, notificationMinute: $notificationMinute)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $UserSettingsCopyWith<$Res>  {
   factory $UserSettingsCopyWith(UserSettings value, $Res Function(UserSettings) _then) = _$UserSettingsCopyWithImpl;
 @useResult
 $Res call({
- AppThemeMode themeMode, FontSizePreset fontSizePreset, FontFamily fontFamily, bool notificationsEnabled, int notificationHour, int notificationMinute
+ AppThemeMode themeMode, FontSizePreset fontSizePreset, bool notificationsEnabled, int notificationHour, int notificationMinute
 });
 
 
@@ -65,12 +65,11 @@ class _$UserSettingsCopyWithImpl<$Res>
 
 /// Create a copy of UserSettings
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? themeMode = null,Object? fontSizePreset = null,Object? fontFamily = null,Object? notificationsEnabled = null,Object? notificationHour = null,Object? notificationMinute = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? themeMode = null,Object? fontSizePreset = null,Object? notificationsEnabled = null,Object? notificationHour = null,Object? notificationMinute = null,}) {
   return _then(_self.copyWith(
 themeMode: null == themeMode ? _self.themeMode : themeMode // ignore: cast_nullable_to_non_nullable
 as AppThemeMode,fontSizePreset: null == fontSizePreset ? _self.fontSizePreset : fontSizePreset // ignore: cast_nullable_to_non_nullable
-as FontSizePreset,fontFamily: null == fontFamily ? _self.fontFamily : fontFamily // ignore: cast_nullable_to_non_nullable
-as FontFamily,notificationsEnabled: null == notificationsEnabled ? _self.notificationsEnabled : notificationsEnabled // ignore: cast_nullable_to_non_nullable
+as FontSizePreset,notificationsEnabled: null == notificationsEnabled ? _self.notificationsEnabled : notificationsEnabled // ignore: cast_nullable_to_non_nullable
 as bool,notificationHour: null == notificationHour ? _self.notificationHour : notificationHour // ignore: cast_nullable_to_non_nullable
 as int,notificationMinute: null == notificationMinute ? _self.notificationMinute : notificationMinute // ignore: cast_nullable_to_non_nullable
 as int,
@@ -158,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AppThemeMode themeMode,  FontSizePreset fontSizePreset,  FontFamily fontFamily,  bool notificationsEnabled,  int notificationHour,  int notificationMinute)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AppThemeMode themeMode,  FontSizePreset fontSizePreset,  bool notificationsEnabled,  int notificationHour,  int notificationMinute)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserSettings() when $default != null:
-return $default(_that.themeMode,_that.fontSizePreset,_that.fontFamily,_that.notificationsEnabled,_that.notificationHour,_that.notificationMinute);case _:
+return $default(_that.themeMode,_that.fontSizePreset,_that.notificationsEnabled,_that.notificationHour,_that.notificationMinute);case _:
   return orElse();
 
 }
@@ -179,10 +178,10 @@ return $default(_that.themeMode,_that.fontSizePreset,_that.fontFamily,_that.noti
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AppThemeMode themeMode,  FontSizePreset fontSizePreset,  FontFamily fontFamily,  bool notificationsEnabled,  int notificationHour,  int notificationMinute)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AppThemeMode themeMode,  FontSizePreset fontSizePreset,  bool notificationsEnabled,  int notificationHour,  int notificationMinute)  $default,) {final _that = this;
 switch (_that) {
 case _UserSettings():
-return $default(_that.themeMode,_that.fontSizePreset,_that.fontFamily,_that.notificationsEnabled,_that.notificationHour,_that.notificationMinute);case _:
+return $default(_that.themeMode,_that.fontSizePreset,_that.notificationsEnabled,_that.notificationHour,_that.notificationMinute);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +198,10 @@ return $default(_that.themeMode,_that.fontSizePreset,_that.fontFamily,_that.noti
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AppThemeMode themeMode,  FontSizePreset fontSizePreset,  FontFamily fontFamily,  bool notificationsEnabled,  int notificationHour,  int notificationMinute)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AppThemeMode themeMode,  FontSizePreset fontSizePreset,  bool notificationsEnabled,  int notificationHour,  int notificationMinute)?  $default,) {final _that = this;
 switch (_that) {
 case _UserSettings() when $default != null:
-return $default(_that.themeMode,_that.fontSizePreset,_that.fontFamily,_that.notificationsEnabled,_that.notificationHour,_that.notificationMinute);case _:
+return $default(_that.themeMode,_that.fontSizePreset,_that.notificationsEnabled,_that.notificationHour,_that.notificationMinute);case _:
   return null;
 
 }
@@ -214,12 +213,11 @@ return $default(_that.themeMode,_that.fontSizePreset,_that.fontFamily,_that.noti
 @JsonSerializable()
 
 class _UserSettings implements UserSettings {
-  const _UserSettings({this.themeMode = AppThemeMode.system, this.fontSizePreset = FontSizePreset.medium, this.fontFamily = FontFamily.jakarta, this.notificationsEnabled = true, this.notificationHour = 8, this.notificationMinute = 30});
+  const _UserSettings({this.themeMode = AppThemeMode.system, this.fontSizePreset = FontSizePreset.medium, this.notificationsEnabled = true, this.notificationHour = 8, this.notificationMinute = 30});
   factory _UserSettings.fromJson(Map<String, dynamic> json) => _$UserSettingsFromJson(json);
 
 @override@JsonKey() final  AppThemeMode themeMode;
 @override@JsonKey() final  FontSizePreset fontSizePreset;
-@override@JsonKey() final  FontFamily fontFamily;
 @override@JsonKey() final  bool notificationsEnabled;
 @override@JsonKey() final  int notificationHour;
 @override@JsonKey() final  int notificationMinute;
@@ -237,16 +235,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserSettings&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.fontSizePreset, fontSizePreset) || other.fontSizePreset == fontSizePreset)&&(identical(other.fontFamily, fontFamily) || other.fontFamily == fontFamily)&&(identical(other.notificationsEnabled, notificationsEnabled) || other.notificationsEnabled == notificationsEnabled)&&(identical(other.notificationHour, notificationHour) || other.notificationHour == notificationHour)&&(identical(other.notificationMinute, notificationMinute) || other.notificationMinute == notificationMinute));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserSettings&&(identical(other.themeMode, themeMode) || other.themeMode == themeMode)&&(identical(other.fontSizePreset, fontSizePreset) || other.fontSizePreset == fontSizePreset)&&(identical(other.notificationsEnabled, notificationsEnabled) || other.notificationsEnabled == notificationsEnabled)&&(identical(other.notificationHour, notificationHour) || other.notificationHour == notificationHour)&&(identical(other.notificationMinute, notificationMinute) || other.notificationMinute == notificationMinute));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,themeMode,fontSizePreset,fontFamily,notificationsEnabled,notificationHour,notificationMinute);
+int get hashCode => Object.hash(runtimeType,themeMode,fontSizePreset,notificationsEnabled,notificationHour,notificationMinute);
 
 @override
 String toString() {
-  return 'UserSettings(themeMode: $themeMode, fontSizePreset: $fontSizePreset, fontFamily: $fontFamily, notificationsEnabled: $notificationsEnabled, notificationHour: $notificationHour, notificationMinute: $notificationMinute)';
+  return 'UserSettings(themeMode: $themeMode, fontSizePreset: $fontSizePreset, notificationsEnabled: $notificationsEnabled, notificationHour: $notificationHour, notificationMinute: $notificationMinute)';
 }
 
 
@@ -257,7 +255,7 @@ abstract mixin class _$UserSettingsCopyWith<$Res> implements $UserSettingsCopyWi
   factory _$UserSettingsCopyWith(_UserSettings value, $Res Function(_UserSettings) _then) = __$UserSettingsCopyWithImpl;
 @override @useResult
 $Res call({
- AppThemeMode themeMode, FontSizePreset fontSizePreset, FontFamily fontFamily, bool notificationsEnabled, int notificationHour, int notificationMinute
+ AppThemeMode themeMode, FontSizePreset fontSizePreset, bool notificationsEnabled, int notificationHour, int notificationMinute
 });
 
 
@@ -274,12 +272,11 @@ class __$UserSettingsCopyWithImpl<$Res>
 
 /// Create a copy of UserSettings
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? themeMode = null,Object? fontSizePreset = null,Object? fontFamily = null,Object? notificationsEnabled = null,Object? notificationHour = null,Object? notificationMinute = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? themeMode = null,Object? fontSizePreset = null,Object? notificationsEnabled = null,Object? notificationHour = null,Object? notificationMinute = null,}) {
   return _then(_UserSettings(
 themeMode: null == themeMode ? _self.themeMode : themeMode // ignore: cast_nullable_to_non_nullable
 as AppThemeMode,fontSizePreset: null == fontSizePreset ? _self.fontSizePreset : fontSizePreset // ignore: cast_nullable_to_non_nullable
-as FontSizePreset,fontFamily: null == fontFamily ? _self.fontFamily : fontFamily // ignore: cast_nullable_to_non_nullable
-as FontFamily,notificationsEnabled: null == notificationsEnabled ? _self.notificationsEnabled : notificationsEnabled // ignore: cast_nullable_to_non_nullable
+as FontSizePreset,notificationsEnabled: null == notificationsEnabled ? _self.notificationsEnabled : notificationsEnabled // ignore: cast_nullable_to_non_nullable
 as bool,notificationHour: null == notificationHour ? _self.notificationHour : notificationHour // ignore: cast_nullable_to_non_nullable
 as int,notificationMinute: null == notificationMinute ? _self.notificationMinute : notificationMinute // ignore: cast_nullable_to_non_nullable
 as int,

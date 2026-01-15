@@ -15,7 +15,7 @@ class SupabaseSettingsDatasource {
     final response = await _client
         .from('profiles')
         .select(
-          'theme_preference, font_size_preference, font_family, notifications_enabled, notification_time',
+          'theme_preference, font_size_preference, notifications_enabled, notification_time',
         )
         .eq('id', userId)
         .maybeSingle();
@@ -39,7 +39,6 @@ class SupabaseSettingsDatasource {
           'font_size_preference': _fontSizePresetToString(
             settings.fontSizePreset,
           ),
-          'font_family': _fontFamilyToString(settings.fontFamily),
           'notifications_enabled': settings.notificationsEnabled,
           'notification_time': _timeToString(
             settings.notificationHour,
@@ -56,7 +55,6 @@ class SupabaseSettingsDatasource {
       fontSizePreset: _stringToFontSizePreset(
         response['font_size_preference'] as String?,
       ),
-      fontFamily: _stringToFontFamily(response['font_family'] as String?),
       notificationsEnabled: response['notifications_enabled'] as bool? ?? true,
       notificationHour: _parseNotificationHour(
         response['notification_time'] as String?,
@@ -128,29 +126,6 @@ class SupabaseSettingsDatasource {
       case 'medium':
       default:
         return FontSizePreset.medium;
-    }
-  }
-
-  // Font family conversion
-  String _fontFamilyToString(FontFamily family) {
-    switch (family) {
-      case FontFamily.jakarta:
-        return 'jakarta';
-      case FontFamily.serif:
-        return 'serif';
-      case FontFamily.mono:
-        return 'mono';
-    }
-  }
-
-  FontFamily _stringToFontFamily(String? value) {
-    switch (value) {
-      case 'serif':
-        return FontFamily.serif;
-      case 'mono':
-        return FontFamily.mono;
-      default:
-        return FontFamily.jakarta;
     }
   }
 

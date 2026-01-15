@@ -68,10 +68,3 @@ FontSizePreset fontSizePreset(Ref ref) {
   final settingsState = ref.watch(settingsControllerProvider);
   return settingsState.settings.fontSizePreset;
 }
-
-/// Provider for current font family
-@riverpod
-FontFamily fontFamily(Ref ref) {
-  final settingsState = ref.watch(settingsControllerProvider);
-  return settingsState.settings.fontFamily;
-}

@@ -109,9 +109,7 @@ class PersonalizationScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   const NotificationSettings(),
-                  // const SizedBox(height: 24),
-                  // Background Styles
-                  // const BackgroundStylesButton(),
+
                   const SizedBox(height: 32),
                 ],
               ),

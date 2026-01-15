@@ -18,9 +18,6 @@ enum FontSizePreset {
   const FontSizePreset(this.value);
 }
 
-/// Font family options
-enum FontFamily { jakarta, serif, mono }
-
 /// Domain entity representing user personalization settings
 /// NO framework dependencies, NO Supabase imports
 @freezed
@@ -28,7 +25,6 @@ abstract class UserSettings with _$UserSettings {
   const factory UserSettings({
     @Default(AppThemeMode.system) AppThemeMode themeMode,
     @Default(FontSizePreset.medium) FontSizePreset fontSizePreset,
-    @Default(FontFamily.jakarta) FontFamily fontFamily,
     @Default(true) bool notificationsEnabled,
     @Default(8) int notificationHour,
     @Default(30) int notificationMinute,

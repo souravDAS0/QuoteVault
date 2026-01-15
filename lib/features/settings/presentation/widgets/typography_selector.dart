@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/constants/settings_constants.dart';
-import '../../domain/entities/user_settings.dart';
+
 import '../../application/controllers/settings_controller.dart';
+import '../../domain/entities/user_settings.dart';
 
 /// Typography section with font size slider and font family selection
 class TypographySelector extends ConsumerWidget {
@@ -68,130 +67,9 @@ class TypographySelector extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          // Font family label
-          Text(
-            SettingsConstants.fontFamilyLabel,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.5,
-              color: colorScheme.onSurface.withValues(alpha: 0.7),
-            ),
-          ),
-          const SizedBox(height: 12),
-          // Font family selection
-          Row(
-            children: [
-              Expanded(
-                child: _FontFamilyButton(
-                  label: SettingsConstants.jakartaLabel,
-                  fontFamily: FontFamily.jakarta,
-                  isSelected: settings.fontFamily == FontFamily.jakarta,
-                  onTap: () => controller.setFontFamily(FontFamily.jakarta),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _FontFamilyButton(
-                  label: SettingsConstants.serifLabel,
-                  fontFamily: FontFamily.serif,
-                  isSelected: settings.fontFamily == FontFamily.serif,
-                  onTap: () => controller.setFontFamily(FontFamily.serif),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _FontFamilyButton(
-                  label: SettingsConstants.monoLabel,
-                  fontFamily: FontFamily.mono,
-                  isSelected: settings.fontFamily == FontFamily.mono,
-                  onTap: () => controller.setFontFamily(FontFamily.mono),
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
-  }
-}
-
-class _FontFamilyButton extends StatelessWidget {
-  final String label;
-  final FontFamily fontFamily;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _FontFamilyButton({
-    required this.label,
-    required this.fontFamily,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final primaryColor = colorScheme.primary;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: theme.brightness == Brightness.dark
-              ? colorScheme.surface
-              : colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected
-                ? primaryColor
-                : colorScheme.outline.withValues(alpha: 0.5),
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Column(
-          children: [
-            Text('Aa', style: _getFontStyle(fontFamily, colorScheme)),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  TextStyle _getFontStyle(FontFamily family, ColorScheme colorScheme) {
-    final color = colorScheme.onSurface;
-
-    switch (family) {
-      case FontFamily.jakarta:
-        return GoogleFonts.plusJakartaSans(
-          fontSize: 24,
-          fontWeight: FontWeight.w600,
-          color: color,
-        );
-      case FontFamily.serif:
-        return GoogleFonts.merriweather(
-          fontSize: 24,
-          fontWeight: FontWeight.w400,
-          color: color,
-        );
-      case FontFamily.mono:
-        return GoogleFonts.jetBrainsMono(
-          fontSize: 24,
-          fontWeight: FontWeight.w400,
-          color: color,
-        );
-    }
   }
 }
 

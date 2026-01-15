@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/config/theme/app_typography.dart';
 import '../../domain/entities/quote.dart';
+import '../../../settings/application/controllers/settings_controller.dart';
 
-class QuoteCard extends StatelessWidget {
+class QuoteCard extends ConsumerWidget {
   final Quote quote;
   final VoidCallback? onFavorite;
   final VoidCallback? onShare;
@@ -26,14 +28,16 @@ class QuoteCard extends StatelessWidget {
 
   @override
   @override
-  Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final settings = ref.watch(settingsControllerProvider).settings;
+
     final colorScheme = theme.colorScheme;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 280,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           gradient: LinearGradient(
@@ -75,15 +79,11 @@ class QuoteCard extends StatelessWidget {
 
               const SizedBox(height: 8),
               // Quote text
-              Expanded(
-                child: Text(
-                  quote.text,
-                  style: AppTypography.headlineLarge(
-                    color: colorScheme.onSurface,
-                  ),
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                ),
+              Text(
+                quote.text,
+                style: AppTypography.headlineLarge(
+                  color: colorScheme.onSurface,
+                ).copyWith(fontSize: settings.fontSizePreset.value),
               ),
               Divider(
                 color: colorScheme.onSurface.withValues(alpha: 0.24),

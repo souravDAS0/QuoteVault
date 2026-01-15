@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:quote_vault/features/settings/application/controllers/settings_controller.dart';
 
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../home_feed/domain/entities/quote.dart';
 
 /// Quote card displayed in collection details screen
 /// Different styling from home feed QuoteCard
-class CollectionQuoteCard extends StatelessWidget {
+class CollectionQuoteCard extends ConsumerWidget {
   final Quote quote;
   final VoidCallback? onCopy;
   final VoidCallback? onShare;
@@ -21,22 +23,24 @@ class CollectionQuoteCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final settings = ref.watch(settingsControllerProvider).settings;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            colorScheme.surface.withValues(alpha: 0.8),
+            colorScheme.surface,
+          ],
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,9 +68,13 @@ class CollectionQuoteCard extends StatelessWidget {
                     children: [
                       Text(
                         quote.text,
-                        style: AppTypography.bodyLarge(
-                          color: colorScheme.onSurface,
-                        ).copyWith(height: 1.5),
+                        style:
+                            AppTypography.bodyLarge(
+                              color: colorScheme.onSurface,
+                            ).copyWith(
+                              height: 1.5,
+                              fontSize: settings.fontSizePreset.value,
+                            ),
                       ),
                       const SizedBox(height: 12),
                       Text(

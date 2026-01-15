@@ -45,12 +45,6 @@ class SettingsController extends _$SettingsController {
     await _updateSettings(newSettings);
   }
 
-  /// Update font family
-  Future<void> setFontFamily(FontFamily family) async {
-    final newSettings = state.settings.copyWith(fontFamily: family);
-    await _updateSettings(newSettings);
-  }
-
   /// Toggle notifications enabled
   Future<void> setNotificationsEnabled(bool enabled) async {
     final newSettings = state.settings.copyWith(notificationsEnabled: enabled);

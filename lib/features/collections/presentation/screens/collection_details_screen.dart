@@ -25,11 +25,10 @@ class CollectionDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
 
     // Use different controller for favorites vs regular collections
     if (isFavorites) {
-      return _buildFavoritesScreen(context, ref, colorScheme);
+      return _buildFavoritesScreen(context, ref, colorScheme, theme);
     }
 
     if (collectionId == null) {
@@ -41,7 +40,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
       ref,
       colorScheme,
       collectionId!,
-      isDark,
+      theme,
     );
   }
 
@@ -49,15 +48,17 @@ class CollectionDetailsScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     ColorScheme colorScheme,
+    ThemeData theme,
   ) {
     final state = ref.watch(favoritesControllerProvider);
     final controller = ref.read(favoritesControllerProvider.notifier);
 
     return Scaffold(
-      backgroundColor: colorScheme.surfaceContainer,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: _buildAppBar(
         context,
         colorScheme,
+        theme,
         title: CollectionsConstants.favorites,
         subtitle: '${state.totalCount} ${CollectionsConstants.quotes}',
         showEditButton: false,
@@ -120,7 +121,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
     WidgetRef ref,
     ColorScheme colorScheme,
     String collectionId,
-    bool isDark,
+    ThemeData theme,
   ) {
     final state = ref.watch(collectionDetailsControllerProvider(collectionId));
     final controller = ref.read(
@@ -132,10 +133,11 @@ class CollectionDetailsScreen extends ConsumerWidget {
         : '';
 
     return Scaffold(
-      backgroundColor: colorScheme.surfaceContainer,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: _buildAppBar(
         context,
         colorScheme,
+        theme,
         title: state.collection?.name ?? '',
         subtitle:
             '${state.collection?.quoteCount ?? 0} ${CollectionsConstants.quotes} \u2022 ${CollectionsConstants.createdOn} $createdDate',
@@ -241,7 +243,8 @@ class CollectionDetailsScreen extends ConsumerWidget {
 
   PreferredSizeWidget _buildAppBar(
     BuildContext context,
-    ColorScheme colorScheme, {
+    ColorScheme colorScheme,
+    ThemeData theme, {
     required String title,
     required String subtitle,
     required bool showEditButton,
@@ -250,7 +253,7 @@ class CollectionDetailsScreen extends ConsumerWidget {
     required bool isLoading,
   }) {
     return AppBar(
-      backgroundColor: colorScheme.surfaceContainer,
+      backgroundColor: theme.scaffoldBackgroundColor,
       elevation: 0,
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: colorScheme.onSurface),

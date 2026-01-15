@@ -76,28 +76,11 @@ class QuotePreviewCard extends ConsumerWidget {
   TextStyle _getQuoteTextStyle(UserSettings settings) {
     final fontSize = settings.fontSizePreset.value;
 
-    switch (settings.fontFamily) {
-      case FontFamily.jakarta:
-        return GoogleFonts.plusJakartaSans(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w500,
-          color: Colors.white,
-          height: 1.4,
-        );
-      case FontFamily.serif:
-        return GoogleFonts.merriweather(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w400,
-          color: Colors.white,
-          height: 1.4,
-        );
-      case FontFamily.mono:
-        return GoogleFonts.jetBrainsMono(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w400,
-          color: Colors.white,
-          height: 1.4,
-        );
-    }
+    return GoogleFonts.albertSans(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w500,
+      color: Colors.white,
+      height: 1.4,
+    );
   }
 }

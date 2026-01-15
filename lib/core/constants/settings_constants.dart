@@ -26,10 +26,7 @@ abstract class SettingsConstants {
   static const String goldLabel = 'Gold';
 
   // Typography labels
-  static const String fontFamilyLabel = 'FONT FAMILY';
-  static const String jakartaLabel = 'Jakarta';
-  static const String serifLabel = 'Serif';
-  static const String monoLabel = 'Mono';
+
   static const String pxSuffix = 'px';
 
   // Notifications labels
