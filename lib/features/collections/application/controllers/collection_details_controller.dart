@@ -3,6 +3,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../state/collection_details_state.dart';
 import '../providers/collection_providers.dart';
 import '../../../home_feed/domain/entities/quote.dart';
+import '../../../../core/domain/entities/retryable_operation.dart';
+import '../../../../core/mixins/offline_aware_mixin.dart';
 
 part 'collection_details_controller.g.dart';
 
@@ -20,27 +22,49 @@ class CollectionDetailsController extends _$CollectionDetailsController {
   }
 
   Future<void> _loadCollectionDetails(String collectionId) async {
+    // Initial check for connectivity
+    if (!ref.offlineAware.isOnline) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage:
+            'No internet connection. Please check your network settings.',
+      );
+      return;
+    }
+
     try {
       final repository = ref.read(collectionRepositoryProvider);
 
-      // Load collection and quotes in parallel
-      final results = await Future.wait([
-        repository.getCollectionById(collectionId),
-        repository.getCollectionQuotes(
-          collectionId: collectionId,
-          page: 0,
-          pageSize: _pageSize,
-        ),
-      ]);
+      await ref.offlineAware.executeWithOfflineHandling(
+        operation: () async {
+          // Load collection and quotes in parallel
+          final results = await Future.wait([
+            repository.getCollectionById(collectionId),
+            repository.getCollectionQuotes(
+              collectionId: collectionId,
+              page: 0,
+              pageSize: _pageSize,
+            ),
+          ]);
 
-      final collection = results[0] as Collection;
-      final quotes = results[1] as List<Quote>;
+          final collection = results[0] as Collection;
+          final quotes = results[1] as List<Quote>;
 
-      state = state.copyWith(
-        collection: collection,
-        quotes: quotes,
-        isLoading: false,
-        hasReachedEnd: quotes.length < _pageSize,
+          state = state.copyWith(
+            collection: collection,
+            quotes: quotes,
+            isLoading: false,
+            hasReachedEnd: quotes.length < _pageSize,
+          );
+        },
+        operationType: OperationType.fetchCollectionDetails,
+        payload: {'collectionId': collectionId},
+        onQueued: () {
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: 'Operation queued. Waiting for connection...',
+          );
+        },
       );
     } catch (e) {
       state = state.copyWith(
@@ -100,22 +124,32 @@ class CollectionDetailsController extends _$CollectionDetailsController {
     final collectionId = state.collection?.id;
     if (collectionId == null || newName.trim().isEmpty) return;
 
-    state = state.copyWith(isEditingName: true, errorMessage: null);
+    // Optimistic update
+    state = state.copyWith(
+      isEditingName: true,
+      errorMessage: null,
+      collection: state.collection?.copyWith(name: newName.trim()),
+    );
 
-    try {
-      final repository = ref.read(collectionRepositoryProvider);
-      final updated = await repository.updateCollection(
-        collectionId: collectionId,
-        name: newName.trim(),
-      );
+    final success = await ref.offlineAware.executeWithOfflineHandling(
+      operation: () async {
+        final repository = ref.read(collectionRepositoryProvider);
+        final updated = await repository.updateCollection(
+          collectionId: collectionId,
+          name: newName.trim(),
+        );
+        state = state.copyWith(collection: updated, isEditingName: false);
+      },
+      operationType: OperationType.updateCollectionName,
+      payload: {'collectionId': collectionId, 'name': newName.trim()},
+      operationId: 'update_collection_name_$collectionId',
+      onQueued: () {
+        // Keep optimistic update
+        state = state.copyWith(isEditingName: false);
+      },
+    );
 
-      state = state.copyWith(collection: updated, isEditingName: false);
-    } catch (e) {
-      state = state.copyWith(
-        isEditingName: false,
-        errorMessage: 'Failed to update collection name: $e',
-      );
-    }
+    if (!success) return;
   }
 
   Future<void> addQuote(String quoteId) async {
@@ -124,23 +158,30 @@ class CollectionDetailsController extends _$CollectionDetailsController {
 
     state = state.copyWith(isAddingQuote: true, errorMessage: null);
 
-    try {
-      final repository = ref.read(collectionRepositoryProvider);
-      await repository.addQuoteToCollection(
-        collectionId: collectionId,
-        quoteId: quoteId,
-      );
+    final success = await ref.offlineAware.executeWithOfflineHandling(
+      operation: () async {
+        final repository = ref.read(collectionRepositoryProvider);
+        await repository.addQuoteToCollection(
+          collectionId: collectionId,
+          quoteId: quoteId,
+        );
+        // Refresh to get updated list
+        await refresh();
+      },
+      operationType: OperationType.addToCollection,
+      payload: {'collectionId': collectionId, 'quoteId': quoteId},
+      operationId: 'add_to_collection_${collectionId}_$quoteId',
+      onQueued: () {
+        state = state.copyWith(
+          isAddingQuote: false,
+          errorMessage: 'Quote will be added when online',
+        );
+      },
+    );
 
-      // Refresh to get updated list
-      await refresh();
-    } catch (e) {
-      state = state.copyWith(
-        isAddingQuote: false,
-        errorMessage: e.toString().contains('already in collection')
-            ? 'Quote already in this collection'
-            : 'Failed to add quote: $e',
-      );
-    }
+    if (!success) return;
+
+    state = state.copyWith(isAddingQuote: false);
   }
 
   Future<void> removeQuote(String quoteId) async {
@@ -153,36 +194,38 @@ class CollectionDetailsController extends _$CollectionDetailsController {
 
     // Optimistic update
     final originalQuotes = state.quotes;
+    final originalCollection = state.collection;
     state = state.copyWith(
       quotes: state.quotes.where((q) => q.id != quoteId).toList(),
       isRemovingQuote: true,
+      collection: state.collection?.copyWith(
+        quoteCount: (state.collection!.quoteCount - 1).clamp(0, 999999),
+      ),
     );
 
-    try {
-      final repository = ref.read(collectionRepositoryProvider);
-      await repository.removeQuoteFromCollection(
-        collectionId: collectionId,
-        quoteId: quoteId,
-      );
-
-      // Update collection quote count
-      if (state.collection != null) {
-        state = state.copyWith(
-          collection: state.collection!.copyWith(
-            quoteCount: state.collection!.quoteCount - 1,
-          ),
-          isRemovingQuote: false,
+    final success = await ref.offlineAware.executeWithOfflineHandling(
+      operation: () async {
+        final repository = ref.read(collectionRepositoryProvider);
+        await repository.removeQuoteFromCollection(
+          collectionId: collectionId,
+          quoteId: quoteId,
         );
-      }
-    } catch (e) {
-      // Revert optimistic update
-      state = state.copyWith(
-        quotes: originalQuotes,
-        isRemovingQuote: false,
-        errorMessage: 'Failed to remove quote: $e',
-      );
-    } finally {
-      _removingQuotes.remove(quoteId);
+        state = state.copyWith(isRemovingQuote: false);
+      },
+      operationType: OperationType.removeFromCollection,
+      payload: {'collectionId': collectionId, 'quoteId': quoteId},
+      operationId: 'remove_from_collection_${collectionId}_$quoteId',
+      onQueued: () {
+        // Keep optimistic update
+        state = state.copyWith(isRemovingQuote: false);
+      },
+    );
+
+    _removingQuotes.remove(quoteId);
+
+    if (!success) {
+      // Operation queued - keep optimistic update
+      return;
     }
   }
 
@@ -203,22 +246,44 @@ class FavoritesController extends _$FavoritesController {
   }
 
   Future<void> _loadFavorites() async {
+    // Initial check for connectivity
+    if (!ref.offlineAware.isOnline) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage:
+            'No internet connection. Please check your network settings.',
+      );
+      return;
+    }
+
     try {
       final repository = ref.read(collectionRepositoryProvider);
 
-      final results = await Future.wait([
-        repository.getFavoritesCount(),
-        repository.getFavorites(page: 0, pageSize: _pageSize),
-      ]);
+      await ref.offlineAware.executeWithOfflineHandling(
+        operation: () async {
+          final results = await Future.wait([
+            repository.getFavoritesCount(),
+            repository.getFavorites(page: 0, pageSize: _pageSize),
+          ]);
 
-      final totalCount = results[0] as int;
-      final quotes = results[1] as List<Quote>;
+          final totalCount = results[0] as int;
+          final quotes = results[1] as List<Quote>;
 
-      state = state.copyWith(
-        quotes: quotes,
-        totalCount: totalCount,
-        isLoading: false,
-        hasReachedEnd: quotes.length < _pageSize,
+          state = state.copyWith(
+            quotes: quotes,
+            totalCount: totalCount,
+            isLoading: false,
+            hasReachedEnd: quotes.length < _pageSize,
+          );
+        },
+        operationType: OperationType.fetchFavorites,
+        payload: {},
+        onQueued: () {
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: 'Operation queued. Waiting for connection...',
+          );
+        },
       );
     } catch (e) {
       state = state.copyWith(

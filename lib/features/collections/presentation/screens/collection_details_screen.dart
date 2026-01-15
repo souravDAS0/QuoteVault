@@ -8,6 +8,7 @@ import '../../application/controllers/collection_details_controller.dart';
 import '../widgets/collection_quote_card.dart';
 import '../widgets/add_quote_sheet.dart';
 import '../../../sharing/presentation/screens/share_quote_sheet.dart';
+import '../../../../core/widgets/offline_aware_content.dart';
 
 /// Collection details screen showing quotes in a collection
 /// Also used for Favorites when [isFavorites] is true
@@ -80,37 +81,40 @@ class CollectionDetailsScreen extends ConsumerWidget {
               CollectionsConstants.startFavoriting,
               colorScheme,
             )
-          : RefreshIndicator(
-              onRefresh: controller.refresh,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(20),
-                itemCount: state.quotes.length + (state.hasReachedEnd ? 0 : 1),
-                itemBuilder: (context, index) {
-                  if (index == state.quotes.length) {
-                    // Load more indicator
-                    controller.loadMore();
-                    return const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-
-                  final quote = state.quotes[index];
-                  return CollectionQuoteCard(
-                    quote: quote,
-                    onCopy: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(CollectionsConstants.quoteCopied),
-                        ),
+          : OfflineAwareContent(
+              child: RefreshIndicator(
+                onRefresh: controller.refresh,
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(20),
+                  itemCount:
+                      state.quotes.length + (state.hasReachedEnd ? 0 : 1),
+                  itemBuilder: (context, index) {
+                    if (index == state.quotes.length) {
+                      // Load more indicator
+                      controller.loadMore();
+                      return const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Center(child: CircularProgressIndicator()),
                       );
-                    },
-                    onShare: () {
-                      ShareQuoteSheet.show(context, quote: quote);
-                    },
-                    onDelete: null, // Can't delete from favorites here
-                  );
-                },
+                    }
+
+                    final quote = state.quotes[index];
+                    return CollectionQuoteCard(
+                      quote: quote,
+                      onCopy: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(CollectionsConstants.quoteCopied),
+                          ),
+                        );
+                      },
+                      onShare: () {
+                        ShareQuoteSheet.show(context, quote: quote);
+                      },
+                      onDelete: null, // Can't delete from favorites here
+                    );
+                  },
+                ),
               ),
             ),
     );
@@ -164,44 +168,47 @@ class CollectionDetailsScreen extends ConsumerWidget {
               CollectionsConstants.addQuotesToCollection,
               colorScheme,
             )
-          : RefreshIndicator(
-              onRefresh: controller.refresh,
-              child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-                itemCount: state.quotes.length + (state.hasReachedEnd ? 0 : 1),
-                itemBuilder: (context, index) {
-                  if (index == state.quotes.length) {
-                    // Load more indicator
-                    controller.loadMore();
-                    return const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
+          : OfflineAwareContent(
+              child: RefreshIndicator(
+                onRefresh: controller.refresh,
+                child: ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+                  itemCount:
+                      state.quotes.length + (state.hasReachedEnd ? 0 : 1),
+                  itemBuilder: (context, index) {
+                    if (index == state.quotes.length) {
+                      // Load more indicator
+                      controller.loadMore();
+                      return const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
 
-                  final quote = state.quotes[index];
-                  return CollectionQuoteCard(
-                    quote: quote,
-                    onCopy: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(CollectionsConstants.quoteCopied),
-                        ),
-                      );
-                    },
-                    onShare: () {
-                      ShareQuoteSheet.show(context, quote: quote);
-                    },
-                    onDelete: () {
-                      _showRemoveQuoteConfirmation(
-                        context,
-                        controller,
-                        quote.id,
-                        colorScheme,
-                      );
-                    },
-                  );
-                },
+                    final quote = state.quotes[index];
+                    return CollectionQuoteCard(
+                      quote: quote,
+                      onCopy: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(CollectionsConstants.quoteCopied),
+                          ),
+                        );
+                      },
+                      onShare: () {
+                        ShareQuoteSheet.show(context, quote: quote);
+                      },
+                      onDelete: () {
+                        _showRemoveQuoteConfirmation(
+                          context,
+                          controller,
+                          quote.id,
+                          colorScheme,
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
       floatingActionButton: isFavorites

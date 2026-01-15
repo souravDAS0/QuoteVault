@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
+import 'package:workmanager/workmanager.dart';
 import 'core/config/theme/theme_provider.dart';
 import 'core/config/router/app_router.dart';
 import 'core/config/router/auth_state_navigation_listener.dart';
 import 'core/config/env/env_config.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'core/providers/notification_manager_provider.dart';
+import 'core/services/daily_quote_worker.dart' as dqw;
+
+import 'core/application/controllers/connectivity_controller.dart';
+import 'core/widgets/offline_banner.dart';
+import 'core/widgets/reconnection_notifier.dart';
 import 'features/settings/application/controllers/settings_controller.dart';
 
 void main() async {
@@ -28,6 +34,12 @@ void main() async {
   // Initialize timezone data for notifications
   tz.initializeTimeZones();
 
+  // Initialize WorkManager for background tasks
+  await Workmanager().initialize(
+    dqw.callbackDispatcher,
+    isInDebugMode: false, // Set to true for debugging WorkManager tasks
+  );
+
   runApp(const ProviderScope(child: QuoteVaultApp()));
 }
 
@@ -40,6 +52,9 @@ class QuoteVaultApp extends ConsumerWidget {
 
     // Initialize auth state navigation listener
     ref.watch(authStateNavigationListenerProvider);
+
+    // Initialize connectivity monitoring
+    ref.watch(connectivityControllerProvider);
 
     // Initialize notification service (permissions will be requested when needed)
     ref.read(notificationServiceProvider).initialize();
@@ -61,6 +76,16 @@ class QuoteVaultApp extends ConsumerWidget {
       themeMode: ref.watch(effectiveFlutterThemeModeProvider),
       routerConfig: router,
       debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        return ReconnectionNotifier(
+          child: Column(
+            children: [
+              const OfflineBanner(),
+              Expanded(child: child ?? const SizedBox.shrink()),
+            ],
+          ),
+        );
+      },
     );
   }
 }

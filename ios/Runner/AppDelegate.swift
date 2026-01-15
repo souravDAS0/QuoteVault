@@ -9,9 +9,6 @@ import UIKit
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
 
-    // Register custom connectivity plugin
-    ConnectivityPlugin.register(with: self.registrar(forPlugin: "ConnectivityPlugin")!)
-
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

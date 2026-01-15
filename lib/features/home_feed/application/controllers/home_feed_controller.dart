@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../../core/application/controllers/connectivity_controller.dart';
 import '../state/home_feed_state.dart';
 import '../providers/quote_providers.dart';
 import '../../domain/entities/category.dart';
@@ -25,60 +26,97 @@ class HomeFeedController extends _$HomeFeedController {
   }
 
   Future<void> _loadInitialData() async {
+    // Initial check for connectivity
+    if (!ref.offlineAware.isOnline) {
+      state = state.copyWith(
+        isLoading: false,
+        isDailyQuoteLoading: false,
+        errorMessage:
+            'No internet connection. Please check your network settings.',
+      );
+      // We return early but we could also load cached data if we had local storage implementation
+      return;
+    }
+
     try {
       final repository = ref.read(quoteRepositoryProvider);
 
       // Load daily quote (non-blocking, scheduled after state init)
       Future.microtask(() => _loadDailyQuote());
 
-      // Load categories (may fail if table doesn't exist)
-      List<Category> categories = [];
-      try {
-        categories = await repository.getCategories();
-        print('Loaded ${categories.length} categories');
-      } catch (e) {
-        print('Failed to load categories (table may not exist): $e');
-        // Continue without categories
-      }
+      await ref.offlineAware.executeWithOfflineHandling(
+        operation: () async {
+          // Load categories (may fail if table doesn't exist)
+          List<Category> categories = [];
+          try {
+            categories = await repository.getCategories();
+            print('Loaded ${categories.length} categories');
+          } catch (e) {
+            print('Failed to load categories (table may not exist): $e');
+            // Continue without categories
+          }
 
-      // Add "all" category at the beginning
-      final allCategory = Category(id: 'all', name: 'All', isSelected: true);
-      categories = [
-        allCategory,
-        ...categories.map((cat) => cat.copyWith(isSelected: false)),
-      ].toList();
+          // Add "all" category at the beginning
+          final allCategory = Category(
+            id: 'all',
+            name: 'All',
+            isSelected: true,
+          );
+          categories = [
+            allCategory,
+            ...categories.map((cat) => cat.copyWith(isSelected: false)),
+          ].toList();
 
-      // Load authors
-      List<Author> authors = [];
-      try {
-        authors = await repository.getAuthors();
-        print('Loaded ${authors.length} authors');
-      } catch (e) {
-        print('Failed to load authors: $e');
-      }
+          // Load authors
+          List<Author> authors = [];
+          try {
+            authors = await repository.getAuthors();
+            print('Loaded ${authors.length} authors');
+          } catch (e) {
+            print('Failed to load authors: $e');
+          }
 
-      // Load quotes
-      List<dynamic> quotes = [];
-      try {
-        quotes = await repository.getQuotes(page: 0, pageSize: _pageSize);
-        print('Loaded ${quotes.length} quotes');
-      } catch (e) {
-        print('Failed to load quotes: $e');
-        rethrow; // Rethrow quote errors as they are critical
-      }
+          // Load quotes
+          List<dynamic> quotes = [];
+          quotes = await repository.getQuotes(page: 0, pageSize: _pageSize);
+          print('Loaded ${quotes.length} quotes');
 
-      state = state.copyWith(
-        categories: categories,
-        authors: authors,
-        quotes: quotes.cast(),
-        isLoading: false,
-        hasReachedEnd: quotes.length < _pageSize,
+          state = state.copyWith(
+            categories: categories,
+            authors: authors,
+            quotes: quotes.cast(),
+            isLoading: false,
+            hasReachedEnd: quotes.length < _pageSize,
+            errorMessage: null, // Clear any previous error
+          );
+        },
+        operationType: OperationType.fetchQuotes,
+        payload: {'page': 0},
+        onQueued: () {
+          state = state.copyWith(
+            isLoading: false,
+            errorMessage: 'Operation queued. Waiting for connection...',
+          );
+        },
       );
     } catch (e) {
       print('Error in _loadInitialData: $e');
+
+      // Determine user-friendly error message
+      String errorMessage = 'Failed to load feed';
+      if (e.toString().contains('SocketException') ||
+          e.toString().contains('Network') ||
+          e.toString().contains('No internet connection')) {
+        errorMessage =
+            'No internet connection. Please check your network settings.';
+      } else {
+        errorMessage = 'Failed to load feed: ${e.toString()}';
+      }
+
       state = state.copyWith(
         isLoading: false,
-        errorMessage: 'Failed to load feed: $e',
+        isDailyQuoteLoading: false,
+        errorMessage: errorMessage,
       );
     }
   }
@@ -103,22 +141,29 @@ class HomeFeedController extends _$HomeFeedController {
       final repository = ref.read(quoteRepositoryProvider);
       final nextPage = state.currentPage + 1;
 
-      List<dynamic> newQuotes;
+      await ref.offlineAware.executeWithOfflineHandling(
+        operation: () async {
+          final newQuotes = await repository.getQuotes(
+            page: nextPage,
+            pageSize: _pageSize,
+            categoryId: state.selectedCategoryId == 'all'
+                ? null
+                : state.selectedCategoryId,
+            authorId: state.selectedAuthorId,
+          );
 
-      newQuotes = await repository.getQuotes(
-        page: nextPage,
-        pageSize: _pageSize,
-        categoryId: state.selectedCategoryId == 'all'
-            ? null
-            : state.selectedCategoryId,
-        authorId: state.selectedAuthorId,
-      );
-
-      state = state.copyWith(
-        quotes: [...state.quotes, ...newQuotes.cast()],
-        currentPage: nextPage,
-        isLoadingMore: false,
-        hasReachedEnd: newQuotes.length < _pageSize,
+          state = state.copyWith(
+            quotes: [...state.quotes, ...newQuotes.cast()],
+            currentPage: nextPage,
+            isLoadingMore: false,
+            hasReachedEnd: newQuotes.isEmpty || newQuotes.length < _pageSize,
+          );
+        },
+        operationType: OperationType.fetchQuotes,
+        payload: {'page': nextPage},
+        onQueued: () {
+          state = state.copyWith(isLoadingMore: false);
+        },
       );
     } catch (e) {
       state = state.copyWith(
@@ -141,19 +186,29 @@ class HomeFeedController extends _$HomeFeedController {
 
     try {
       final repository = ref.read(quoteRepositoryProvider);
-      final quotes = await repository.getQuotes(
-        page: 0,
-        pageSize: _pageSize,
-        categoryId: state.selectedCategoryId == 'all'
-            ? null
-            : state.selectedCategoryId,
-        authorId: authorId,
-      );
 
-      state = state.copyWith(
-        quotes: quotes.cast(),
-        isLoading: false,
-        hasReachedEnd: quotes.length < _pageSize,
+      await ref.offlineAware.executeWithOfflineHandling(
+        operation: () async {
+          final quotes = await repository.getQuotes(
+            page: 0,
+            pageSize: _pageSize,
+            categoryId: state.selectedCategoryId == 'all'
+                ? null
+                : state.selectedCategoryId,
+            authorId: authorId,
+          );
+
+          state = state.copyWith(
+            quotes: quotes.cast(),
+            isLoading: false,
+            hasReachedEnd: quotes.length < _pageSize,
+          );
+        },
+        operationType: OperationType.fetchQuotes,
+        payload: {'authorId': authorId},
+        onQueued: () {
+          state = state.copyWith(isLoading: false);
+        },
       );
     } catch (e) {
       state = state.copyWith(
@@ -183,19 +238,26 @@ class HomeFeedController extends _$HomeFeedController {
     try {
       final repository = ref.read(quoteRepositoryProvider);
 
-      List<dynamic> quotes;
+      await ref.offlineAware.executeWithOfflineHandling(
+        operation: () async {
+          final quotes = await repository.getQuotes(
+            page: 0,
+            pageSize: _pageSize,
+            categoryId: categoryId == 'all' ? null : categoryId,
+            authorId: state.selectedAuthorId,
+          );
 
-      quotes = await repository.getQuotes(
-        page: 0,
-        pageSize: _pageSize,
-        categoryId: categoryId == 'all' ? null : categoryId,
-        authorId: state.selectedAuthorId,
-      );
-
-      state = state.copyWith(
-        quotes: quotes.cast(),
-        isLoading: false,
-        hasReachedEnd: quotes.length < _pageSize,
+          state = state.copyWith(
+            quotes: quotes.cast(),
+            isLoading: false,
+            hasReachedEnd: quotes.length < _pageSize,
+          );
+        },
+        operationType: OperationType.fetchQuotes,
+        payload: {'categoryId': categoryId},
+        onQueued: () {
+          state = state.copyWith(isLoading: false);
+        },
       );
     } catch (e) {
       state = state.copyWith(
@@ -298,11 +360,20 @@ class HomeFeedController extends _$HomeFeedController {
   Future<void> _loadDailyQuote() async {
     try {
       final repository = ref.read(quoteRepositoryProvider);
-      final dailyQuote = await repository.getDailyQuote();
 
-      state = state.copyWith(
-        dailyQuote: dailyQuote,
-        isDailyQuoteLoading: false,
+      await ref.offlineAware.executeWithOfflineHandling(
+        operation: () async {
+          final dailyQuote = await repository.getDailyQuote();
+          state = state.copyWith(
+            dailyQuote: dailyQuote,
+            isDailyQuoteLoading: false,
+          );
+        },
+        operationType: OperationType.fetchDailyQuote,
+        payload: {},
+        onQueued: () {
+          state = state.copyWith(isDailyQuoteLoading: false);
+        },
       );
     } catch (e) {
       print('Error loading daily quote: $e');
