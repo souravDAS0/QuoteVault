@@ -31,7 +31,6 @@ class QuoteVaultApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
     final router = ref.watch(goRouterProvider);
 
     // Initialize auth state navigation listener
@@ -39,9 +38,9 @@ class QuoteVaultApp extends ConsumerWidget {
 
     return MaterialApp.router(
       title: 'QuoteVault',
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
-      themeMode: themeMode,
+      theme: ref.watch(effectiveThemeProvider),
+      darkTheme: ref.watch(effectiveDarkThemeProvider),
+      themeMode: ref.watch(effectiveFlutterThemeModeProvider),
       routerConfig: router,
       debugShowCheckedModeBanner: false,
     );

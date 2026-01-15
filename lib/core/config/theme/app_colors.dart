@@ -55,3 +55,44 @@ abstract class AppColorsDark {
   static const Color border = Color(0xFF374151);
   static const Color divider = Color(0xFF4B5563);
 }
+
+/// Blue Theme (Standalone)
+abstract class AppColorsBlue {
+  static const Color primary = Color(0xFF715AFF);
+  static const Color secondary = Color(0xFF286571);
+  static const Color tertiary = Color(0xFF329CB0);
+  static const Color accent = Color(0xFFAFCAD1);
+
+  static const Color background = Color(0xFF1A1F2E);
+  static const Color surface = Color(0xFF242B3D);
+
+  static const Color textPrimary = Color(0xFFF5F5F7);
+  static const Color textSecondary = Color(0xFFB8C0D4);
+
+  static const Color border = Color(0xFF2E364A);
+  static const Color divider = Color(0xFF3A445C);
+
+  // Reuse semantic colors from Dark mainly or define specific if needed
+  static const Color error = Color(0xFFEF4444);
+  static const Color success = Color(0xFF10B981);
+}
+
+/// Violet Theme (Standalone)
+abstract class AppColorsViolet {
+  static const Color primary = Color(0xFF845EC2);
+  static const Color secondary = Color(0xFF009EFA);
+  static const Color tertiary = Color(0xFF00D2FC);
+  static const Color accent = Color(0xFF4FFBDF);
+
+  static const Color background = Color(0xFF1E1A2E);
+  static const Color surface = Color(0xFF2A2640);
+
+  static const Color textPrimary = Color(0xFFF8F7FA);
+  static const Color textSecondary = Color(0xFFC4BED4);
+
+  static const Color border = Color(0xFF3D3654);
+  static const Color divider = Color(0xFF4B4366);
+
+  static const Color error = Color(0xFFEF4444);
+  static const Color success = Color(0xFF10B981);
+}

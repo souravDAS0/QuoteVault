@@ -9,9 +9,11 @@ import '../../../features/auth/application/providers/auth_state_provider.dart';
 import '../../../features/home_feed/presentation/screens/main_shell.dart';
 import '../../../features/home_feed/presentation/screens/search_screen.dart';
 import '../../../features/collections/presentation/screens/collection_details_screen.dart';
+import '../../../features/settings/presentation/screens/personalization_screen.dart';
 import '../../constants/auth_constants.dart';
 import '../../constants/home_feed_constants.dart';
 import '../../constants/collections_constants.dart';
+import '../../constants/settings_constants.dart';
 
 /// Provider for go_router configuration
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -99,6 +101,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: CollectionsConstants.favoritesRoute,
         builder: (context, state) =>
             const CollectionDetailsScreen(isFavorites: true),
+      ),
+      GoRoute(
+        path: SettingsConstants.personalizationRoute,
+        builder: (context, state) => const PersonalizationScreen(),
       ),
     ],
   );

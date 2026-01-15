@@ -71,6 +71,9 @@ dependencies:
   # Image picker for avatar selection
   image_picker: ^1.0.7
 
+  # Local storage for settings persistence
+  shared_preferences: ^2.3.5
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

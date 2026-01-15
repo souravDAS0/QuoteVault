@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quote_vault/core/config/theme/app_typography.dart';
 import 'package:quote_vault/core/constants/collections_constants.dart';
+import 'package:quote_vault/core/constants/settings_constants.dart';
 import 'package:quote_vault/features/auth/domain/entities/qv_user.dart';
 import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/constants/profile_constants.dart';
@@ -94,7 +95,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
 
                     const SizedBox(height: 32),
-                    _buildAcoountSettingSection(context, isDark, ref),
+                    _buildAccountSettingSection(context, isDark, ref),
                     const SizedBox(height: 24),
                   ],
                 ),
@@ -109,7 +110,7 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAcoountSettingSection(
+  Widget _buildAccountSettingSection(
     BuildContext context,
     bool isDark,
     WidgetRef ref,
@@ -153,7 +154,7 @@ class ProfileScreen extends ConsumerWidget {
             icon: Icons.settings,
             title: ProfileConstants.settings,
             onTap: () {
-              _showComingSoonSnackbar(context, 'Settings');
+              context.push(SettingsConstants.personalizationRoute);
             },
           ),
 
@@ -199,15 +200,6 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ),
       ],
-    );
-  }
-
-  void _showComingSoonSnackbar(BuildContext context, String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$feature - Coming Soon'),
-        duration: const Duration(seconds: 2),
-      ),
     );
   }
 
