@@ -12,6 +12,7 @@ import '../widgets/category_chip.dart';
 import '../widgets/quote_card.dart';
 import '../widgets/loading_indicator.dart';
 import '../widgets/author_filter_sheet.dart';
+import '../widgets/daily_quote_card.dart';
 
 class HomeFeedScreen extends ConsumerStatefulWidget {
   const HomeFeedScreen({super.key});
@@ -111,9 +112,6 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                   child: HomeFeedHeader(
                     userName: userName,
                     userPhotoUrl: userPhotoUrl,
-                    onNotificationTap: () {
-                      // TODO: Navigate to notifications
-                    },
                   ),
                 ),
               ),
@@ -174,6 +172,50 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                   ),
                 ),
               ),
+              // Daily Quote Section
+              if (feedState.isDailyQuoteLoading)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                )
+              else if (feedState.dailyQuote != null)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: DailyQuoteCard(
+                      quote: feedState.dailyQuote!,
+                      onFavorite: () {
+                        ref
+                            .read(homeFeedControllerProvider.notifier)
+                            .toggleFavorite(feedState.dailyQuote!.id);
+                      },
+                      onShare: () {
+                        ShareQuoteSheet.show(
+                          context,
+                          quote: feedState.dailyQuote!,
+                        );
+                      },
+                      onCopy: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Quote copied to clipboard'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      onAddToCollection: () {
+                        AddToCollectionSheet.show(
+                          context,
+                          quoteId: feedState.dailyQuote!.id,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              if (feedState.dailyQuote != null)
+                const SliverToBoxAdapter(child: SizedBox(height: 16)),
               // Loading state
               if (feedState.isLoading && feedState.quotes.isEmpty)
                 const SliverFillRemaining(

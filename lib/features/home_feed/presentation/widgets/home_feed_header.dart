@@ -5,14 +5,12 @@ import '../../../../core/constants/home_feed_constants.dart';
 class HomeFeedHeader extends StatelessWidget {
   final String? userName;
   final String? userPhotoUrl;
-  final VoidCallback? onNotificationTap;
   final VoidCallback? onProfileTap;
 
   const HomeFeedHeader({
     super.key,
     this.userName,
     this.userPhotoUrl,
-    this.onNotificationTap,
     this.onProfileTap,
   });
 
@@ -66,22 +64,6 @@ class HomeFeedHeader extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
-        // Notification bell
-        GestureDetector(
-          onTap: onNotificationTap,
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: colorScheme.surface,
-            ),
-            child: Icon(
-              Icons.notifications_outlined,
-              color: colorScheme.onSurface,
-            ),
           ),
         ),
       ],

@@ -42,7 +42,7 @@ final class HomeFeedControllerProvider
 }
 
 String _$homeFeedControllerHash() =>
-    r'9ac15f051cfdc9ad349ab1db3d20693d7d699d2a';
+    r'a34670248bb72d5a6a433a80742b0b681d26d4f6';
 
 abstract class _$HomeFeedController extends $Notifier<HomeFeedState> {
   HomeFeedState build();

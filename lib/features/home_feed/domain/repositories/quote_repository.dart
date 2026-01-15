@@ -52,4 +52,8 @@ abstract class QuoteRepository {
 
   /// Toggle favorite status for a quote
   Future<Quote> toggleFavorite({required String quoteId});
+
+  /// Get today's quote of the day
+  /// Returns null if no quote is marked as quote of the day for today
+  Future<Quote?> getDailyQuote();
 }

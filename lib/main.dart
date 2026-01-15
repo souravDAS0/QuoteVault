@@ -6,6 +6,9 @@ import 'core/config/theme/theme_provider.dart';
 import 'core/config/router/app_router.dart';
 import 'core/config/router/auth_state_navigation_listener.dart';
 import 'core/config/env/env_config.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'core/providers/notification_manager_provider.dart';
+import 'features/settings/application/controllers/settings_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +25,9 @@ void main() async {
     ),
   );
 
+  // Initialize timezone data for notifications
+  tz.initializeTimeZones();
+
   runApp(const ProviderScope(child: QuoteVaultApp()));
 }
 
@@ -34,6 +40,19 @@ class QuoteVaultApp extends ConsumerWidget {
 
     // Initialize auth state navigation listener
     ref.watch(authStateNavigationListenerProvider);
+
+    // Initialize notification service (permissions will be requested when needed)
+    ref.read(notificationServiceProvider).initialize();
+
+    // Schedule notifications if enabled (after settings load)
+    ref.listen(settingsControllerProvider, (previous, next) {
+      // Only schedule on first load when settings become available
+      if (previous?.isLoading == true && next.isLoading == false) {
+        ref
+            .read(settingsControllerProvider.notifier)
+            .scheduleInitialNotifications();
+      }
+    });
 
     return MaterialApp.router(
       title: 'QuoteVault',

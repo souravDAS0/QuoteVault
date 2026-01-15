@@ -22,6 +22,10 @@ _QuoteDto _$QuoteDtoFromJson(Map<String, dynamic> json) => _QuoteDto(
   createdAt: json['created_at'] == null
       ? null
       : DateTime.parse(json['created_at'] as String),
+  isQuoteOfTheDay: json['is_quote_of_the_day'] as bool? ?? false,
+  quoteOfTheDayDate: json['quote_of_the_day_date'] == null
+      ? null
+      : DateTime.parse(json['quote_of_the_day_date'] as String),
 );
 
 Map<String, dynamic> _$QuoteDtoToJson(_QuoteDto instance) => <String, dynamic>{
@@ -38,4 +42,6 @@ Map<String, dynamic> _$QuoteDtoToJson(_QuoteDto instance) => <String, dynamic>{
   'is_featured': instance.isFeatured,
   'image_url': instance.imageUrl,
   'created_at': instance.createdAt?.toIso8601String(),
+  'is_quote_of_the_day': instance.isQuoteOfTheDay,
+  'quote_of_the_day_date': instance.quoteOfTheDayDate?.toIso8601String(),
 };

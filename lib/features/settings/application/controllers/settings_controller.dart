@@ -1,7 +1,10 @@
+import 'package:quote_vault/features/home_feed/application/providers/quote_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../../../core/providers/notification_manager_provider.dart';
 import '../../domain/entities/user_settings.dart';
-import '../state/settings_state.dart';
 import '../providers/settings_providers.dart';
+import '../state/settings_state.dart';
 
 part 'settings_controller.g.dart';
 
@@ -49,6 +52,9 @@ class SettingsController extends _$SettingsController {
   Future<void> setNotificationsEnabled(bool enabled) async {
     final newSettings = state.settings.copyWith(notificationsEnabled: enabled);
     await _updateSettings(newSettings);
+
+    // Reschedule notifications
+    await _rescheduleNotifications(newSettings);
   }
 
   /// Update notification time
@@ -58,6 +64,9 @@ class SettingsController extends _$SettingsController {
       notificationMinute: minute,
     );
     await _updateSettings(newSettings);
+
+    // Reschedule notifications with new time
+    await _rescheduleNotifications(newSettings);
   }
 
   /// Update settings locally and sync to cloud
@@ -105,5 +114,39 @@ class SettingsController extends _$SettingsController {
   /// Clear error message
   void clearError() {
     state = state.copyWith(errorMessage: null, syncError: null);
+  }
+
+  /// Reschedule notifications based on new settings
+  Future<void> _rescheduleNotifications(UserSettings settings) async {
+    try {
+      final notificationService = ref.read(notificationServiceProvider);
+
+      if (settings.notificationsEnabled) {
+        // Get daily quote for notification content
+        final repository = ref.read(quoteRepositoryProvider);
+        final dailyQuote = await repository.getDailyQuote();
+        // Use a generic message for now - the notification manager will update it
+
+        if (dailyQuote != null) {
+          await notificationService.scheduleDailyNotification(
+            hour: settings.notificationHour,
+            minute: settings.notificationMinute,
+            title: 'Quote of the Day ☀️',
+            body: '"${dailyQuote.text}" - ${dailyQuote.authorName}',
+          );
+        }
+      } else {
+        await notificationService.cancelDailyNotification();
+      }
+    } catch (e) {
+      print('Error rescheduling notifications: $e');
+    }
+  }
+
+  /// Schedule initial notifications on app startup
+  Future<void> scheduleInitialNotifications() async {
+    if (state.settings.notificationsEnabled) {
+      await _rescheduleNotifications(state.settings);
+    }
   }
 }

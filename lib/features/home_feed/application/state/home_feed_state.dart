@@ -18,5 +18,7 @@ abstract class HomeFeedState with _$HomeFeedState {
     String? selectedCategoryId,
     String? selectedAuthorId,
     String? errorMessage,
+    Quote? dailyQuote,
+    @Default(false) bool isDailyQuoteLoading,
   }) = _HomeFeedState;
 }

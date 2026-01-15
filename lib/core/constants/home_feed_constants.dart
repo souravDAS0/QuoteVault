@@ -13,6 +13,10 @@ abstract class HomeFeedConstants {
   static const String noQuotesFound = 'No quotes found';
   static const String pullToRefresh = 'Pull to refresh';
 
+  // Daily Quote
+  static const String quoteOfTheDay = 'Quote of the Day';
+  static const String dailyInspiration = 'Your daily dose of inspiration';
+
   // Search
   static const String foundResults = 'Found';
   static const String resultsFor = 'results for';

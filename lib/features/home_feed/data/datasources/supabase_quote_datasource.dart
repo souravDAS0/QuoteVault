@@ -44,6 +44,10 @@ class SupabaseQuoteDatasource {
       createdAt: data['created_at'] != null
           ? DateTime.tryParse(data['created_at'].toString())
           : null,
+      isQuoteOfTheDay: data['is_quote_of_the_day'] as bool? ?? false,
+      quoteOfTheDayDate: data['quote_of_the_day_date'] != null
+          ? DateTime.tryParse(data['quote_of_the_day_date'].toString())
+          : null,
     );
   }
 
@@ -330,5 +334,36 @@ class SupabaseQuoteDatasource {
         .eq('quote_id', quoteId)
         .maybeSingle();
     return result != null;
+  }
+
+  /// Get today's daily quote
+  Future<QuoteDto?> getDailyQuote() async {
+    try {
+      final userId = _currentUserId;
+      final today = DateTime.now().toIso8601String().split('T')[0];
+
+      final response = await _client
+          .from('quotes')
+          .select('*, authors(*), categories(*)')
+          .eq('is_quote_of_the_day', true)
+          .eq('quote_of_the_day_date', today)
+          .maybeSingle();
+
+      if (response == null) {
+        return null;
+      }
+
+      // Get user's favorites if logged in
+      Set<String> userFavorites = {};
+      if (userId != null) {
+        userFavorites = await _getUserFavoriteQuoteIds(userId);
+      }
+
+      final quote = _mapToQuoteDto(response);
+      return quote.copyWith(isFavorite: userFavorites.contains(quote.id));
+    } catch (e) {
+      print('Error fetching daily quote: $e');
+      return null;
+    }
   }
 }

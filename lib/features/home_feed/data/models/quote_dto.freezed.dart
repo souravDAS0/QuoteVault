@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$QuoteDto {
 
- String get id; String get text;@JsonKey(name: 'author_id') String get authorId;@JsonKey(name: 'author_name') String get authorName;@JsonKey(name: 'author_description') String? get authorDescription;@JsonKey(name: 'category_id') String get categoryId;@JsonKey(name: 'category_name') String get categoryName;@JsonKey(name: 'likes_count') int get likesCount;@JsonKey(name: 'is_favorite') bool get isFavorite;@JsonKey(name: 'is_bookmarked') bool get isBookmarked;@JsonKey(name: 'is_featured') bool get isFeatured;@JsonKey(name: 'image_url') String? get imageUrl;@JsonKey(name: 'created_at') DateTime? get createdAt;
+ String get id; String get text;@JsonKey(name: 'author_id') String get authorId;@JsonKey(name: 'author_name') String get authorName;@JsonKey(name: 'author_description') String? get authorDescription;@JsonKey(name: 'category_id') String get categoryId;@JsonKey(name: 'category_name') String get categoryName;@JsonKey(name: 'likes_count') int get likesCount;@JsonKey(name: 'is_favorite') bool get isFavorite;@JsonKey(name: 'is_bookmarked') bool get isBookmarked;@JsonKey(name: 'is_featured') bool get isFeatured;@JsonKey(name: 'image_url') String? get imageUrl;@JsonKey(name: 'created_at') DateTime? get createdAt;@JsonKey(name: 'is_quote_of_the_day') bool get isQuoteOfTheDay;@JsonKey(name: 'quote_of_the_day_date') DateTime? get quoteOfTheDayDate;
 /// Create a copy of QuoteDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $QuoteDtoCopyWith<QuoteDto> get copyWith => _$QuoteDtoCopyWithImpl<QuoteDto>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuoteDto&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.authorDescription, authorDescription) || other.authorDescription == authorDescription)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.categoryName, categoryName) || other.categoryName == categoryName)&&(identical(other.likesCount, likesCount) || other.likesCount == likesCount)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.isBookmarked, isBookmarked) || other.isBookmarked == isBookmarked)&&(identical(other.isFeatured, isFeatured) || other.isFeatured == isFeatured)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is QuoteDto&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.authorDescription, authorDescription) || other.authorDescription == authorDescription)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.categoryName, categoryName) || other.categoryName == categoryName)&&(identical(other.likesCount, likesCount) || other.likesCount == likesCount)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.isBookmarked, isBookmarked) || other.isBookmarked == isBookmarked)&&(identical(other.isFeatured, isFeatured) || other.isFeatured == isFeatured)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isQuoteOfTheDay, isQuoteOfTheDay) || other.isQuoteOfTheDay == isQuoteOfTheDay)&&(identical(other.quoteOfTheDayDate, quoteOfTheDayDate) || other.quoteOfTheDayDate == quoteOfTheDayDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,text,authorId,authorName,authorDescription,categoryId,categoryName,likesCount,isFavorite,isBookmarked,isFeatured,imageUrl,createdAt);
+int get hashCode => Object.hash(runtimeType,id,text,authorId,authorName,authorDescription,categoryId,categoryName,likesCount,isFavorite,isBookmarked,isFeatured,imageUrl,createdAt,isQuoteOfTheDay,quoteOfTheDayDate);
 
 @override
 String toString() {
-  return 'QuoteDto(id: $id, text: $text, authorId: $authorId, authorName: $authorName, authorDescription: $authorDescription, categoryId: $categoryId, categoryName: $categoryName, likesCount: $likesCount, isFavorite: $isFavorite, isBookmarked: $isBookmarked, isFeatured: $isFeatured, imageUrl: $imageUrl, createdAt: $createdAt)';
+  return 'QuoteDto(id: $id, text: $text, authorId: $authorId, authorName: $authorName, authorDescription: $authorDescription, categoryId: $categoryId, categoryName: $categoryName, likesCount: $likesCount, isFavorite: $isFavorite, isBookmarked: $isBookmarked, isFeatured: $isFeatured, imageUrl: $imageUrl, createdAt: $createdAt, isQuoteOfTheDay: $isQuoteOfTheDay, quoteOfTheDayDate: $quoteOfTheDayDate)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $QuoteDtoCopyWith<$Res>  {
   factory $QuoteDtoCopyWith(QuoteDto value, $Res Function(QuoteDto) _then) = _$QuoteDtoCopyWithImpl;
 @useResult
 $Res call({
- String id, String text,@JsonKey(name: 'author_id') String authorId,@JsonKey(name: 'author_name') String authorName,@JsonKey(name: 'author_description') String? authorDescription,@JsonKey(name: 'category_id') String categoryId,@JsonKey(name: 'category_name') String categoryName,@JsonKey(name: 'likes_count') int likesCount,@JsonKey(name: 'is_favorite') bool isFavorite,@JsonKey(name: 'is_bookmarked') bool isBookmarked,@JsonKey(name: 'is_featured') bool isFeatured,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'created_at') DateTime? createdAt
+ String id, String text,@JsonKey(name: 'author_id') String authorId,@JsonKey(name: 'author_name') String authorName,@JsonKey(name: 'author_description') String? authorDescription,@JsonKey(name: 'category_id') String categoryId,@JsonKey(name: 'category_name') String categoryName,@JsonKey(name: 'likes_count') int likesCount,@JsonKey(name: 'is_favorite') bool isFavorite,@JsonKey(name: 'is_bookmarked') bool isBookmarked,@JsonKey(name: 'is_featured') bool isFeatured,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'is_quote_of_the_day') bool isQuoteOfTheDay,@JsonKey(name: 'quote_of_the_day_date') DateTime? quoteOfTheDayDate
 });
 
 
@@ -65,7 +65,7 @@ class _$QuoteDtoCopyWithImpl<$Res>
 
 /// Create a copy of QuoteDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? text = null,Object? authorId = null,Object? authorName = null,Object? authorDescription = freezed,Object? categoryId = null,Object? categoryName = null,Object? likesCount = null,Object? isFavorite = null,Object? isBookmarked = null,Object? isFeatured = null,Object? imageUrl = freezed,Object? createdAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? text = null,Object? authorId = null,Object? authorName = null,Object? authorDescription = freezed,Object? categoryId = null,Object? categoryName = null,Object? likesCount = null,Object? isFavorite = null,Object? isBookmarked = null,Object? isFeatured = null,Object? imageUrl = freezed,Object? createdAt = freezed,Object? isQuoteOfTheDay = null,Object? quoteOfTheDayDate = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
@@ -80,6 +80,8 @@ as bool,isBookmarked: null == isBookmarked ? _self.isBookmarked : isBookmarked /
 as bool,isFeatured: null == isFeatured ? _self.isFeatured : isFeatured // ignore: cast_nullable_to_non_nullable
 as bool,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,isQuoteOfTheDay: null == isQuoteOfTheDay ? _self.isQuoteOfTheDay : isQuoteOfTheDay // ignore: cast_nullable_to_non_nullable
+as bool,quoteOfTheDayDate: freezed == quoteOfTheDayDate ? _self.quoteOfTheDayDate : quoteOfTheDayDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }
@@ -165,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String text, @JsonKey(name: 'author_id')  String authorId, @JsonKey(name: 'author_name')  String authorName, @JsonKey(name: 'author_description')  String? authorDescription, @JsonKey(name: 'category_id')  String categoryId, @JsonKey(name: 'category_name')  String categoryName, @JsonKey(name: 'likes_count')  int likesCount, @JsonKey(name: 'is_favorite')  bool isFavorite, @JsonKey(name: 'is_bookmarked')  bool isBookmarked, @JsonKey(name: 'is_featured')  bool isFeatured, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String text, @JsonKey(name: 'author_id')  String authorId, @JsonKey(name: 'author_name')  String authorName, @JsonKey(name: 'author_description')  String? authorDescription, @JsonKey(name: 'category_id')  String categoryId, @JsonKey(name: 'category_name')  String categoryName, @JsonKey(name: 'likes_count')  int likesCount, @JsonKey(name: 'is_favorite')  bool isFavorite, @JsonKey(name: 'is_bookmarked')  bool isBookmarked, @JsonKey(name: 'is_featured')  bool isFeatured, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'is_quote_of_the_day')  bool isQuoteOfTheDay, @JsonKey(name: 'quote_of_the_day_date')  DateTime? quoteOfTheDayDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _QuoteDto() when $default != null:
-return $default(_that.id,_that.text,_that.authorId,_that.authorName,_that.authorDescription,_that.categoryId,_that.categoryName,_that.likesCount,_that.isFavorite,_that.isBookmarked,_that.isFeatured,_that.imageUrl,_that.createdAt);case _:
+return $default(_that.id,_that.text,_that.authorId,_that.authorName,_that.authorDescription,_that.categoryId,_that.categoryName,_that.likesCount,_that.isFavorite,_that.isBookmarked,_that.isFeatured,_that.imageUrl,_that.createdAt,_that.isQuoteOfTheDay,_that.quoteOfTheDayDate);case _:
   return orElse();
 
 }
@@ -186,10 +188,10 @@ return $default(_that.id,_that.text,_that.authorId,_that.authorName,_that.author
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String text, @JsonKey(name: 'author_id')  String authorId, @JsonKey(name: 'author_name')  String authorName, @JsonKey(name: 'author_description')  String? authorDescription, @JsonKey(name: 'category_id')  String categoryId, @JsonKey(name: 'category_name')  String categoryName, @JsonKey(name: 'likes_count')  int likesCount, @JsonKey(name: 'is_favorite')  bool isFavorite, @JsonKey(name: 'is_bookmarked')  bool isBookmarked, @JsonKey(name: 'is_featured')  bool isFeatured, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'created_at')  DateTime? createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String text, @JsonKey(name: 'author_id')  String authorId, @JsonKey(name: 'author_name')  String authorName, @JsonKey(name: 'author_description')  String? authorDescription, @JsonKey(name: 'category_id')  String categoryId, @JsonKey(name: 'category_name')  String categoryName, @JsonKey(name: 'likes_count')  int likesCount, @JsonKey(name: 'is_favorite')  bool isFavorite, @JsonKey(name: 'is_bookmarked')  bool isBookmarked, @JsonKey(name: 'is_featured')  bool isFeatured, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'is_quote_of_the_day')  bool isQuoteOfTheDay, @JsonKey(name: 'quote_of_the_day_date')  DateTime? quoteOfTheDayDate)  $default,) {final _that = this;
 switch (_that) {
 case _QuoteDto():
-return $default(_that.id,_that.text,_that.authorId,_that.authorName,_that.authorDescription,_that.categoryId,_that.categoryName,_that.likesCount,_that.isFavorite,_that.isBookmarked,_that.isFeatured,_that.imageUrl,_that.createdAt);case _:
+return $default(_that.id,_that.text,_that.authorId,_that.authorName,_that.authorDescription,_that.categoryId,_that.categoryName,_that.likesCount,_that.isFavorite,_that.isBookmarked,_that.isFeatured,_that.imageUrl,_that.createdAt,_that.isQuoteOfTheDay,_that.quoteOfTheDayDate);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +208,10 @@ return $default(_that.id,_that.text,_that.authorId,_that.authorName,_that.author
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String text, @JsonKey(name: 'author_id')  String authorId, @JsonKey(name: 'author_name')  String authorName, @JsonKey(name: 'author_description')  String? authorDescription, @JsonKey(name: 'category_id')  String categoryId, @JsonKey(name: 'category_name')  String categoryName, @JsonKey(name: 'likes_count')  int likesCount, @JsonKey(name: 'is_favorite')  bool isFavorite, @JsonKey(name: 'is_bookmarked')  bool isBookmarked, @JsonKey(name: 'is_featured')  bool isFeatured, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'created_at')  DateTime? createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String text, @JsonKey(name: 'author_id')  String authorId, @JsonKey(name: 'author_name')  String authorName, @JsonKey(name: 'author_description')  String? authorDescription, @JsonKey(name: 'category_id')  String categoryId, @JsonKey(name: 'category_name')  String categoryName, @JsonKey(name: 'likes_count')  int likesCount, @JsonKey(name: 'is_favorite')  bool isFavorite, @JsonKey(name: 'is_bookmarked')  bool isBookmarked, @JsonKey(name: 'is_featured')  bool isFeatured, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'created_at')  DateTime? createdAt, @JsonKey(name: 'is_quote_of_the_day')  bool isQuoteOfTheDay, @JsonKey(name: 'quote_of_the_day_date')  DateTime? quoteOfTheDayDate)?  $default,) {final _that = this;
 switch (_that) {
 case _QuoteDto() when $default != null:
-return $default(_that.id,_that.text,_that.authorId,_that.authorName,_that.authorDescription,_that.categoryId,_that.categoryName,_that.likesCount,_that.isFavorite,_that.isBookmarked,_that.isFeatured,_that.imageUrl,_that.createdAt);case _:
+return $default(_that.id,_that.text,_that.authorId,_that.authorName,_that.authorDescription,_that.categoryId,_that.categoryName,_that.likesCount,_that.isFavorite,_that.isBookmarked,_that.isFeatured,_that.imageUrl,_that.createdAt,_that.isQuoteOfTheDay,_that.quoteOfTheDayDate);case _:
   return null;
 
 }
@@ -221,7 +223,7 @@ return $default(_that.id,_that.text,_that.authorId,_that.authorName,_that.author
 @JsonSerializable()
 
 class _QuoteDto extends QuoteDto {
-  const _QuoteDto({required this.id, required this.text, @JsonKey(name: 'author_id') required this.authorId, @JsonKey(name: 'author_name') required this.authorName, @JsonKey(name: 'author_description') this.authorDescription, @JsonKey(name: 'category_id') required this.categoryId, @JsonKey(name: 'category_name') required this.categoryName, @JsonKey(name: 'likes_count') this.likesCount = 0, @JsonKey(name: 'is_favorite') this.isFavorite = false, @JsonKey(name: 'is_bookmarked') this.isBookmarked = false, @JsonKey(name: 'is_featured') this.isFeatured = false, @JsonKey(name: 'image_url') this.imageUrl, @JsonKey(name: 'created_at') this.createdAt}): super._();
+  const _QuoteDto({required this.id, required this.text, @JsonKey(name: 'author_id') required this.authorId, @JsonKey(name: 'author_name') required this.authorName, @JsonKey(name: 'author_description') this.authorDescription, @JsonKey(name: 'category_id') required this.categoryId, @JsonKey(name: 'category_name') required this.categoryName, @JsonKey(name: 'likes_count') this.likesCount = 0, @JsonKey(name: 'is_favorite') this.isFavorite = false, @JsonKey(name: 'is_bookmarked') this.isBookmarked = false, @JsonKey(name: 'is_featured') this.isFeatured = false, @JsonKey(name: 'image_url') this.imageUrl, @JsonKey(name: 'created_at') this.createdAt, @JsonKey(name: 'is_quote_of_the_day') this.isQuoteOfTheDay = false, @JsonKey(name: 'quote_of_the_day_date') this.quoteOfTheDayDate}): super._();
   factory _QuoteDto.fromJson(Map<String, dynamic> json) => _$QuoteDtoFromJson(json);
 
 @override final  String id;
@@ -237,6 +239,8 @@ class _QuoteDto extends QuoteDto {
 @override@JsonKey(name: 'is_featured') final  bool isFeatured;
 @override@JsonKey(name: 'image_url') final  String? imageUrl;
 @override@JsonKey(name: 'created_at') final  DateTime? createdAt;
+@override@JsonKey(name: 'is_quote_of_the_day') final  bool isQuoteOfTheDay;
+@override@JsonKey(name: 'quote_of_the_day_date') final  DateTime? quoteOfTheDayDate;
 
 /// Create a copy of QuoteDto
 /// with the given fields replaced by the non-null parameter values.
@@ -251,16 +255,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _QuoteDto&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.authorDescription, authorDescription) || other.authorDescription == authorDescription)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.categoryName, categoryName) || other.categoryName == categoryName)&&(identical(other.likesCount, likesCount) || other.likesCount == likesCount)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.isBookmarked, isBookmarked) || other.isBookmarked == isBookmarked)&&(identical(other.isFeatured, isFeatured) || other.isFeatured == isFeatured)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _QuoteDto&&(identical(other.id, id) || other.id == id)&&(identical(other.text, text) || other.text == text)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.authorName, authorName) || other.authorName == authorName)&&(identical(other.authorDescription, authorDescription) || other.authorDescription == authorDescription)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.categoryName, categoryName) || other.categoryName == categoryName)&&(identical(other.likesCount, likesCount) || other.likesCount == likesCount)&&(identical(other.isFavorite, isFavorite) || other.isFavorite == isFavorite)&&(identical(other.isBookmarked, isBookmarked) || other.isBookmarked == isBookmarked)&&(identical(other.isFeatured, isFeatured) || other.isFeatured == isFeatured)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.isQuoteOfTheDay, isQuoteOfTheDay) || other.isQuoteOfTheDay == isQuoteOfTheDay)&&(identical(other.quoteOfTheDayDate, quoteOfTheDayDate) || other.quoteOfTheDayDate == quoteOfTheDayDate));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,text,authorId,authorName,authorDescription,categoryId,categoryName,likesCount,isFavorite,isBookmarked,isFeatured,imageUrl,createdAt);
+int get hashCode => Object.hash(runtimeType,id,text,authorId,authorName,authorDescription,categoryId,categoryName,likesCount,isFavorite,isBookmarked,isFeatured,imageUrl,createdAt,isQuoteOfTheDay,quoteOfTheDayDate);
 
 @override
 String toString() {
-  return 'QuoteDto(id: $id, text: $text, authorId: $authorId, authorName: $authorName, authorDescription: $authorDescription, categoryId: $categoryId, categoryName: $categoryName, likesCount: $likesCount, isFavorite: $isFavorite, isBookmarked: $isBookmarked, isFeatured: $isFeatured, imageUrl: $imageUrl, createdAt: $createdAt)';
+  return 'QuoteDto(id: $id, text: $text, authorId: $authorId, authorName: $authorName, authorDescription: $authorDescription, categoryId: $categoryId, categoryName: $categoryName, likesCount: $likesCount, isFavorite: $isFavorite, isBookmarked: $isBookmarked, isFeatured: $isFeatured, imageUrl: $imageUrl, createdAt: $createdAt, isQuoteOfTheDay: $isQuoteOfTheDay, quoteOfTheDayDate: $quoteOfTheDayDate)';
 }
 
 
@@ -271,7 +275,7 @@ abstract mixin class _$QuoteDtoCopyWith<$Res> implements $QuoteDtoCopyWith<$Res>
   factory _$QuoteDtoCopyWith(_QuoteDto value, $Res Function(_QuoteDto) _then) = __$QuoteDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String text,@JsonKey(name: 'author_id') String authorId,@JsonKey(name: 'author_name') String authorName,@JsonKey(name: 'author_description') String? authorDescription,@JsonKey(name: 'category_id') String categoryId,@JsonKey(name: 'category_name') String categoryName,@JsonKey(name: 'likes_count') int likesCount,@JsonKey(name: 'is_favorite') bool isFavorite,@JsonKey(name: 'is_bookmarked') bool isBookmarked,@JsonKey(name: 'is_featured') bool isFeatured,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'created_at') DateTime? createdAt
+ String id, String text,@JsonKey(name: 'author_id') String authorId,@JsonKey(name: 'author_name') String authorName,@JsonKey(name: 'author_description') String? authorDescription,@JsonKey(name: 'category_id') String categoryId,@JsonKey(name: 'category_name') String categoryName,@JsonKey(name: 'likes_count') int likesCount,@JsonKey(name: 'is_favorite') bool isFavorite,@JsonKey(name: 'is_bookmarked') bool isBookmarked,@JsonKey(name: 'is_featured') bool isFeatured,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'created_at') DateTime? createdAt,@JsonKey(name: 'is_quote_of_the_day') bool isQuoteOfTheDay,@JsonKey(name: 'quote_of_the_day_date') DateTime? quoteOfTheDayDate
 });
 
 
@@ -288,7 +292,7 @@ class __$QuoteDtoCopyWithImpl<$Res>
 
 /// Create a copy of QuoteDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? text = null,Object? authorId = null,Object? authorName = null,Object? authorDescription = freezed,Object? categoryId = null,Object? categoryName = null,Object? likesCount = null,Object? isFavorite = null,Object? isBookmarked = null,Object? isFeatured = null,Object? imageUrl = freezed,Object? createdAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? text = null,Object? authorId = null,Object? authorName = null,Object? authorDescription = freezed,Object? categoryId = null,Object? categoryName = null,Object? likesCount = null,Object? isFavorite = null,Object? isBookmarked = null,Object? isFeatured = null,Object? imageUrl = freezed,Object? createdAt = freezed,Object? isQuoteOfTheDay = null,Object? quoteOfTheDayDate = freezed,}) {
   return _then(_QuoteDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
@@ -303,6 +307,8 @@ as bool,isBookmarked: null == isBookmarked ? _self.isBookmarked : isBookmarked /
 as bool,isFeatured: null == isFeatured ? _self.isFeatured : isFeatured // ignore: cast_nullable_to_non_nullable
 as bool,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: freezed == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,isQuoteOfTheDay: null == isQuoteOfTheDay ? _self.isQuoteOfTheDay : isQuoteOfTheDay // ignore: cast_nullable_to_non_nullable
+as bool,quoteOfTheDayDate: freezed == quoteOfTheDayDate ? _self.quoteOfTheDayDate : quoteOfTheDayDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
 }

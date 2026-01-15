@@ -3,6 +3,7 @@ import '../state/home_feed_state.dart';
 import '../providers/quote_providers.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/author.dart';
+import '../../domain/entities/quote.dart';
 
 part 'home_feed_controller.g.dart';
 
@@ -17,12 +18,15 @@ class HomeFeedController extends _$HomeFeedController {
   HomeFeedState build() {
     // Load initial data
     _loadInitialData();
-    return const HomeFeedState(isLoading: true);
+    return const HomeFeedState(isLoading: true, isDailyQuoteLoading: true);
   }
 
   Future<void> _loadInitialData() async {
     try {
       final repository = ref.read(quoteRepositoryProvider);
+
+      // Load daily quote (non-blocking, scheduled after state init)
+      Future.microtask(() => _loadDailyQuote());
 
       // Load categories (may fail if table doesn't exist)
       List<Category> categories = [];
@@ -206,44 +210,76 @@ class HomeFeedController extends _$HomeFeedController {
 
     _togglingFavorites.add(quoteId);
 
-    // Find the current quote to get its state
-    final currentQuote = state.quotes.firstWhere(
-      (q) => q.id == quoteId,
-      orElse: () => throw Exception('Quote not found'),
-    );
+    // Check if this is the daily quote or a regular quote
+    final isDailyQuote = state.dailyQuote?.id == quoteId;
 
-    // Optimistic update - toggle immediately in UI
-    final optimisticQuotes = state.quotes.map((q) {
-      if (q.id == quoteId) {
-        return q.copyWith(
-          isFavorite: !q.isFavorite,
-          likesCount: q.isFavorite ? q.likesCount - 1 : q.likesCount + 1,
+    Quote currentQuote;
+    if (isDailyQuote && state.dailyQuote != null) {
+      currentQuote = state.dailyQuote!;
+    } else {
+      // Find in regular quotes list
+      try {
+        currentQuote = state.quotes.firstWhere(
+          (q) => q.id == quoteId,
+          orElse: () => throw Exception('Quote not found'),
         );
+      } catch (e) {
+        _togglingFavorites.remove(quoteId);
+        return;
       }
-      return q;
-    }).toList();
-    state = state.copyWith(quotes: optimisticQuotes);
+    }
+
+    // Optimistic update
+    if (isDailyQuote) {
+      // Update daily quote
+      state = state.copyWith(
+        dailyQuote: currentQuote.copyWith(
+          isFavorite: !currentQuote.isFavorite,
+          likesCount: currentQuote.isFavorite
+              ? currentQuote.likesCount - 1
+              : currentQuote.likesCount + 1,
+        ),
+      );
+    } else {
+      // Update in quotes list
+      final optimisticQuotes = state.quotes.map((q) {
+        if (q.id == quoteId) {
+          return q.copyWith(
+            isFavorite: !q.isFavorite,
+            likesCount: q.isFavorite ? q.likesCount - 1 : q.likesCount + 1,
+          );
+        }
+        return q;
+      }).toList();
+      state = state.copyWith(quotes: optimisticQuotes);
+    }
 
     try {
       final repository = ref.read(quoteRepositoryProvider);
       final updatedQuote = await repository.toggleFavorite(quoteId: quoteId);
 
       // Update with server response
-      final updatedQuotes = state.quotes.map((q) {
-        return q.id == quoteId ? updatedQuote : q;
-      }).toList();
-
-      state = state.copyWith(quotes: updatedQuotes);
+      if (isDailyQuote) {
+        state = state.copyWith(dailyQuote: updatedQuote);
+      } else {
+        final updatedQuotes = state.quotes.map((q) {
+          return q.id == quoteId ? updatedQuote : q;
+        }).toList();
+        state = state.copyWith(quotes: updatedQuotes);
+      }
     } catch (e) {
       // Revert optimistic update on error
-      final revertedQuotes = state.quotes.map((q) {
-        return q.id == quoteId ? currentQuote : q;
-      }).toList();
-
-      state = state.copyWith(
-        quotes: revertedQuotes,
-        errorMessage: 'Failed to update favorite: $e',
-      );
+      if (isDailyQuote) {
+        state = state.copyWith(dailyQuote: currentQuote);
+      } else {
+        final revertedQuotes = state.quotes.map((q) {
+          return q.id == quoteId ? currentQuote : q;
+        }).toList();
+        state = state.copyWith(
+          quotes: revertedQuotes,
+          errorMessage: 'Failed to update favorite: $e',
+        );
+      }
     } finally {
       _togglingFavorites.remove(quoteId);
     }
@@ -251,5 +287,21 @@ class HomeFeedController extends _$HomeFeedController {
 
   void clearError() {
     state = state.copyWith(errorMessage: null);
+  }
+
+  /// Load today's quote of the day
+  Future<void> _loadDailyQuote() async {
+    try {
+      final repository = ref.read(quoteRepositoryProvider);
+      final dailyQuote = await repository.getDailyQuote();
+
+      state = state.copyWith(
+        dailyQuote: dailyQuote,
+        isDailyQuoteLoading: false,
+      );
+    } catch (e) {
+      print('Error loading daily quote: $e');
+      state = state.copyWith(isDailyQuoteLoading: false);
+    }
   }
 }

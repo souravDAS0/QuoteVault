@@ -83,4 +83,10 @@ class QuoteRepositoryImpl implements QuoteRepository {
     final dto = await _datasource.toggleFavorite(quoteId: quoteId);
     return dto.toDomain();
   }
+
+  @override
+  Future<Quote?> getDailyQuote() async {
+    final dto = await _datasource.getDailyQuote();
+    return dto?.toDomain();
+  }
 }

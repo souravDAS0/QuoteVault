@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeFeedState {
 
- List<Quote> get quotes; List<Category> get categories; List<Author> get authors; bool get isLoading; bool get isLoadingMore; bool get hasReachedEnd; int get currentPage; String? get selectedCategoryId; String? get selectedAuthorId; String? get errorMessage;
+ List<Quote> get quotes; List<Category> get categories; List<Author> get authors; bool get isLoading; bool get isLoadingMore; bool get hasReachedEnd; int get currentPage; String? get selectedCategoryId; String? get selectedAuthorId; String? get errorMessage; Quote? get dailyQuote; bool get isDailyQuoteLoading;
 /// Create a copy of HomeFeedState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $HomeFeedStateCopyWith<HomeFeedState> get copyWith => _$HomeFeedStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeFeedState&&const DeepCollectionEquality().equals(other.quotes, quotes)&&const DeepCollectionEquality().equals(other.categories, categories)&&const DeepCollectionEquality().equals(other.authors, authors)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.hasReachedEnd, hasReachedEnd) || other.hasReachedEnd == hasReachedEnd)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.selectedCategoryId, selectedCategoryId) || other.selectedCategoryId == selectedCategoryId)&&(identical(other.selectedAuthorId, selectedAuthorId) || other.selectedAuthorId == selectedAuthorId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeFeedState&&const DeepCollectionEquality().equals(other.quotes, quotes)&&const DeepCollectionEquality().equals(other.categories, categories)&&const DeepCollectionEquality().equals(other.authors, authors)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.hasReachedEnd, hasReachedEnd) || other.hasReachedEnd == hasReachedEnd)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.selectedCategoryId, selectedCategoryId) || other.selectedCategoryId == selectedCategoryId)&&(identical(other.selectedAuthorId, selectedAuthorId) || other.selectedAuthorId == selectedAuthorId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.dailyQuote, dailyQuote) || other.dailyQuote == dailyQuote)&&(identical(other.isDailyQuoteLoading, isDailyQuoteLoading) || other.isDailyQuoteLoading == isDailyQuoteLoading));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(quotes),const DeepCollectionEquality().hash(categories),const DeepCollectionEquality().hash(authors),isLoading,isLoadingMore,hasReachedEnd,currentPage,selectedCategoryId,selectedAuthorId,errorMessage);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(quotes),const DeepCollectionEquality().hash(categories),const DeepCollectionEquality().hash(authors),isLoading,isLoadingMore,hasReachedEnd,currentPage,selectedCategoryId,selectedAuthorId,errorMessage,dailyQuote,isDailyQuoteLoading);
 
 @override
 String toString() {
-  return 'HomeFeedState(quotes: $quotes, categories: $categories, authors: $authors, isLoading: $isLoading, isLoadingMore: $isLoadingMore, hasReachedEnd: $hasReachedEnd, currentPage: $currentPage, selectedCategoryId: $selectedCategoryId, selectedAuthorId: $selectedAuthorId, errorMessage: $errorMessage)';
+  return 'HomeFeedState(quotes: $quotes, categories: $categories, authors: $authors, isLoading: $isLoading, isLoadingMore: $isLoadingMore, hasReachedEnd: $hasReachedEnd, currentPage: $currentPage, selectedCategoryId: $selectedCategoryId, selectedAuthorId: $selectedAuthorId, errorMessage: $errorMessage, dailyQuote: $dailyQuote, isDailyQuoteLoading: $isDailyQuoteLoading)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $HomeFeedStateCopyWith<$Res>  {
   factory $HomeFeedStateCopyWith(HomeFeedState value, $Res Function(HomeFeedState) _then) = _$HomeFeedStateCopyWithImpl;
 @useResult
 $Res call({
- List<Quote> quotes, List<Category> categories, List<Author> authors, bool isLoading, bool isLoadingMore, bool hasReachedEnd, int currentPage, String? selectedCategoryId, String? selectedAuthorId, String? errorMessage
+ List<Quote> quotes, List<Category> categories, List<Author> authors, bool isLoading, bool isLoadingMore, bool hasReachedEnd, int currentPage, String? selectedCategoryId, String? selectedAuthorId, String? errorMessage, Quote? dailyQuote, bool isDailyQuoteLoading
 });
 
 
-
+$QuoteCopyWith<$Res>? get dailyQuote;
 
 }
 /// @nodoc
@@ -62,7 +62,7 @@ class _$HomeFeedStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeFeedState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? quotes = null,Object? categories = null,Object? authors = null,Object? isLoading = null,Object? isLoadingMore = null,Object? hasReachedEnd = null,Object? currentPage = null,Object? selectedCategoryId = freezed,Object? selectedAuthorId = freezed,Object? errorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? quotes = null,Object? categories = null,Object? authors = null,Object? isLoading = null,Object? isLoadingMore = null,Object? hasReachedEnd = null,Object? currentPage = null,Object? selectedCategoryId = freezed,Object? selectedAuthorId = freezed,Object? errorMessage = freezed,Object? dailyQuote = freezed,Object? isDailyQuoteLoading = null,}) {
   return _then(_self.copyWith(
 quotes: null == quotes ? _self.quotes : quotes // ignore: cast_nullable_to_non_nullable
 as List<Quote>,categories: null == categories ? _self.categories : categories // ignore: cast_nullable_to_non_nullable
@@ -74,10 +74,24 @@ as bool,currentPage: null == currentPage ? _self.currentPage : currentPage // ig
 as int,selectedCategoryId: freezed == selectedCategoryId ? _self.selectedCategoryId : selectedCategoryId // ignore: cast_nullable_to_non_nullable
 as String?,selectedAuthorId: freezed == selectedAuthorId ? _self.selectedAuthorId : selectedAuthorId // ignore: cast_nullable_to_non_nullable
 as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,dailyQuote: freezed == dailyQuote ? _self.dailyQuote : dailyQuote // ignore: cast_nullable_to_non_nullable
+as Quote?,isDailyQuoteLoading: null == isDailyQuoteLoading ? _self.isDailyQuoteLoading : isDailyQuoteLoading // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
+/// Create a copy of HomeFeedState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$QuoteCopyWith<$Res>? get dailyQuote {
+    if (_self.dailyQuote == null) {
+    return null;
+  }
 
+  return $QuoteCopyWith<$Res>(_self.dailyQuote!, (value) {
+    return _then(_self.copyWith(dailyQuote: value));
+  });
+}
 }
 
 
@@ -159,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Quote> quotes,  List<Category> categories,  List<Author> authors,  bool isLoading,  bool isLoadingMore,  bool hasReachedEnd,  int currentPage,  String? selectedCategoryId,  String? selectedAuthorId,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Quote> quotes,  List<Category> categories,  List<Author> authors,  bool isLoading,  bool isLoadingMore,  bool hasReachedEnd,  int currentPage,  String? selectedCategoryId,  String? selectedAuthorId,  String? errorMessage,  Quote? dailyQuote,  bool isDailyQuoteLoading)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeFeedState() when $default != null:
-return $default(_that.quotes,_that.categories,_that.authors,_that.isLoading,_that.isLoadingMore,_that.hasReachedEnd,_that.currentPage,_that.selectedCategoryId,_that.selectedAuthorId,_that.errorMessage);case _:
+return $default(_that.quotes,_that.categories,_that.authors,_that.isLoading,_that.isLoadingMore,_that.hasReachedEnd,_that.currentPage,_that.selectedCategoryId,_that.selectedAuthorId,_that.errorMessage,_that.dailyQuote,_that.isDailyQuoteLoading);case _:
   return orElse();
 
 }
@@ -180,10 +194,10 @@ return $default(_that.quotes,_that.categories,_that.authors,_that.isLoading,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Quote> quotes,  List<Category> categories,  List<Author> authors,  bool isLoading,  bool isLoadingMore,  bool hasReachedEnd,  int currentPage,  String? selectedCategoryId,  String? selectedAuthorId,  String? errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Quote> quotes,  List<Category> categories,  List<Author> authors,  bool isLoading,  bool isLoadingMore,  bool hasReachedEnd,  int currentPage,  String? selectedCategoryId,  String? selectedAuthorId,  String? errorMessage,  Quote? dailyQuote,  bool isDailyQuoteLoading)  $default,) {final _that = this;
 switch (_that) {
 case _HomeFeedState():
-return $default(_that.quotes,_that.categories,_that.authors,_that.isLoading,_that.isLoadingMore,_that.hasReachedEnd,_that.currentPage,_that.selectedCategoryId,_that.selectedAuthorId,_that.errorMessage);case _:
+return $default(_that.quotes,_that.categories,_that.authors,_that.isLoading,_that.isLoadingMore,_that.hasReachedEnd,_that.currentPage,_that.selectedCategoryId,_that.selectedAuthorId,_that.errorMessage,_that.dailyQuote,_that.isDailyQuoteLoading);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +214,10 @@ return $default(_that.quotes,_that.categories,_that.authors,_that.isLoading,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Quote> quotes,  List<Category> categories,  List<Author> authors,  bool isLoading,  bool isLoadingMore,  bool hasReachedEnd,  int currentPage,  String? selectedCategoryId,  String? selectedAuthorId,  String? errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Quote> quotes,  List<Category> categories,  List<Author> authors,  bool isLoading,  bool isLoadingMore,  bool hasReachedEnd,  int currentPage,  String? selectedCategoryId,  String? selectedAuthorId,  String? errorMessage,  Quote? dailyQuote,  bool isDailyQuoteLoading)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeFeedState() when $default != null:
-return $default(_that.quotes,_that.categories,_that.authors,_that.isLoading,_that.isLoadingMore,_that.hasReachedEnd,_that.currentPage,_that.selectedCategoryId,_that.selectedAuthorId,_that.errorMessage);case _:
+return $default(_that.quotes,_that.categories,_that.authors,_that.isLoading,_that.isLoadingMore,_that.hasReachedEnd,_that.currentPage,_that.selectedCategoryId,_that.selectedAuthorId,_that.errorMessage,_that.dailyQuote,_that.isDailyQuoteLoading);case _:
   return null;
 
 }
@@ -215,7 +229,7 @@ return $default(_that.quotes,_that.categories,_that.authors,_that.isLoading,_tha
 
 
 class _HomeFeedState implements HomeFeedState {
-  const _HomeFeedState({final  List<Quote> quotes = const [], final  List<Category> categories = const [], final  List<Author> authors = const [], this.isLoading = false, this.isLoadingMore = false, this.hasReachedEnd = false, this.currentPage = 0, this.selectedCategoryId, this.selectedAuthorId, this.errorMessage}): _quotes = quotes,_categories = categories,_authors = authors;
+  const _HomeFeedState({final  List<Quote> quotes = const [], final  List<Category> categories = const [], final  List<Author> authors = const [], this.isLoading = false, this.isLoadingMore = false, this.hasReachedEnd = false, this.currentPage = 0, this.selectedCategoryId, this.selectedAuthorId, this.errorMessage, this.dailyQuote, this.isDailyQuoteLoading = false}): _quotes = quotes,_categories = categories,_authors = authors;
   
 
  final  List<Quote> _quotes;
@@ -246,6 +260,8 @@ class _HomeFeedState implements HomeFeedState {
 @override final  String? selectedCategoryId;
 @override final  String? selectedAuthorId;
 @override final  String? errorMessage;
+@override final  Quote? dailyQuote;
+@override@JsonKey() final  bool isDailyQuoteLoading;
 
 /// Create a copy of HomeFeedState
 /// with the given fields replaced by the non-null parameter values.
@@ -257,16 +273,16 @@ _$HomeFeedStateCopyWith<_HomeFeedState> get copyWith => __$HomeFeedStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeFeedState&&const DeepCollectionEquality().equals(other._quotes, _quotes)&&const DeepCollectionEquality().equals(other._categories, _categories)&&const DeepCollectionEquality().equals(other._authors, _authors)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.hasReachedEnd, hasReachedEnd) || other.hasReachedEnd == hasReachedEnd)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.selectedCategoryId, selectedCategoryId) || other.selectedCategoryId == selectedCategoryId)&&(identical(other.selectedAuthorId, selectedAuthorId) || other.selectedAuthorId == selectedAuthorId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeFeedState&&const DeepCollectionEquality().equals(other._quotes, _quotes)&&const DeepCollectionEquality().equals(other._categories, _categories)&&const DeepCollectionEquality().equals(other._authors, _authors)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore)&&(identical(other.hasReachedEnd, hasReachedEnd) || other.hasReachedEnd == hasReachedEnd)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.selectedCategoryId, selectedCategoryId) || other.selectedCategoryId == selectedCategoryId)&&(identical(other.selectedAuthorId, selectedAuthorId) || other.selectedAuthorId == selectedAuthorId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.dailyQuote, dailyQuote) || other.dailyQuote == dailyQuote)&&(identical(other.isDailyQuoteLoading, isDailyQuoteLoading) || other.isDailyQuoteLoading == isDailyQuoteLoading));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_quotes),const DeepCollectionEquality().hash(_categories),const DeepCollectionEquality().hash(_authors),isLoading,isLoadingMore,hasReachedEnd,currentPage,selectedCategoryId,selectedAuthorId,errorMessage);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_quotes),const DeepCollectionEquality().hash(_categories),const DeepCollectionEquality().hash(_authors),isLoading,isLoadingMore,hasReachedEnd,currentPage,selectedCategoryId,selectedAuthorId,errorMessage,dailyQuote,isDailyQuoteLoading);
 
 @override
 String toString() {
-  return 'HomeFeedState(quotes: $quotes, categories: $categories, authors: $authors, isLoading: $isLoading, isLoadingMore: $isLoadingMore, hasReachedEnd: $hasReachedEnd, currentPage: $currentPage, selectedCategoryId: $selectedCategoryId, selectedAuthorId: $selectedAuthorId, errorMessage: $errorMessage)';
+  return 'HomeFeedState(quotes: $quotes, categories: $categories, authors: $authors, isLoading: $isLoading, isLoadingMore: $isLoadingMore, hasReachedEnd: $hasReachedEnd, currentPage: $currentPage, selectedCategoryId: $selectedCategoryId, selectedAuthorId: $selectedAuthorId, errorMessage: $errorMessage, dailyQuote: $dailyQuote, isDailyQuoteLoading: $isDailyQuoteLoading)';
 }
 
 
@@ -277,11 +293,11 @@ abstract mixin class _$HomeFeedStateCopyWith<$Res> implements $HomeFeedStateCopy
   factory _$HomeFeedStateCopyWith(_HomeFeedState value, $Res Function(_HomeFeedState) _then) = __$HomeFeedStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<Quote> quotes, List<Category> categories, List<Author> authors, bool isLoading, bool isLoadingMore, bool hasReachedEnd, int currentPage, String? selectedCategoryId, String? selectedAuthorId, String? errorMessage
+ List<Quote> quotes, List<Category> categories, List<Author> authors, bool isLoading, bool isLoadingMore, bool hasReachedEnd, int currentPage, String? selectedCategoryId, String? selectedAuthorId, String? errorMessage, Quote? dailyQuote, bool isDailyQuoteLoading
 });
 
 
-
+@override $QuoteCopyWith<$Res>? get dailyQuote;
 
 }
 /// @nodoc
@@ -294,7 +310,7 @@ class __$HomeFeedStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeFeedState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? quotes = null,Object? categories = null,Object? authors = null,Object? isLoading = null,Object? isLoadingMore = null,Object? hasReachedEnd = null,Object? currentPage = null,Object? selectedCategoryId = freezed,Object? selectedAuthorId = freezed,Object? errorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? quotes = null,Object? categories = null,Object? authors = null,Object? isLoading = null,Object? isLoadingMore = null,Object? hasReachedEnd = null,Object? currentPage = null,Object? selectedCategoryId = freezed,Object? selectedAuthorId = freezed,Object? errorMessage = freezed,Object? dailyQuote = freezed,Object? isDailyQuoteLoading = null,}) {
   return _then(_HomeFeedState(
 quotes: null == quotes ? _self._quotes : quotes // ignore: cast_nullable_to_non_nullable
 as List<Quote>,categories: null == categories ? _self._categories : categories // ignore: cast_nullable_to_non_nullable
@@ -306,11 +322,25 @@ as bool,currentPage: null == currentPage ? _self.currentPage : currentPage // ig
 as int,selectedCategoryId: freezed == selectedCategoryId ? _self.selectedCategoryId : selectedCategoryId // ignore: cast_nullable_to_non_nullable
 as String?,selectedAuthorId: freezed == selectedAuthorId ? _self.selectedAuthorId : selectedAuthorId // ignore: cast_nullable_to_non_nullable
 as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,dailyQuote: freezed == dailyQuote ? _self.dailyQuote : dailyQuote // ignore: cast_nullable_to_non_nullable
+as Quote?,isDailyQuoteLoading: null == isDailyQuoteLoading ? _self.isDailyQuoteLoading : isDailyQuoteLoading // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
+/// Create a copy of HomeFeedState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$QuoteCopyWith<$Res>? get dailyQuote {
+    if (_self.dailyQuote == null) {
+    return null;
+  }
 
+  return $QuoteCopyWith<$Res>(_self.dailyQuote!, (value) {
+    return _then(_self.copyWith(dailyQuote: value));
+  });
+}
 }
 
 // dart format on

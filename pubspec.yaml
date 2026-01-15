@@ -74,6 +74,10 @@ dependencies:
   # Local storage for settings persistence
   shared_preferences: ^2.3.5
 
+  # Local push notifications
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.9.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

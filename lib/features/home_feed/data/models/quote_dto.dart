@@ -24,6 +24,8 @@ abstract class QuoteDto with _$QuoteDto {
     @JsonKey(name: 'is_featured') @Default(false) bool isFeatured,
     @JsonKey(name: 'image_url') String? imageUrl,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'is_quote_of_the_day') @Default(false) bool isQuoteOfTheDay,
+    @JsonKey(name: 'quote_of_the_day_date') DateTime? quoteOfTheDayDate,
   }) = _QuoteDto;
 
   factory QuoteDto.fromJson(Map<String, dynamic> json) =>
