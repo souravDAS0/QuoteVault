@@ -45,7 +45,7 @@ final class RetryQueueControllerProvider
 }
 
 String _$retryQueueControllerHash() =>
-    r'ff45dfda880fcb34ab5d2a2dfb1cd081a27cde65';
+    r'bcb0d7cf50c141d56bb53d6cb4a0831f46174fa5';
 
 /// Controller for managing the retry queue of offline operations
 

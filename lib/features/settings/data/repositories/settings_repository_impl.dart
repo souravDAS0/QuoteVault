@@ -50,4 +50,9 @@ class SettingsRepositoryImpl implements SettingsRepository {
     }
     return const UserSettings();
   }
+
+  @override
+  Future<void> clearLocalSettings() async {
+    await _localDatasource.clearSettings();
+  }
 }

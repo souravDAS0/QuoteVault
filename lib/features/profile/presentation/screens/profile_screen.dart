@@ -5,6 +5,7 @@ import 'package:quote_vault/core/config/theme/app_typography.dart';
 import 'package:quote_vault/core/constants/collections_constants.dart';
 import 'package:quote_vault/core/constants/settings_constants.dart';
 import 'package:quote_vault/features/auth/domain/entities/qv_user.dart';
+import 'package:quote_vault/features/settings/application/providers/settings_providers.dart';
 
 import '../../../../core/constants/profile_constants.dart';
 import '../../../auth/application/providers/auth_state_provider.dart';
@@ -314,6 +315,12 @@ class ProfileScreen extends ConsumerWidget {
 
   Future<void> _performLogout(BuildContext context, WidgetRef ref) async {
     try {
+      // Clear local settings cache before logout to prevent
+      // stale settings being shown to the next user
+      final settingsRepository =
+          await ref.read(settingsRepositoryProvider.future);
+      await settingsRepository.clearLocalSettings();
+
       final authRepository = ref.read(authRepositoryProvider);
       await authRepository.signOut();
 

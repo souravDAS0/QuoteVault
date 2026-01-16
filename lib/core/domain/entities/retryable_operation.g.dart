@@ -37,4 +37,9 @@ const _$OperationTypeEnumMap = {
   OperationType.syncSettings: 'syncSettings',
   OperationType.deleteCollection: 'deleteCollection',
   OperationType.updateCollectionName: 'updateCollectionName',
+  OperationType.fetchCollections: 'fetchCollections',
+  OperationType.fetchCollectionDetails: 'fetchCollectionDetails',
+  OperationType.fetchFavorites: 'fetchFavorites',
+  OperationType.fetchQuotes: 'fetchQuotes',
+  OperationType.fetchDailyQuote: 'fetchDailyQuote',
 };

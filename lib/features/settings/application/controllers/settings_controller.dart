@@ -15,11 +15,12 @@ part 'settings_controller.g.dart';
 class SettingsController extends _$SettingsController {
   @override
   SettingsState build() {
+    // Load settings from local storage (local-first approach)
     _loadSettings();
     return const SettingsState(isLoading: true);
   }
 
-  /// Load settings from repository
+  /// Load settings from repository (local first, then cloud fallback)
   Future<void> _loadSettings() async {
     try {
       final repository = await ref.read(settingsRepositoryProvider.future);
@@ -35,6 +36,25 @@ class SettingsController extends _$SettingsController {
         isLoading: false,
         errorMessage: 'Failed to load settings: $e',
       );
+    }
+  }
+
+  /// Sync settings from cloud after login
+  /// Called when user logs in to fetch their settings from Supabase
+  Future<void> syncFromCloud() async {
+    state = state.copyWith(isLoading: true);
+    try {
+      final repository = await ref.read(settingsRepositoryProvider.future);
+      final settings = await repository.loadSettingsFromCloud();
+
+      state = state.copyWith(
+        settings: settings,
+        isLoading: false,
+        errorMessage: null,
+      );
+    } catch (e) {
+      // Fall back to local/defaults on error
+      await _loadSettings();
     }
   }
 

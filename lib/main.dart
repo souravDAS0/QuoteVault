@@ -14,6 +14,7 @@ import 'core/services/daily_quote_worker.dart' as dqw;
 import 'core/application/controllers/connectivity_controller.dart';
 import 'core/widgets/offline_banner.dart';
 import 'core/widgets/reconnection_notifier.dart';
+import 'features/auth/application/providers/auth_state_provider.dart';
 import 'features/settings/application/controllers/settings_controller.dart';
 
 void main() async {
@@ -66,6 +67,17 @@ class QuoteVaultApp extends ConsumerWidget {
         ref
             .read(settingsControllerProvider.notifier)
             .scheduleInitialNotifications();
+      }
+    });
+
+    // Sync settings from cloud when user logs in
+    ref.listen(authStateChangesProvider, (previous, next) {
+      final prevUser = previous?.hasValue == true ? previous!.value : null;
+      final nextUser = next.hasValue ? next.value : null;
+
+      // User just logged in (was null, now has user)
+      if (prevUser == null && nextUser != null) {
+        ref.read(settingsControllerProvider.notifier).syncFromCloud();
       }
     });
 

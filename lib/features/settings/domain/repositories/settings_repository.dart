@@ -14,4 +14,7 @@ abstract class SettingsRepository {
 
   /// Load settings from cloud and merge with local
   Future<UserSettings> loadSettingsFromCloud();
+
+  /// Clear local settings cache (used on logout)
+  Future<void> clearLocalSettings();
 }
