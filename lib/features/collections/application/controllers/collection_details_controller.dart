@@ -201,8 +201,8 @@ class CollectionDetailsController extends _$CollectionDetailsController {
     _removingQuotes.add(quoteId);
 
     // Optimistic update
-    final originalQuotes = state.quotes;
-    final originalCollection = state.collection;
+    final _ = state.quotes;
+    final _ = state.collection;
     state = state.copyWith(
       quotes: state.quotes.where((q) => q.id != quoteId).toList(),
       isRemovingQuote: true,

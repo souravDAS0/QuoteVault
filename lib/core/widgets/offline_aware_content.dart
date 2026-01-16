@@ -43,7 +43,7 @@ class OfflineAwareContent extends ConsumerWidget {
             Icon(
               Icons.cloud_off_outlined,
               size: 64,
-              color: colorScheme.onSurface.withOpacity(0.3),
+              color: colorScheme.onSurface.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 16),
             Text(
@@ -57,7 +57,7 @@ class OfflineAwareContent extends ConsumerWidget {
             Text(
               offlineMessage ?? ConnectivityConstants.offlineSubtitle,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurface.withOpacity(0.6),
+                color: colorScheme.onSurface.withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
@@ -97,8 +97,8 @@ class OfflineIndicator extends ConsumerWidget {
           Text(
             'Offline',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: colorScheme.onErrorContainer,
-                ),
+              color: colorScheme.onErrorContainer,
+            ),
           ),
         ],
       ),

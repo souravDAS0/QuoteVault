@@ -59,7 +59,7 @@ class OfflineBanner extends ConsumerWidget {
                                   '${retryQueueState.pendingOperations.length} ${ConnectivityConstants.pendingOperations}',
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: colorScheme.onErrorContainer
-                                        .withOpacity(0.8),
+                                        .withValues(alpha: 0.8),
                                   ),
                                 ),
                             ],
@@ -72,7 +72,8 @@ class OfflineBanner extends ConsumerWidget {
                                 : () {
                                     ref
                                         .read(
-                                            retryQueueControllerProvider.notifier)
+                                          retryQueueControllerProvider.notifier,
+                                        )
                                         .processQueue();
                                   },
                             child: retryQueueState.isProcessing

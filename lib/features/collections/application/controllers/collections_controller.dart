@@ -109,7 +109,7 @@ class CollectionsController extends _$CollectionsController {
 
   Future<void> deleteCollection(String collectionId) async {
     // Store collection for potential rollback
-    final collectionToDelete = state.collections.firstWhere(
+    final _ = state.collections.firstWhere(
       (c) => c.id == collectionId,
       orElse: () => throw Exception('Collection not found'),
     );

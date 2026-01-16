@@ -1,5 +1,4 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../../core/application/controllers/connectivity_controller.dart';
 import '../state/home_feed_state.dart';
 import '../providers/quote_providers.dart';
 import '../../domain/entities/category.dart';

@@ -36,10 +36,7 @@ void main() async {
   tz.initializeTimeZones();
 
   // Initialize WorkManager for background tasks
-  await Workmanager().initialize(
-    dqw.callbackDispatcher,
-    isInDebugMode: false, // Set to true for debugging WorkManager tasks
-  );
+  await Workmanager().initialize(dqw.callbackDispatcher);
 
   runApp(const ProviderScope(child: QuoteVaultApp()));
 }
