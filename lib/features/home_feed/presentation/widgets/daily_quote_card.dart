@@ -30,9 +30,13 @@ class DailyQuoteCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [colorScheme.secondary, colorScheme.primary],
+          colors: [
+            colorScheme.surface,
+            colorScheme.tertiary.withValues(alpha: 0.6),
+          ],
         ),
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.5)),
       ),
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -43,14 +47,14 @@ class DailyQuoteCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.wb_sunny_outlined,
-                color: colorScheme.onPrimary,
+                color: colorScheme.onSurfaceVariant,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 HomeFeedConstants.quoteOfTheDay,
                 style: AppTypography.bodyLarge().copyWith(
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -69,7 +73,7 @@ class DailyQuoteCard extends StatelessWidget {
           Text(
             quote.text,
             style: AppTypography.headlineLarge().copyWith(
-              color: colorScheme.onPrimary,
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w600,
               height: 1.4,
             ),
@@ -80,7 +84,7 @@ class DailyQuoteCard extends StatelessWidget {
           Text(
             '— ${quote.authorName}',
             style: AppTypography.bodyItalic().copyWith(
-              color: colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+              color: colorScheme.onSurface.withValues(alpha: 0.8),
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -94,15 +98,13 @@ class DailyQuoteCard extends StatelessWidget {
                 icon: quote.isFavorite ? Icons.favorite : Icons.favorite_border,
                 label: quote.isFavorite ? 'Liked' : 'Like',
                 onTap: onFavorite,
-                color: quote.isFavorite
-                    ? Colors.red
-                    : colorScheme.onPrimaryContainer,
+                color: quote.isFavorite ? Colors.red : colorScheme.onSurface,
               ),
               _ActionButton(
                 icon: Icons.share_outlined,
                 label: 'Share',
                 onTap: onShare,
-                color: colorScheme.onPrimaryContainer,
+                color: colorScheme.onSurface,
               ),
               _ActionButton(
                 icon: Icons.content_copy_outlined,
@@ -113,13 +115,13 @@ class DailyQuoteCard extends StatelessWidget {
                   );
                   onCopy();
                 },
-                color: colorScheme.onPrimaryContainer,
+                color: colorScheme.onSurface,
               ),
               _ActionButton(
                 icon: Icons.bookmark_border_outlined,
                 label: 'Save',
                 onTap: onAddToCollection,
-                color: colorScheme.onPrimaryContainer,
+                color: colorScheme.onSurface,
               ),
             ],
           ),

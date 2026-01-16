@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/constants/home_feed_constants.dart';
 
 class LoadingMoreIndicator extends StatelessWidget {
@@ -14,7 +14,8 @@ class LoadingMoreIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     if (!isLoading && !hasReachedEnd) {
       return const SizedBox.shrink();
@@ -30,9 +31,7 @@ class LoadingMoreIndicator extends StatelessWidget {
               height: 24,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: isDark
-                    ? AppColorsDark.accentTeal
-                    : AppColorsLight.accentTeal,
+                color: colorScheme.tertiary,
               ),
             ),
           const SizedBox(height: 8),
@@ -41,11 +40,9 @@ class LoadingMoreIndicator extends StatelessWidget {
                 ? HomeFeedConstants.loadingMoreQuotes
                 : HomeFeedConstants.endOfResults,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: isDark
-                      ? AppColorsDark.textTertiary
-                      : AppColorsLight.textTertiary,
-                  letterSpacing: 1.2,
-                ),
+              color: colorScheme.onTertiary,
+              letterSpacing: 1.2,
+            ),
           ),
         ],
       ),

@@ -6,16 +6,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   final Color textTertiary;
   final Color border;
 
-  const AppColorsExtension({
-    required this.textTertiary,
-    required this.border,
-  });
+  const AppColorsExtension({required this.textTertiary, required this.border});
 
   @override
-  AppColorsExtension copyWith({
-    Color? textTertiary,
-    Color? border,
-  }) {
+  AppColorsExtension copyWith({Color? textTertiary, Color? border}) {
     return AppColorsExtension(
       textTertiary: textTertiary ?? this.textTertiary,
       border: border ?? this.border,
@@ -118,18 +112,19 @@ abstract class AppColorsDark {
 
 /// Blue Theme (Standalone)
 abstract class AppColorsBlue {
-  static const Color primary = Color(0xFF715AFF);
+  static const Color primary = Color(0xFF5A68FF);
   static const Color secondary = Color(0xFF286571);
   static const Color tertiary = Color(0xFF329CB0);
   static const Color accent = Color(0xFFAFCAD1);
 
   static const Color background = Color(0xFF1A1F2E);
-  static const Color surface = Color(0xFF242B3D);
-  static const Color surfaceContainer = Color.fromARGB(255, 65, 76, 104);
+  static const Color surface = Color(0xFF242E57);
+  static const Color surfaceContainer = Color(0xFF414C68);
   static const Color outlineVariant = Color.fromARGB(255, 179, 66, 224);
 
   static const Color textPrimary = Color(0xFFF5F5F7);
   static const Color textSecondary = Color(0xFFB8C0D4);
+  static const Color textTertiary = Color(0xFF616672);
 
   static const Color border = Color(0xFF2E364A);
   static const Color divider = Color(0xFF3A445C);
@@ -138,6 +133,8 @@ abstract class AppColorsBlue {
   static const Color error = Color(0xFFEF4444);
   static const Color errorContainer = Color.fromARGB(255, 243, 149, 125);
   static const Color success = Color(0xFF10B981);
+  static const Color warning = Color(0xFFFBBF24);
+  static const Color info = Color(0xFF60A5FA);
 }
 
 /// Violet Theme (Standalone)
@@ -154,6 +151,7 @@ abstract class AppColorsViolet {
 
   static const Color textPrimary = Color(0xFFF8F7FA);
   static const Color textSecondary = Color(0xFFC4BED4);
+  static const Color textTertiary = Color.fromARGB(255, 98, 94, 107);
 
   static const Color border = Color(0xFF3D3654);
   static const Color divider = Color(0xFF4B4366);
@@ -161,4 +159,6 @@ abstract class AppColorsViolet {
   static const Color error = Color(0xFFEF4444);
   static const Color errorContainer = Color.fromARGB(255, 243, 149, 125);
   static const Color success = Color(0xFF10B981);
+  static const Color warning = Color(0xFFFBBF24);
+  static const Color info = Color(0xFF60A5FA);
 }

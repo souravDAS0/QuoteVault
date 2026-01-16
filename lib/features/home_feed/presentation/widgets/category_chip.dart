@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
 
 class CategoryChip extends StatelessWidget {
   final String label;
@@ -15,32 +14,23 @@ class CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected
-              ? (isDark ? AppColorsDark.accentTeal : AppColorsLight.accentTeal)
-              : (isDark ? AppColorsDark.surface : AppColorsLight.surface),
+          color: isSelected ? (colorScheme.tertiary) : (colorScheme.surface),
           borderRadius: BorderRadius.circular(20),
-          border: isSelected
-              ? null
-              : Border.all(
-                  color: isDark ? AppColorsDark.border : AppColorsLight.border,
-                ),
+          border: isSelected ? null : Border.all(color: colorScheme.outline),
         ),
         child: Center(
           child: Text(
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: isSelected
-                  ? Colors.white
-                  : (isDark
-                        ? AppColorsDark.textPrimary
-                        : AppColorsLight.textPrimary),
+              color: isSelected ? Colors.white : (colorScheme.onSurface),
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             ),
           ),
