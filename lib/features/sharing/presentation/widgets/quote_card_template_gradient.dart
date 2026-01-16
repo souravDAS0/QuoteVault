@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../home_feed/domain/entities/quote.dart';
 
@@ -7,12 +7,12 @@ import '../../../home_feed/domain/entities/quote.dart';
 /// Vibrant gradient background
 class QuoteCardTemplateGradient extends StatelessWidget {
   final Quote quote;
-  final bool isDark;
+  final ColorScheme colorScheme;
 
   const QuoteCardTemplateGradient({
     super.key,
     required this.quote,
-    this.isDark = false,
+    required this.colorScheme,
   });
 
   @override
@@ -26,17 +26,11 @@ class QuoteCardTemplateGradient extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: isDark
-                ? [
-                    AppColorsDark.secondary,
-                    AppColorsDark.primaryNavy,
-                    AppColorsDark.accentTeal.withValues(alpha: 0.7),
-                  ]
-                : [
-                    AppColorsLight.secondary,
-                    AppColorsLight.primaryNavy,
-                    AppColorsLight.accentTeal.withValues(alpha: 0.8),
-                  ],
+            colors: [
+              colorScheme.secondary,
+              colorScheme.primary,
+              colorScheme.surface.withValues(alpha: 0.7),
+            ],
           ),
         ),
         child: Padding(

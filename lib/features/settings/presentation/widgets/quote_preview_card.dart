@@ -13,8 +13,8 @@ class QuotePreviewCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settingsState = ref.watch(settingsControllerProvider);
     final settings = settingsState.settings;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Theme.of(context).primaryColor;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Container(
       width: double.infinity,
@@ -25,8 +25,8 @@ class QuotePreviewCard extends ConsumerWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            isDark ? const Color(0xFF1A2F3A) : const Color(0xFF2A4A5A),
-            isDark ? const Color(0xFF0F1A22) : const Color(0xFF1A3040),
+            colorScheme.surface.withValues(alpha: 0.8),
+            colorScheme.surface,
           ],
         ),
       ),
@@ -36,14 +36,14 @@ class QuotePreviewCard extends ConsumerWidget {
           // Quote marks icon
           Icon(
             Icons.format_quote,
-            color: primaryColor.withValues(alpha: 0.6),
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
             size: 28,
           ),
           const SizedBox(height: 16),
           // Quote text
           Text(
             SettingsConstants.previewQuote,
-            style: _getQuoteTextStyle(settings),
+            style: _getQuoteTextStyle(settings, colorScheme),
           ),
           const SizedBox(height: 12),
           // Author row with heart
@@ -55,16 +55,20 @@ class QuotePreviewCard extends ConsumerWidget {
                 style: GoogleFonts.barlow(
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
+                  color: colorScheme.onSurface.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.favorite, color: primaryColor, size: 20),
+                child: Icon(
+                  Icons.favorite,
+                  color: colorScheme.tertiary,
+                  size: 20,
+                ),
               ),
             ],
           ),
@@ -73,13 +77,13 @@ class QuotePreviewCard extends ConsumerWidget {
     );
   }
 
-  TextStyle _getQuoteTextStyle(UserSettings settings) {
+  TextStyle _getQuoteTextStyle(UserSettings settings, ColorScheme colorScheme) {
     final fontSize = settings.fontSizePreset.value;
 
     return GoogleFonts.albertSans(
       fontSize: fontSize,
       fontWeight: FontWeight.w500,
-      color: Colors.white,
+      color: colorScheme.onSurface,
       height: 1.4,
     );
   }

@@ -103,4 +103,15 @@ class SearchController extends _$SearchController {
   void clearError() {
     state = state.copyWith(errorMessage: null);
   }
+
+  /// Update a quote's favorite status in search results (for optimistic UI updates)
+  void updateQuoteFavoriteStatus(String quoteId, bool isFavorite, int likesCount) {
+    final updatedResults = state.results.map((quote) {
+      if (quote.id == quoteId) {
+        return quote.copyWith(isFavorite: isFavorite, likesCount: likesCount);
+      }
+      return quote;
+    }).toList();
+    state = state.copyWith(results: updatedResults);
+  }
 }

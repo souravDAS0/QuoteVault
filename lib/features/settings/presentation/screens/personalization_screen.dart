@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quote_vault/features/settings/domain/entities/user_settings.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/constants/settings_constants.dart';
 import '../../application/controllers/settings_controller.dart';
-import '../widgets/quote_preview_card.dart';
 import '../widgets/appearance_selector.dart';
-import '../widgets/typography_selector.dart';
 import '../widgets/notification_settings.dart';
+import '../widgets/quote_preview_card.dart';
+import '../widgets/typography_selector.dart';
 
 /// Personalization/Settings screen
 class PersonalizationScreen extends ConsumerWidget {
@@ -17,24 +17,18 @@ class PersonalizationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settingsState = ref.watch(settingsControllerProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = Theme.of(context).primaryColor;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? AppColorsDark.background
-          : AppColorsLight.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: isDark
-            ? AppColorsDark.background
-            : AppColorsLight.background,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.chevron_left,
-            color: isDark
-                ? AppColorsDark.textPrimary
-                : AppColorsLight.textPrimary,
+            color: colorScheme.onSurface,
             size: 28,
           ),
           onPressed: () => context.pop(),
@@ -44,15 +38,13 @@ class PersonalizationScreen extends ConsumerWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: isDark
-                ? AppColorsDark.textPrimary
-                : AppColorsLight.textPrimary,
+            color: colorScheme.onSurface,
           ),
         ),
         centerTitle: true,
       ),
       body: settingsState.isLoading
-          ? Center(child: CircularProgressIndicator(color: primaryColor))
+          ? Center(child: CircularProgressIndicator(color: colorScheme.primary))
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -63,7 +55,6 @@ class PersonalizationScreen extends ConsumerWidget {
                   _SectionHeader(
                     icon: Icons.visibility_outlined,
                     title: SettingsConstants.previewSection,
-                    color: primaryColor,
                   ),
                   const SizedBox(height: 12),
                   const QuotePreviewCard(),
@@ -73,9 +64,7 @@ class PersonalizationScreen extends ConsumerWidget {
                       SettingsConstants.previewHint,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark
-                            ? AppColorsDark.textTertiary
-                            : AppColorsLight.textTertiary,
+                        color: colorScheme.tertiary,
                       ),
                     ),
                   ),
@@ -84,7 +73,6 @@ class PersonalizationScreen extends ConsumerWidget {
                   _SectionHeader(
                     icon: Icons.palette_outlined,
                     title: SettingsConstants.appearanceSection,
-                    color: primaryColor,
                   ),
                   const SizedBox(height: 12),
                   const AppearanceSelector(),
@@ -96,7 +84,6 @@ class PersonalizationScreen extends ConsumerWidget {
                     value: _getFontSizeLabel(
                       settingsState.settings.fontSizePreset,
                     ),
-                    color: primaryColor,
                   ),
                   const SizedBox(height: 12),
                   const TypographySelector(),
@@ -105,7 +92,6 @@ class PersonalizationScreen extends ConsumerWidget {
                   _SectionHeader(
                     icon: Icons.notifications_outlined,
                     title: SettingsConstants.notificationsSection,
-                    color: primaryColor,
                   ),
                   const SizedBox(height: 12),
                   const NotificationSettings(),
@@ -136,30 +122,24 @@ class PersonalizationScreen extends ConsumerWidget {
 class _SectionHeader extends StatelessWidget {
   final IconData icon;
   final String title;
-  final Color color;
 
-  const _SectionHeader({
-    required this.icon,
-    required this.title,
-    required this.color,
-  });
+  const _SectionHeader({required this.icon, required this.title});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Row(
       children: [
-        Icon(icon, size: 20, color: color),
+        Icon(icon, size: 20, color: colorScheme.primary),
         const SizedBox(width: 8),
         Text(
           title,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: isDark
-                ? AppColorsDark.textPrimary
-                : AppColorsLight.textPrimary,
+            color: colorScheme.onSurface,
           ),
         ),
       ],
@@ -171,22 +151,21 @@ class _SectionHeaderWithValue extends StatelessWidget {
   final IconData icon;
   final String title;
   final String value;
-  final Color color;
 
   const _SectionHeaderWithValue({
     required this.icon,
     required this.title,
     required this.value,
-    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Row(
       children: [
-        Icon(icon, size: 20, color: color),
+        Icon(icon, size: 20, color: colorScheme.primary),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
@@ -194,9 +173,7 @@ class _SectionHeaderWithValue extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: isDark
-                  ? AppColorsDark.textPrimary
-                  : AppColorsLight.textPrimary,
+              color: colorScheme.onSurface,
             ),
           ),
         ),
@@ -205,7 +182,7 @@ class _SectionHeaderWithValue extends StatelessWidget {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: color,
+            color: colorScheme.primary,
           ),
         ),
       ],

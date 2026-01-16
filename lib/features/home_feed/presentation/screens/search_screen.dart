@@ -56,7 +56,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final searchState = ref.watch(searchControllerProvider);
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,6 +180,19 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           child: QuoteCard(
                             quote: quote,
                             onFavorite: () {
+                              // Update search results state immediately for responsive UI
+                              final newIsFavorite = !quote.isFavorite;
+                              final newLikesCount = newIsFavorite
+                                  ? quote.likesCount + 1
+                                  : quote.likesCount - 1;
+                              ref
+                                  .read(searchControllerProvider.notifier)
+                                  .updateQuoteFavoriteStatus(
+                                    quote.id,
+                                    newIsFavorite,
+                                    newLikesCount,
+                                  );
+                              // Also toggle in home feed (handles API call)
                               ref
                                   .read(homeFeedControllerProvider.notifier)
                                   .toggleFavorite(quote.id);

@@ -17,11 +17,11 @@ class QuoteImageGenerator {
   Future<Uint8List?> generateImage(
     Quote quote,
     ShareTemplate template, {
-    bool isDark = false,
+    required ColorScheme colorScheme,
   }) async {
     try {
       // Get the appropriate template widget
-      final widget = getTemplateWidget(quote, template, isDark);
+      final widget = getTemplateWidget(quote, template, colorScheme);
 
       // Capture the widget as an image
       final imageBytes = await _screenshotController.captureFromWidget(
@@ -38,11 +38,18 @@ class QuoteImageGenerator {
   }
 
   /// Get the appropriate template widget for the given template type
-  Widget getTemplateWidget(Quote quote, ShareTemplate template, bool isDark) {
+  Widget getTemplateWidget(
+    Quote quote,
+    ShareTemplate template,
+    ColorScheme colorScheme,
+  ) {
     return template.map(
-      classic: (_) => QuoteCardTemplateClassic(quote: quote, isDark: isDark),
-      minimal: (_) => QuoteCardTemplateMinimal(quote: quote, isDark: isDark),
-      gradient: (_) => QuoteCardTemplateGradient(quote: quote, isDark: isDark),
+      classic: (_) =>
+          QuoteCardTemplateClassic(quote: quote, colorScheme: colorScheme),
+      minimal: (_) =>
+          QuoteCardTemplateMinimal(quote: quote, colorScheme: colorScheme),
+      gradient: (_) =>
+          QuoteCardTemplateGradient(quote: quote, colorScheme: colorScheme),
     );
   }
 }

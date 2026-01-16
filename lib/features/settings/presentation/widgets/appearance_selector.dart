@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../core/constants/settings_constants.dart';
-import '../../domain/entities/user_settings.dart';
 import '../../application/controllers/settings_controller.dart';
+import '../../domain/entities/user_settings.dart';
 
 /// Appearance section with theme mode and accent color selection
 class AppearanceSelector extends ConsumerWidget {
@@ -83,7 +84,6 @@ class _ColorThemeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: onTap,
@@ -127,9 +127,7 @@ class _ColorThemeButton extends StatelessWidget {
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: isSelected
                     ? color
-                    : (isDark
-                          ? colorScheme.onSurface.withValues(alpha: 0.7)
-                          : colorScheme.onSurface.withValues(alpha: 0.7)),
+                    : colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -165,17 +163,23 @@ class _ThemeModeButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? colorScheme
-                    .primary // Use primary color for selected state
+              ? colorScheme.surface.withValues(alpha: 0.5)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
+          border: isSelected
+              ? Border.all(
+                  color: colorScheme.primary.withValues(alpha: 0.5),
+                  width: 1,
+                )
+              : null,
         ),
+
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              color: isSelected ? colorScheme.onPrimary : unselectedColor,
+              color: isSelected ? colorScheme.primary : unselectedColor,
               size: 22,
             ),
             const SizedBox(height: 4),
@@ -184,7 +188,7 @@ class _ThemeModeButton extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? colorScheme.onPrimary : unselectedColor,
+                color: isSelected ? colorScheme.primary : unselectedColor,
               ),
             ),
           ],

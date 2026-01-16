@@ -245,8 +245,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       backgroundColor: colorScheme.secondary,
-                      disabledBackgroundColor:
-                          colorScheme.surfaceContainerHighest,
+                      disabledBackgroundColor: colorScheme.outline,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -290,7 +289,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
               : colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? colorScheme.secondary : Colors.transparent,
+            color: isSelected ? colorScheme.secondary : colorScheme.secondary,
             width: 2,
           ),
         ),

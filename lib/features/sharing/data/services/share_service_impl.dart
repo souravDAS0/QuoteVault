@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../home_feed/domain/entities/quote.dart';
@@ -25,12 +26,12 @@ class ShareServiceImpl implements ShareService {
   Future<void> shareAsImage(
     Quote quote,
     ShareTemplate template, {
-    bool isDark = false,
+    required ColorScheme colorScheme,
   }) async {
     final imageBytes = await _imageGenerator.generateImage(
       quote,
       template,
-      isDark: isDark,
+      colorScheme: colorScheme,
     );
     if (imageBytes == null) {
       throw Exception('Failed to generate image');
@@ -54,12 +55,12 @@ class ShareServiceImpl implements ShareService {
   Future<String?> saveImageToDevice(
     Quote quote,
     ShareTemplate template, {
-    bool isDark = false,
+    required ColorScheme colorScheme,
   }) async {
     final imageBytes = await _imageGenerator.generateImage(
       quote,
       template,
-      isDark: isDark,
+      colorScheme: colorScheme,
     );
     if (imageBytes == null) {
       return null;

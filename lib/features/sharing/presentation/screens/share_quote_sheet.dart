@@ -68,12 +68,13 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
 
     setState(() => _isSharing = true);
     try {
-      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final theme = Theme.of(context);
+      final colorScheme = theme.colorScheme;
       final service = ref.read(shareServiceProvider);
       await service.shareAsImage(
         widget.quote,
         _selectedTemplate!,
-        isDark: isDark,
+        colorScheme: colorScheme,
       );
       if (mounted) {
         Navigator.pop(context);
@@ -96,12 +97,13 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
 
     setState(() => _isSaving = true);
     try {
-      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final theme = Theme.of(context);
+      final colorScheme = theme.colorScheme;
       final service = ref.read(shareServiceProvider);
       final path = await service.saveImageToDevice(
         widget.quote,
         _selectedTemplate!,
-        isDark: isDark,
+        colorScheme: colorScheme,
       );
       if (mounted) {
         Navigator.pop(context);
@@ -132,27 +134,34 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
   }
 
   /// Build preview widget based on selected template
-  Widget _buildPreviewWidget(ShareTemplate template, bool isDark) {
+  Widget _buildPreviewWidget(ShareTemplate template, ColorScheme colorScheme) {
     return template.map(
-      classic: (_) =>
-          QuoteCardTemplateClassic(quote: widget.quote, isDark: isDark),
-      minimal: (_) =>
-          QuoteCardTemplateMinimal(quote: widget.quote, isDark: isDark),
-      gradient: (_) =>
-          QuoteCardTemplateGradient(quote: widget.quote, isDark: isDark),
+      classic: (_) => QuoteCardTemplateClassic(
+        quote: widget.quote,
+        colorScheme: colorScheme,
+      ),
+      minimal: (_) => QuoteCardTemplateMinimal(
+        quote: widget.quote,
+        colorScheme: colorScheme,
+      ),
+      gradient: (_) => QuoteCardTemplateGradient(
+        quote: widget.quote,
+        colorScheme: colorScheme,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height,
       ),
       decoration: BoxDecoration(
-        color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+        color: theme.scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -165,7 +174,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: isDark ? AppColorsDark.divider : AppColorsLight.divider,
+                color: colorScheme.outline,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -178,20 +187,13 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                 // Close button
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: Icon(
-                    Icons.close,
-                    color: isDark
-                        ? AppColorsDark.textSecondary
-                        : AppColorsLight.textSecondary,
-                  ),
+                  child: Icon(Icons.close, color: colorScheme.onSurfaceVariant),
                 ),
                 Expanded(
                   child: Text(
                     SharingConstants.shareQuote,
                     style: AppTypography.headlineLarge(
-                      color: isDark
-                          ? AppColorsDark.textPrimary
-                          : AppColorsLight.textPrimary,
+                      color: colorScheme.onSurface,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -225,7 +227,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                     width: 400,
                     height: 500,
                     child: _selectedTemplate != null
-                        ? _buildPreviewWidget(_selectedTemplate!, isDark)
+                        ? _buildPreviewWidget(_selectedTemplate!, colorScheme)
                         : const SizedBox.shrink(),
                   ),
                 ),
@@ -242,9 +244,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                 Text(
                   SharingConstants.chooseStyle,
                   style: AppTypography.bodyLarge(
-                    color: isDark
-                        ? AppColorsDark.textPrimary
-                        : AppColorsLight.textPrimary,
+                    color: colorScheme.onSurface,
                   ).copyWith(fontWeight: FontWeight.w600),
                 ),
               ],
@@ -269,7 +269,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                                 const ShareTemplate.minimal(),
                           );
                         },
-                        isDark: isDark,
+                        colorScheme: colorScheme,
                         icon: const Text(
                           'Abc',
                           style: TextStyle(
@@ -291,7 +291,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                                 const ShareTemplate.gradient(),
                           );
                         },
-                        isDark: isDark,
+                        colorScheme: colorScheme,
                         showGradient: true,
                       ),
                     ),
@@ -306,7 +306,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                                 const ShareTemplate.classic(),
                           );
                         },
-                        isDark: isDark,
+                        colorScheme: colorScheme,
                         icon: const Text(
                           'BOLD',
                           style: TextStyle(
@@ -341,9 +341,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                         : _handleShareAsImage,
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      backgroundColor: isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.secondary,
+                      backgroundColor: colorScheme.secondary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -390,11 +388,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                                 : _handleShareAsText,
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
-                              side: BorderSide(
-                                color: isDark
-                                    ? AppColorsDark.border
-                                    : AppColorsLight.border,
-                              ),
+                              side: BorderSide(color: colorScheme.outline),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -402,9 +396,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                             child: Text(
                               SharingConstants.shareAsText,
                               style: AppTypography.bodyMedium(
-                                color: isDark
-                                    ? AppColorsDark.textSecondary
-                                    : AppColorsLight.textSecondary,
+                                color: colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ),
@@ -421,9 +413,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                             icon: Icon(
                               Icons.download,
                               size: 18,
-                              color: isDark
-                                  ? AppColorsDark.accentTeal
-                                  : AppColorsLight.accentTeal,
+                              color: colorScheme.tertiary,
                             ),
                             label: _isSaving
                                 ? const SizedBox(
@@ -437,18 +427,12 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                                 : Text(
                                     SharingConstants.saveImage,
                                     style: AppTypography.bodyMedium(
-                                      color: isDark
-                                          ? AppColorsDark.accentTeal
-                                          : AppColorsLight.accentTeal,
+                                      color: colorScheme.tertiary,
                                     ),
                                   ),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 14),
-                              side: BorderSide(
-                                color: isDark
-                                    ? AppColorsDark.accentTeal
-                                    : AppColorsLight.accentTeal,
-                              ),
+                              side: BorderSide(color: colorScheme.tertiary),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -472,7 +456,7 @@ class _TemplateOption extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
-  final bool isDark;
+  final ColorScheme colorScheme;
   final Widget? icon;
   final bool showGradient;
 
@@ -480,7 +464,7 @@ class _TemplateOption extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.onTap,
-    required this.isDark,
+    required this.colorScheme,
     this.icon,
     this.showGradient = false,
   });
@@ -506,16 +490,12 @@ class _TemplateOption extends StatelessWidget {
                       ],
                     )
                   : null,
-              color: showGradient
-                  ? null
-                  : (isDark ? AppColorsDark.surface : AppColorsLight.surface),
+              color: showGradient ? null : (colorScheme.surface),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected
-                    ? (isDark
-                          ? AppColorsDark.accentTeal
-                          : AppColorsLight.accentTeal)
-                    : (isDark ? AppColorsDark.border : AppColorsLight.border),
+                    ? (colorScheme.tertiary)
+                    : (colorScheme.outline),
                 width: isSelected ? 2 : 1,
               ),
             ),
@@ -525,9 +505,7 @@ class _TemplateOption extends StatelessWidget {
                       style: TextStyle(
                         color: showGradient
                             ? Colors.white
-                            : (isDark
-                                  ? AppColorsDark.textPrimary
-                                  : AppColorsLight.textPrimary),
+                            : (colorScheme.onSurface),
                       ),
                       child: icon!,
                     )
@@ -545,9 +523,7 @@ class _TemplateOption extends StatelessWidget {
                   child: Icon(
                     Icons.check_circle,
                     size: 16,
-                    color: isDark
-                        ? AppColorsDark.accentTeal
-                        : AppColorsLight.accentTeal,
+                    color: colorScheme.tertiary,
                   ),
                 ),
               Text(
@@ -556,12 +532,8 @@ class _TemplateOption extends StatelessWidget {
                 style:
                     AppTypography.caption(
                       color: isSelected
-                          ? (isDark
-                                ? AppColorsDark.accentTeal
-                                : AppColorsLight.accentTeal)
-                          : (isDark
-                                ? AppColorsDark.textSecondary
-                                : AppColorsLight.textSecondary),
+                          ? (colorScheme.tertiary)
+                          : (colorScheme.onSurfaceVariant),
                     ).copyWith(
                       fontWeight: isSelected
                           ? FontWeight.w600

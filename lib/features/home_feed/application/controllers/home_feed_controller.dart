@@ -8,6 +8,7 @@ import '../../domain/entities/quote.dart';
 
 import '../../../../core/domain/entities/retryable_operation.dart';
 import '../../../../core/mixins/offline_aware_mixin.dart';
+import '../../../collections/application/controllers/collections_controller.dart';
 
 part 'home_feed_controller.g.dart';
 
@@ -346,10 +347,14 @@ class HomeFeedController extends _$HomeFeedController {
     if (!success) {
       // Operation was queued, optimistic update is kept
       _togglingFavorites.remove(quoteId);
+      // Still invalidate collections to update favorites count
+      ref.invalidate(collectionsControllerProvider);
       return;
     }
 
     _togglingFavorites.remove(quoteId);
+    // Invalidate collections to update favorites count
+    ref.invalidate(collectionsControllerProvider);
   }
 
   void clearError() {

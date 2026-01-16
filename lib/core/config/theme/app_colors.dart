@@ -1,5 +1,61 @@
 import 'package:flutter/material.dart';
 
+/// Theme extension for app-specific colors not in ColorScheme
+@immutable
+class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
+  final Color textTertiary;
+  final Color border;
+
+  const AppColorsExtension({
+    required this.textTertiary,
+    required this.border,
+  });
+
+  @override
+  AppColorsExtension copyWith({
+    Color? textTertiary,
+    Color? border,
+  }) {
+    return AppColorsExtension(
+      textTertiary: textTertiary ?? this.textTertiary,
+      border: border ?? this.border,
+    );
+  }
+
+  @override
+  AppColorsExtension lerp(ThemeExtension<AppColorsExtension>? other, double t) {
+    if (other is! AppColorsExtension) return this;
+    return AppColorsExtension(
+      textTertiary: Color.lerp(textTertiary, other.textTertiary, t)!,
+      border: Color.lerp(border, other.border, t)!,
+    );
+  }
+
+  // Light theme extension
+  static const light = AppColorsExtension(
+    textTertiary: AppColorsLight.textTertiary,
+    border: AppColorsLight.border,
+  );
+
+  // Dark theme extension
+  static const dark = AppColorsExtension(
+    textTertiary: AppColorsDark.textTertiary,
+    border: AppColorsDark.border,
+  );
+
+  // Blue theme extension
+  static const blue = AppColorsExtension(
+    textTertiary: AppColorsBlue.textSecondary,
+    border: AppColorsBlue.border,
+  );
+
+  // Violet theme extension
+  static const violet = AppColorsExtension(
+    textTertiary: AppColorsViolet.textSecondary,
+    border: AppColorsViolet.border,
+  );
+}
+
 /// Light mode color palette
 abstract class AppColorsLight {
   // Brand colors

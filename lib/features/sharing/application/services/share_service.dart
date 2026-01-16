@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../../home_feed/domain/entities/quote.dart';
 import '../../domain/entities/share_template.dart';
 
@@ -11,7 +13,7 @@ abstract class ShareService {
   Future<void> shareAsImage(
     Quote quote,
     ShareTemplate template, {
-    bool isDark = false,
+    required ColorScheme colorScheme,
   });
 
   /// Save quote image to device storage
@@ -19,6 +21,6 @@ abstract class ShareService {
   Future<String?> saveImageToDevice(
     Quote quote,
     ShareTemplate template, {
-    bool isDark = false,
+    required ColorScheme colorScheme,
   });
 }

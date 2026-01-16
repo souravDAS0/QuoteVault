@@ -5,7 +5,8 @@ import 'package:intl/intl.dart';
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../../core/constants/collections_constants.dart';
 import '../../application/controllers/collection_details_controller.dart';
-import '../widgets/collection_quote_card.dart';
+import '../../../home_feed/presentation/widgets/quote_card.dart';
+import '../widgets/add_to_collection_sheet.dart';
 import '../widgets/add_quote_sheet.dart';
 import '../../../sharing/presentation/screens/share_quote_sheet.dart';
 import '../../../../core/widgets/offline_aware_content.dart';
@@ -99,19 +100,18 @@ class CollectionDetailsScreen extends ConsumerWidget {
                     }
 
                     final quote = state.quotes[index];
-                    return CollectionQuoteCard(
-                      quote: quote,
-                      onCopy: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(CollectionsConstants.quoteCopied),
-                          ),
-                        );
-                      },
-                      onShare: () {
-                        ShareQuoteSheet.show(context, quote: quote);
-                      },
-                      onDelete: null, // Can't delete from favorites here
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: QuoteCard(
+                        quote: quote,
+                        onFavorite: () => controller.unfavoriteQuote(quote.id),
+                        onAddToCollection: () =>
+                            AddToCollectionSheet.show(context, quoteId: quote.id),
+                        onShare: () => ShareQuoteSheet.show(context, quote: quote),
+                        onCopy: () => ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(CollectionsConstants.quoteCopied)),
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -186,26 +186,22 @@ class CollectionDetailsScreen extends ConsumerWidget {
                     }
 
                     final quote = state.quotes[index];
-                    return CollectionQuoteCard(
-                      quote: quote,
-                      onCopy: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(CollectionsConstants.quoteCopied),
-                          ),
-                        );
-                      },
-                      onShare: () {
-                        ShareQuoteSheet.show(context, quote: quote);
-                      },
-                      onDelete: () {
-                        _showRemoveQuoteConfirmation(
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: QuoteCard(
+                        quote: quote,
+                        onFavorite: () => controller.toggleFavorite(quote.id),
+                        onShare: () => ShareQuoteSheet.show(context, quote: quote),
+                        onCopy: () => ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(CollectionsConstants.quoteCopied)),
+                        ),
+                        onDelete: () => _showRemoveQuoteConfirmation(
                           context,
                           controller,
                           quote.id,
                           colorScheme,
-                        );
-                      },
+                        ),
+                      ),
                     );
                   },
                 ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../home_feed/domain/entities/quote.dart';
 
@@ -7,12 +7,12 @@ import '../../../home_feed/domain/entities/quote.dart';
 /// Gradient background with quote mark icon
 class QuoteCardTemplateClassic extends StatelessWidget {
   final Quote quote;
-  final bool isDark;
+  final ColorScheme colorScheme;
 
   const QuoteCardTemplateClassic({
     super.key,
     required this.quote,
-    this.isDark = false,
+    required this.colorScheme,
   });
 
   @override
@@ -27,10 +27,8 @@ class QuoteCardTemplateClassic extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              isDark
-                  ? AppColorsDark.primaryNavy.withValues(alpha: 0.8)
-                  : AppColorsLight.primaryNavy.withValues(alpha: 0.8),
-              isDark ? AppColorsDark.primaryNavy : AppColorsLight.primaryNavy,
+              colorScheme.primary.withValues(alpha: 0.8),
+              colorScheme.primary,
             ],
           ),
           image: quote.imageUrl != null
@@ -53,9 +51,7 @@ class QuoteCardTemplateClassic extends StatelessWidget {
               Icon(
                 Icons.format_quote_rounded,
                 size: 48,
-                color: isDark
-                    ? AppColorsDark.accentTeal
-                    : AppColorsLight.accentTeal,
+                color: colorScheme.tertiary,
               ),
               const SizedBox(height: 24),
               // Quote text

@@ -3,8 +3,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../state/collection_details_state.dart';
 import '../providers/collection_providers.dart';
 import '../../../home_feed/domain/entities/quote.dart';
+import '../../../home_feed/application/providers/quote_providers.dart';
 import '../../../../core/domain/entities/retryable_operation.dart';
 import '../../../../core/mixins/offline_aware_mixin.dart';
+import 'collections_controller.dart';
 
 part 'collection_details_controller.g.dart';
 
@@ -179,9 +181,15 @@ class CollectionDetailsController extends _$CollectionDetailsController {
       },
     );
 
-    if (!success) return;
+    if (!success) {
+      // Still invalidate collections to update quote count
+      ref.invalidate(collectionsControllerProvider);
+      return;
+    }
 
     state = state.copyWith(isAddingQuote: false);
+    // Invalidate collections to update quote count
+    ref.invalidate(collectionsControllerProvider);
   }
 
   Future<void> removeQuote(String quoteId) async {
@@ -225,8 +233,37 @@ class CollectionDetailsController extends _$CollectionDetailsController {
 
     if (!success) {
       // Operation queued - keep optimistic update
+      // Still invalidate collections to update quote count
+      ref.invalidate(collectionsControllerProvider);
       return;
     }
+    // Invalidate collections to update quote count
+    ref.invalidate(collectionsControllerProvider);
+  }
+
+  Future<void> toggleFavorite(String quoteId) async {
+    // Optimistic update - toggle isFavorite in the quote
+    final updatedQuotes = state.quotes.map((q) {
+      if (q.id == quoteId) {
+        return q.copyWith(isFavorite: !q.isFavorite);
+      }
+      return q;
+    }).toList();
+
+    state = state.copyWith(quotes: updatedQuotes);
+
+    await ref.offlineAware.executeWithOfflineHandling(
+      operation: () async {
+        final repository = ref.read(quoteRepositoryProvider);
+        await repository.toggleFavorite(quoteId: quoteId);
+      },
+      operationType: OperationType.toggleFavorite,
+      payload: {'quoteId': quoteId},
+      operationId: 'toggle_favorite_$quoteId',
+      onQueued: () {},
+    );
+    // Invalidate collections to update favorites count
+    ref.invalidate(collectionsControllerProvider);
   }
 
   void clearError() {
@@ -238,6 +275,9 @@ class CollectionDetailsController extends _$CollectionDetailsController {
 @riverpod
 class FavoritesController extends _$FavoritesController {
   static const int _pageSize = 20;
+
+  /// Track quotes being unfavorited to prevent race conditions
+  final Set<String> _unfavoritingQuotes = {};
 
   @override
   FavoritesState build() {
@@ -330,6 +370,32 @@ class FavoritesController extends _$FavoritesController {
         errorMessage: 'Failed to load more favorites: $e',
       );
     }
+  }
+
+  Future<void> unfavoriteQuote(String quoteId) async {
+    if (_unfavoritingQuotes.contains(quoteId)) return;
+    _unfavoritingQuotes.add(quoteId);
+
+    // Optimistic update - remove from list
+    state = state.copyWith(
+      quotes: state.quotes.where((q) => q.id != quoteId).toList(),
+      totalCount: (state.totalCount - 1).clamp(0, 999999),
+    );
+
+    await ref.offlineAware.executeWithOfflineHandling(
+      operation: () async {
+        final repository = ref.read(quoteRepositoryProvider);
+        await repository.toggleFavorite(quoteId: quoteId);
+      },
+      operationType: OperationType.toggleFavorite,
+      payload: {'quoteId': quoteId},
+      operationId: 'unfavorite_$quoteId',
+      onQueued: () {},
+    );
+
+    _unfavoritingQuotes.remove(quoteId);
+    // Invalidate collections to update favorites count
+    ref.invalidate(collectionsControllerProvider);
   }
 
   void clearError() {

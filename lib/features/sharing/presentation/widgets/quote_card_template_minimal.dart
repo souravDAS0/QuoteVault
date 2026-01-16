@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/config/theme/app_colors.dart';
+
 import '../../../../core/config/theme/app_typography.dart';
 import '../../../home_feed/domain/entities/quote.dart';
 
@@ -7,12 +7,12 @@ import '../../../home_feed/domain/entities/quote.dart';
 /// Clean, simple design with white background
 class QuoteCardTemplateMinimal extends StatelessWidget {
   final Quote quote;
-  final bool isDark;
+  final ColorScheme colorScheme;
 
   const QuoteCardTemplateMinimal({
     super.key,
     required this.quote,
-    this.isDark = false,
+    required this.colorScheme,
   });
 
   @override
@@ -22,12 +22,9 @@ class QuoteCardTemplateMinimal extends StatelessWidget {
         width: 400,
         height: 500,
         decoration: BoxDecoration(
-          color: isDark ? AppColorsDark.surface : AppColorsLight.surface,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isDark ? AppColorsDark.border : AppColorsLight.border,
-            width: 1,
-          ),
+          border: Border.all(color: colorScheme.outline, width: 1),
         ),
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -42,9 +39,7 @@ class QuoteCardTemplateMinimal extends StatelessWidget {
                     Text(
                       '\u201C',
                       style: AppTypography.displayLarge(
-                        color: isDark
-                            ? AppColorsDark.accentTeal
-                            : AppColorsLight.accentTeal,
+                        color: colorScheme.tertiary,
                       ).copyWith(fontSize: 64, height: 1),
                     ),
                     const SizedBox(height: 16),
@@ -52,9 +47,7 @@ class QuoteCardTemplateMinimal extends StatelessWidget {
                       child: Text(
                         quote.text,
                         style: AppTypography.bodyLarge(
-                          color: isDark
-                              ? AppColorsDark.textPrimary
-                              : AppColorsLight.textPrimary,
+                          color: colorScheme.onSurface,
                         ).copyWith(fontSize: 20, height: 1.6),
                       ),
                     ),
@@ -67,9 +60,7 @@ class QuoteCardTemplateMinimal extends StatelessWidget {
                 '\u2014 ${quote.authorName.toUpperCase()}',
                 style:
                     AppTypography.caption(
-                      color: isDark
-                          ? AppColorsDark.textSecondary
-                          : AppColorsLight.textSecondary,
+                      color: colorScheme.onSurfaceVariant,
                     ).copyWith(
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.5,

@@ -12,8 +12,8 @@ class QuoteCard extends ConsumerWidget {
   final VoidCallback? onShare;
   final VoidCallback? onCopy;
   final VoidCallback? onTap;
-  final VoidCallback? onMore;
   final VoidCallback? onAddToCollection;
+  final VoidCallback? onDelete;
 
   const QuoteCard({
     super.key,
@@ -22,8 +22,8 @@ class QuoteCard extends ConsumerWidget {
     this.onShare,
     this.onCopy,
     this.onTap,
-    this.onMore,
     this.onAddToCollection,
+    this.onDelete,
   });
 
   @override
@@ -112,18 +112,21 @@ class QuoteCard extends ConsumerWidget {
                       size: 20,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  // Add to collection
-                  GestureDetector(
-                    onTap: onAddToCollection,
-                    child: Icon(
-                      quote.isBookmarked
-                          ? Icons.bookmark
-                          : Icons.bookmark_border,
-                      color: colorScheme.onSurface,
-                      size: 20,
+                  if (onAddToCollection != null) ...[
+                    const SizedBox(width: 16),
+                    // Add to collection
+                    GestureDetector(
+                      onTap: onAddToCollection,
+                      child: Icon(
+                        quote.isBookmarked
+                            ? Icons.bookmark
+                            : Icons.bookmark_border,
+                        color: colorScheme.onSurface,
+                        size: 20,
+                      ),
                     ),
-                  ),
+                  ],
+
                   const SizedBox(width: 16),
                   // Share
                   GestureDetector(
@@ -152,6 +155,17 @@ class QuoteCard extends ConsumerWidget {
                       size: 20,
                     ),
                   ),
+                  if (onDelete != null) ...[
+                    const SizedBox(width: 16),
+                    GestureDetector(
+                      onTap: onDelete,
+                      child: Icon(
+                        Icons.delete_outline,
+                        color: colorScheme.error.withValues(alpha: 0.7),
+                        size: 20,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ],
