@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:quote_vault/core/config/theme/app_typography.dart';
 import 'package:quote_vault/core/constants/collections_constants.dart';
 import 'package:quote_vault/core/constants/settings_constants.dart';
@@ -167,6 +168,27 @@ class ProfileScreen extends ConsumerWidget {
             onTap: () => _handleLogout(context, ref),
             isLogout: true,
           ),
+
+          const SizedBox(height: 24),
+
+          // Version Display
+          FutureBuilder<PackageInfo>(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final version = snapshot.data!.version;
+                return Center(
+                  child: Text(
+                    '${ProfileConstants.version} $version',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.5),
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
         ],
       ),
     );
@@ -317,8 +339,9 @@ class ProfileScreen extends ConsumerWidget {
     try {
       // Clear local settings cache before logout to prevent
       // stale settings being shown to the next user
-      final settingsRepository =
-          await ref.read(settingsRepositoryProvider.future);
+      final settingsRepository = await ref.read(
+        settingsRepositoryProvider.future,
+      );
       await settingsRepository.clearLocalSettings();
 
       final authRepository = ref.read(authRepositoryProvider);

@@ -25,4 +25,7 @@ abstract class ProfileConstants {
   static const String errorLoadingProfile = 'Failed to load profile';
   static const String logoutSuccess = 'Logged out successfully';
   static const String logoutFailed = 'Failed to logout';
+
+  // Version
+  static const String version = 'Version';
 }

@@ -70,27 +70,39 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
       final existingQuotesInCollection = await repository.getCollectionQuotes(
         collectionId: widget.collectionId,
         page: 0,
-        pageSize: 1000, // Get all existing quotes
+        pageSize: 1000,
       );
+      _existingQuotes.clear();
       _existingQuotes.addAll(existingQuotesInCollection.map((q) => q.id));
 
-      // Load available quotes
-      final quoteDtos = _searchQuery != null && _searchQuery!.isNotEmpty
-          ? await _quoteDatasource.searchQuotes(
-              query: _searchQuery!,
-              page: 0,
-              pageSize: 50,
+      // Load all quotes (ignore backend search for now)
+      final quoteDtos = await _quoteDatasource.getQuotes(page: 0, pageSize: 50);
+
+      // Convert DTOs to domain objects
+      var quotes = quoteDtos.map((dto) => dto.toDomain()).toList();
+
+      // Apply client‑side filtering on text and author name
+      if (_searchQuery != null && _searchQuery!.isNotEmpty) {
+        final queryLower = _searchQuery!.toLowerCase();
+        quotes = quotes
+            .where(
+              (q) =>
+                  q.text.toLowerCase().contains(queryLower) ||
+                  q.authorName.toLowerCase().contains(queryLower),
             )
-          : await _quoteDatasource.getQuotes(page: 0, pageSize: 50);
+            .toList();
+      }
+
+      // Debug output (can be removed later)
+      print('Loaded ${quotes.length} quotes for query "${_searchQuery ?? ""}"');
 
       setState(() {
-        _availableQuotes = quoteDtos.map((dto) => dto.toDomain()).toList();
+        _availableQuotes = quotes;
         _isLoading = false;
       });
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
+      print('Error loading quotes: $e');
+      setState(() => _isLoading = false);
     }
   }
 
@@ -105,9 +117,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.85,
-      ),
+      height: MediaQuery.of(context).size.height * 0.85,
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -174,7 +184,7 @@ class _AddQuoteSheetState extends ConsumerState<AddQuoteSheet> {
           ),
 
           // Quotes list
-          Flexible(
+          Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _availableQuotes.isEmpty
