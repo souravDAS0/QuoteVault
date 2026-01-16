@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../core/constants/settings_constants.dart';
-import '../../../../core/providers/notification_manager_provider.dart';
 import '../../application/controllers/settings_controller.dart';
 
 /// Notification settings with toggle and time picker
@@ -75,7 +75,6 @@ class NotificationSettings extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             // Test notification button
-            _TestNotificationButton(color: primaryColor),
           ],
         ],
       ),
@@ -242,49 +241,6 @@ class _TimePicker extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _TestNotificationButton extends ConsumerWidget {
-  final Color color;
-
-  const _TestNotificationButton({required this.color});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return OutlinedButton.icon(
-      onPressed: () async {
-        final notificationService = ref.read(notificationServiceProvider);
-        await notificationService.showImmediateNotification(
-          title: 'Test Notification 🔔',
-          body: 'If you see this, notifications are working!',
-        );
-
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Test notification sent!'),
-              backgroundColor: color,
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        }
-      },
-      icon: Icon(Icons.notifications_active, color: color, size: 18),
-      label: Text(
-        'Test Notification',
-        style: TextStyle(
-          color: color,
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(color: color.withValues(alpha: 0.3)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       ),
     );
   }

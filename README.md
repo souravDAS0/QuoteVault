@@ -12,6 +12,12 @@ QuoteVault is a modern Flutter application designed for discovering, collecting,
 - **Premium Aesthetics**: A stunning UI with dark mode support, smooth animations, and dynamic theming.
 - **Profile Management**: Customize your profile and manage your account settings.
 
+## 📲 Download APK
+
+Scan the QR code below to download the latest APK from Google Drive:
+
+![Download APK QR Code](assets/images/qvQR.png)
+
 ## 🛠️ Architecture
 
 The project follows a **Feature-First** architecture pattern, promoting modularity and maintainability.

@@ -190,9 +190,17 @@ class SettingsController extends _$SettingsController {
       await Workmanager().cancelByUniqueName(dailyQuoteTaskName);
 
       // Calculate time until next midnight
-      final now = DateTime.now();
-      final nextMidnight = DateTime(now.year, now.month, now.day + 1, 0, 20, 0);
-      final initialDelay = nextMidnight.difference(now);
+      final nowUtc = DateTime.now().toUtc();
+      final nowIst = nowUtc.add(const Duration(hours: 5, minutes: 30));
+      final nextIstOneAm = DateTime(
+        nowIst.year,
+        nowIst.month,
+        nowIst.day + 1,
+        0,
+        30,
+        0,
+      );
+      final initialDelay = nextIstOneAm.difference(nowIst);
 
       // Register periodic task that runs daily at midnight
       await Workmanager().registerPeriodicTask(
@@ -205,7 +213,7 @@ class SettingsController extends _$SettingsController {
         ),
       );
 
-      print('WorkManager task registered. Next run at: $nextMidnight');
+      print('WorkManager task registered. Next run at: $nextIstOneAm');
     } catch (e) {
       print('Error registering WorkManager task: $e');
     }

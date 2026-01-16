@@ -69,6 +69,7 @@ Future<void> updateDailyQuoteNotification() async {
     // Get Supabase credentials from environment
     final supabaseUrl = dotenv.env['SUPABASE_URL'];
     final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
+    const int _dailyQuoteNotificationId = 0;
 
     if (supabaseUrl == null || supabaseAnonKey == null) {
       print('[WorkManager] Missing Supabase credentials');
@@ -79,12 +80,30 @@ Future<void> updateDailyQuoteNotification() async {
     final client = supabase.SupabaseClient(supabaseUrl, supabaseAnonKey);
 
     // Fetch today's daily quote
-    final today = DateTime.now().toIso8601String().split('T')[0];
+    // Get today's date in IST timezone
+    // IST is UTC+5:30
+    final currentTimeUtc = DateTime.now().toUtc();
+    final istNow = currentTimeUtc.add(const Duration(hours: 5, minutes: 30));
+    final istToday = DateTime(istNow.year, istNow.month, istNow.day);
+
+    // Calculate the range for today in IST
+    final istStartOfDay = istToday;
+    final istEndOfDay = istStartOfDay.add(const Duration(days: 1));
+
+    // Convert back to UTC for query
+    final utcStartOfDay = istStartOfDay.subtract(
+      const Duration(hours: 5, minutes: 30),
+    );
+    final utcEndOfDay = istEndOfDay.subtract(
+      const Duration(hours: 5, minutes: 30),
+    );
+
     final response = await client
         .from('quotes')
         .select('*, authors(*), categories(*)')
         .eq('is_quote_of_the_day', true)
-        .eq('quote_of_the_day_date', today)
+        .gte('quote_of_the_day_date', utcStartOfDay.toIso8601String())
+        .lt('quote_of_the_day_date', utcEndOfDay.toIso8601String())
         .maybeSingle();
 
     if (response == null) {
@@ -182,7 +201,7 @@ Future<void> updateDailyQuoteNotification() async {
     await notifications.cancel(0);
 
     await notifications.zonedSchedule(
-      0, // Daily quote notification ID
+      _dailyQuoteNotificationId, // Daily quote notification ID
       'Quote of the Day ☀️',
       '"$quoteText" - $authorName',
       scheduledDate,

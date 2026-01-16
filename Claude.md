@@ -6,7 +6,7 @@ All UI designs are FINAL and provided as static reference images inside:
 
 /Users/souravdas/personalProjects/quote_vault/assets/ui_pages/
 
----
+<!-- ---
 
 ## 🔒 CORE RULE (NON-NEGOTIABLE)
 
@@ -19,7 +19,7 @@ You must ONLY work on the task currently loaded into `current_task.md`.
 
 If the user asks for anything outside `current_task.md`, respond with:
 
-> **"Out of scope. Load the correct task using /scope."**
+> **"Out of scope. Load the correct task using /scope."** -->
 
 ---
 

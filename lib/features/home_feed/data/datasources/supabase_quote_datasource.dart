@@ -340,13 +340,27 @@ class SupabaseQuoteDatasource {
   Future<QuoteDto?> getDailyQuote() async {
     try {
       final userId = _currentUserId;
-      final today = DateTime.now().toIso8601String().split('T')[0];
+
+      // Get today's date in IST timezone
+      // IST is UTC+5:30
+      final now = DateTime.now().toUtc();
+      final istNow = now.add(const Duration(hours: 5, minutes: 30));
+      final istToday = DateTime(istNow.year, istNow.month, istNow.day);
+
+      // Calculate the range for today in IST
+      final istStartOfDay = istToday;
+      final istEndOfDay = istStartOfDay.add(const Duration(days: 1));
+
+      // Convert back to UTC for query (subtract IST offset)
+      final utcStartOfDay = istStartOfDay.subtract(const Duration(hours: 5, minutes: 30));
+      final utcEndOfDay = istEndOfDay.subtract(const Duration(hours: 5, minutes: 30));
 
       final response = await _client
           .from('quotes')
           .select('*, authors(*), categories(*)')
           .eq('is_quote_of_the_day', true)
-          .eq('quote_of_the_day_date', today)
+          .gte('quote_of_the_day_date', utcStartOfDay.toIso8601String())
+          .lt('quote_of_the_day_date', utcEndOfDay.toIso8601String())
           .maybeSingle();
 
       if (response == null) {
