@@ -219,6 +219,15 @@ class SettingsController extends _$SettingsController {
     }
   }
 
+  // Future<void> showTestNotification() async {
+  //   final notificationService = ref.read(notificationServiceProvider);
+  //   await notificationService.showImmediateNotification(
+  //     title: 'Quote of the Day ☀️',
+  //     body:
+  //         'A wise man can learn more from a follish question than a fool can learn from a wise answer. is a test notification with a large body. \n and it has a very very large body ',
+  //   );
+  // }
+
   /// Schedule initial notifications on app startup
   Future<void> scheduleInitialNotifications() async {
     // Don't refresh from cloud here - settings are already loaded when this is called

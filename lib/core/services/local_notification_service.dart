@@ -53,7 +53,7 @@ class LocalNotificationService implements NotificationService {
 
     // Android initialization settings
     const androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
+      '@mipmap/ic_launcher_monochrome',
     );
 
     // iOS initialization settings
@@ -135,6 +135,11 @@ class LocalNotificationService implements NotificationService {
           channelDescription: 'Daily inspirational quote notification',
           importance: Importance.high,
           priority: Priority.high,
+          styleInformation: BigTextStyleInformation(
+            body,
+            contentTitle: title,
+            summaryText: 'Quote of the Day',
+          ),
         ),
         iOS: const DarwinNotificationDetails(),
       ),
@@ -156,15 +161,20 @@ class LocalNotificationService implements NotificationService {
       999, // Use a different ID for test notifications
       title,
       body,
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_quote_channel',
           'Quote of the Day',
           channelDescription: 'Daily inspirational quote notification',
           importance: Importance.high,
           priority: Priority.high,
+          styleInformation: BigTextStyleInformation(
+            body,
+            contentTitle: title,
+            // summaryText: 'Quote of the Day',
+          ),
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: const DarwinNotificationDetails(),
       ),
     );
   }

@@ -26,7 +26,7 @@ class OfflineBanner extends ConsumerWidget {
         duration: const Duration(milliseconds: 200),
         child: showBanner
             ? Material(
-                color: colorScheme.errorContainer,
+                color: colorScheme.error,
                 child: SafeArea(
                   bottom: false,
                   child: Padding(

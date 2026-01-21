@@ -42,7 +42,7 @@ final class CollectionsControllerProvider
 }
 
 String _$collectionsControllerHash() =>
-    r'8af6490bfe1ea6a8ed65f53bfb1953fc52a9e765';
+    r'f6cd8b1f500ecb19f9b19602a7da41eab8e63264';
 
 abstract class _$CollectionsController extends $Notifier<CollectionsState> {
   CollectionsState build();

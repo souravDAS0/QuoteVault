@@ -5,6 +5,7 @@ import '../../../../core/config/theme/app_typography.dart';
 import '../../../../core/constants/sharing_constants.dart';
 import '../../../home_feed/domain/entities/quote.dart';
 import '../../domain/entities/share_template.dart';
+import '../../domain/entities/share_destination.dart';
 import '../../application/providers/share_providers.dart';
 import '../widgets/quote_card_template_classic.dart';
 import '../widgets/quote_card_template_minimal.dart';
@@ -32,13 +33,15 @@ class ShareQuoteSheet extends ConsumerStatefulWidget {
 
 class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
   ShareTemplate? _selectedTemplate;
+  ShareDestination _selectedDestination =
+      const ShareDestination.instagramPost();
   bool _isSharing = false;
   bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
-    // Default to classic template
+    // Default to minimal template
     _selectedTemplate = const ShareTemplate.minimal();
   }
 
@@ -74,6 +77,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
       await service.shareAsImage(
         widget.quote,
         _selectedTemplate!,
+        _selectedDestination,
         colorScheme: colorScheme,
       );
       if (mounted) {
@@ -103,6 +107,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
       final path = await service.saveImageToDevice(
         widget.quote,
         _selectedTemplate!,
+        _selectedDestination,
         colorScheme: colorScheme,
       );
       if (mounted) {
@@ -133,20 +138,30 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
     }
   }
 
-  /// Build preview widget based on selected template
-  Widget _buildPreviewWidget(ShareTemplate template, ColorScheme colorScheme) {
+  /// Build preview widget based on selected template and destination
+  Widget _buildPreviewWidget(
+    ShareTemplate template,
+    ShareDestination destination,
+    ColorScheme colorScheme,
+  ) {
     return template.map(
       classic: (_) => QuoteCardTemplateClassic(
         quote: widget.quote,
         colorScheme: colorScheme,
+        width: destination.width,
+        height: destination.height,
       ),
       minimal: (_) => QuoteCardTemplateMinimal(
         quote: widget.quote,
         colorScheme: colorScheme,
+        width: destination.width,
+        height: destination.height,
       ),
       gradient: (_) => QuoteCardTemplateGradient(
         quote: widget.quote,
         colorScheme: colorScheme,
+        width: destination.width,
+        height: destination.height,
       ),
     );
   }
@@ -158,7 +173,7 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
 
     return Container(
       constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height,
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
       ),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
@@ -203,32 +218,37 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
             ),
           ),
           // Preview Card
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Center(
-              child: Container(
-                constraints: const BoxConstraints(
-                  maxWidth: 280,
-                  maxHeight: 350,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Center(
+                child: Container(
+                  constraints: const BoxConstraints(
+                    maxWidth: 280,
+                    maxHeight: 350,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: AspectRatio(
+                    aspectRatio: _selectedDestination.aspectRatio,
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: _selectedTemplate != null
+                          ? _buildPreviewWidget(
+                              _selectedTemplate!,
+                              _selectedDestination,
+                              colorScheme,
+                            )
+                          : const SizedBox.shrink(),
                     ),
-                  ],
-                ),
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: SizedBox(
-                    width: 400,
-                    height: 500,
-                    child: _selectedTemplate != null
-                        ? _buildPreviewWidget(_selectedTemplate!, colorScheme)
-                        : const SizedBox.shrink(),
                   ),
                 ),
               ),
@@ -317,6 +337,84 @@ class _ShareQuoteSheetState extends ConsumerState<ShareQuoteSheet> {
                       ),
                     ),
                   ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          // Choose Destination section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  SharingConstants.chooseDestination,
+                  style: AppTypography.bodyLarge(
+                    color: colorScheme.onSurface,
+                  ).copyWith(fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Destination selection
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _DestinationOption(
+                    label: SharingConstants.destinationInstagramPost,
+                    aspectRatio: '1:1',
+                    isSelected: _selectedDestination.maybeWhen(
+                      instagramPost: () => true,
+                      orElse: () => false,
+                    ),
+                    onTap: () {
+                      setState(
+                        () => _selectedDestination =
+                            const ShareDestination.instagramPost(),
+                      );
+                    },
+                    colorScheme: colorScheme,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _DestinationOption(
+                    label: SharingConstants.destinationInstagramStory,
+                    aspectRatio: '9:16',
+                    isSelected: _selectedDestination.maybeWhen(
+                      instagramStory: () => true,
+                      orElse: () => false,
+                    ),
+                    onTap: () {
+                      setState(
+                        () => _selectedDestination =
+                            const ShareDestination.instagramStory(),
+                      );
+                    },
+                    colorScheme: colorScheme,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _DestinationOption(
+                    label: SharingConstants.destinationWhatsappStatus,
+                    aspectRatio: '4:5',
+                    isSelected: _selectedDestination.maybeWhen(
+                      whatsappStatus: () => true,
+                      orElse: () => false,
+                    ),
+                    onTap: () {
+                      setState(
+                        () => _selectedDestination =
+                            const ShareDestination.whatsappStatus(),
+                      );
+                    },
+                    colorScheme: colorScheme,
+                  ),
                 ),
               ],
             ),
@@ -541,6 +639,74 @@ class _TemplateOption extends StatelessWidget {
                     ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Widget for destination option display
+class _DestinationOption extends StatelessWidget {
+  final String label;
+  final String aspectRatio;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final ColorScheme colorScheme;
+
+  const _DestinationOption({
+    required this.label,
+    required this.aspectRatio,
+    required this.isSelected,
+    required this.onTap,
+    required this.colorScheme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          // Aspect ratio display box
+          Container(
+            width: double.infinity,
+            height: 60,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainer,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isSelected ? colorScheme.tertiary : colorScheme.outline,
+                width: isSelected ? 2 : 1,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                aspectRatio,
+                style: AppTypography.bodyMedium(
+                  color: isSelected
+                      ? colorScheme.tertiary
+                      : colorScheme.onSurfaceVariant,
+                ).copyWith(fontWeight: FontWeight.w600, fontSize: 14),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
+          // Label
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style:
+                AppTypography.caption(
+                  color: isSelected
+                      ? colorScheme.tertiary
+                      : colorScheme.onSurfaceVariant,
+                ).copyWith(
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  fontSize: 11,
+                ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

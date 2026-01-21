@@ -28,7 +28,7 @@ class SortByButton extends StatelessWidget {
       child: Text(
         CollectionsConstants.sortBy,
         style: AppTypography.bodyMedium(
-          color: colorScheme.secondary,
+          color: colorScheme.onSurface,
         ).copyWith(fontWeight: FontWeight.w500),
       ),
     );
@@ -128,7 +128,7 @@ class _SortOption extends StatelessWidget {
         style: AppTypography.bodyLarge(color: colorScheme.onSurface),
       ),
       trailing: isSelected
-          ? Icon(Icons.check, color: colorScheme.secondary)
+          ? Icon(Icons.check, color: colorScheme.onSurface)
           : null,
     );
   }

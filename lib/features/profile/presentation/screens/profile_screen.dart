@@ -307,7 +307,7 @@ class ProfileScreen extends ConsumerWidget {
                           _performLogout(context, ref);
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: colorScheme.errorContainer,
+                          backgroundColor: colorScheme.error,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

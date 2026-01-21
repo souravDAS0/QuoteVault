@@ -24,16 +24,30 @@ class DailyQuoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final isDarkTheme = colorScheme.brightness == Brightness.dark;
 
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colorScheme.surface,
-            colorScheme.tertiary.withValues(alpha: 0.6),
-          ],
+          colors: isDarkTheme
+              ? [
+                  colorScheme.primary.withValues(alpha: 0.9),
+                  colorScheme.secondary.withValues(alpha: 0.9),
+                  colorScheme.primary.withValues(alpha: 0.6),
+                  colorScheme.secondary.withValues(alpha: 0.6),
+                  colorScheme.primary.withValues(alpha: 0.6),
+                  colorScheme.secondary.withValues(alpha: 0.6),
+                ]
+              : [
+                  colorScheme.outlineVariant.withValues(alpha: 0.9),
+                  colorScheme.surface.withValues(alpha: 0.9),
+                  colorScheme.outlineVariant.withValues(alpha: 0.6),
+                  colorScheme.surface.withValues(alpha: 0.6),
+                  colorScheme.outlineVariant.withValues(alpha: 0.6),
+                  colorScheme.surface.withValues(alpha: 0.6),
+                ],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: colorScheme.primary.withValues(alpha: 0.5)),
@@ -47,14 +61,14 @@ class DailyQuoteCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.wb_sunny_outlined,
-                color: colorScheme.onSurfaceVariant,
+                color: colorScheme.onSurface,
                 size: 24,
               ),
               const SizedBox(width: 8),
               Text(
                 HomeFeedConstants.quoteOfTheDay,
                 style: AppTypography.bodyLarge().copyWith(
-                  color: colorScheme.onSurfaceVariant,
+                  color: colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -65,7 +79,7 @@ class DailyQuoteCard extends StatelessWidget {
           // Quote icon
           Icon(
             Icons.format_quote,
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+            color: colorScheme.onSurface.withValues(alpha: 0.4),
             size: 40,
           ),
           const SizedBox(height: 8),

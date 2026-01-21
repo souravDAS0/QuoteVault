@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../home_feed/domain/entities/quote.dart';
 import '../../domain/entities/share_template.dart';
+import '../../domain/entities/share_destination.dart';
 import '../../application/services/share_service.dart';
 import '../generators/quote_image_generator.dart';
 
@@ -18,19 +19,21 @@ class ShareServiceImpl implements ShareService {
 
   @override
   Future<void> shareAsText(Quote quote) async {
-    final text = '"${quote.text}" - ${quote.authorName}';
+    final text = '"${quote.text}" \n\n - ${quote.authorName}';
     await SharePlus.instance.share(ShareParams(text: text));
   }
 
   @override
   Future<void> shareAsImage(
     Quote quote,
-    ShareTemplate template, {
+    ShareTemplate template,
+    ShareDestination destination, {
     required ColorScheme colorScheme,
   }) async {
     final imageBytes = await _imageGenerator.generateImage(
       quote,
       template,
+      destination,
       colorScheme: colorScheme,
     );
     if (imageBytes == null) {
@@ -44,7 +47,8 @@ class ShareServiceImpl implements ShareService {
     await file.writeAsBytes(imageBytes);
 
     final params = ShareParams(
-      text: '${quote.text} by ${quote.authorName}',
+      text:
+          'Hey, Check out this quote by ${quote.authorName} and many more in QuoteVault App',
       files: [XFile(file.path)],
     );
 
@@ -54,12 +58,14 @@ class ShareServiceImpl implements ShareService {
   @override
   Future<String?> saveImageToDevice(
     Quote quote,
-    ShareTemplate template, {
+    ShareTemplate template,
+    ShareDestination destination, {
     required ColorScheme colorScheme,
   }) async {
     final imageBytes = await _imageGenerator.generateImage(
       quote,
       template,
+      destination,
       colorScheme: colorScheme,
     );
     if (imageBytes == null) {

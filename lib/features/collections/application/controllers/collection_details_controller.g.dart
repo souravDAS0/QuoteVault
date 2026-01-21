@@ -62,7 +62,7 @@ final class CollectionDetailsControllerProvider
 }
 
 String _$collectionDetailsControllerHash() =>
-    r'eee41d1290a980d809e3a02609cc398964bd9610';
+    r'dfba293bd94223d53d9ec92163f4ea6534ad8224';
 
 final class CollectionDetailsControllerFamily extends $Family
     with
@@ -150,7 +150,7 @@ final class FavoritesControllerProvider
 }
 
 String _$favoritesControllerHash() =>
-    r'b553684654db23f8a2893312f0defe0c01e63098';
+    r'1b8130b1bdc5865f06ca3d3dc9b38ed0025a3d7f';
 
 /// Controller for Favorites (special collection using user_favorites table)
 

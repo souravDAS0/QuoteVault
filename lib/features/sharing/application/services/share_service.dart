@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../home_feed/domain/entities/quote.dart';
 import '../../domain/entities/share_template.dart';
+import '../../domain/entities/share_destination.dart';
 
 /// Abstract interface for sharing service
 /// Application layer service - no framework dependencies
@@ -9,10 +10,11 @@ abstract class ShareService {
   /// Share quote as plain text
   Future<void> shareAsText(Quote quote);
 
-  /// Share quote as image using the specified template
+  /// Share quote as image using the specified template and destination
   Future<void> shareAsImage(
     Quote quote,
-    ShareTemplate template, {
+    ShareTemplate template,
+    ShareDestination destination, {
     required ColorScheme colorScheme,
   });
 
@@ -20,7 +22,8 @@ abstract class ShareService {
   /// Returns the file path if successful, null otherwise
   Future<String?> saveImageToDevice(
     Quote quote,
-    ShareTemplate template, {
+    ShareTemplate template,
+    ShareDestination destination, {
     required ColorScheme colorScheme,
   });
 }

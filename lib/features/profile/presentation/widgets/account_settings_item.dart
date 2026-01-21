@@ -38,7 +38,7 @@ class AccountSettingsItem extends StatelessWidget {
                 : colorScheme.primary.withValues(alpha: 0.4),
           ),
           color: isLogout
-              ? colorScheme.errorContainer.withValues(alpha: 0.1)
+              ? colorScheme.error.withValues(alpha: 0.1)
               : colorScheme.surface,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

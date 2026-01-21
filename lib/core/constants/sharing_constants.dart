@@ -12,6 +12,14 @@ abstract class SharingConstants {
   static const String templateMinimal = 'Minimal';
   static const String templateGradient = 'Gradient';
 
+  // Destinations
+  static const String chooseDestination = 'Choose Destination';
+  static const String destinationDefault = 'Default';
+  static const String destinationInstagramStory = 'Instagram Story';
+  static const String destinationInstagramPost = 'Instagram Post';
+  static const String destinationTwitterPost = 'Twitter Post';
+  static const String destinationWhatsappStatus = 'Whatsapp Status';
+
   // Messages
   static const String imageSaved = 'Image saved to gallery';
   static const String imageSaveFailed = 'Failed to save image';
