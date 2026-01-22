@@ -8,6 +8,8 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'dart:convert';
 
+import '../data/services/local_log_service.dart';
+
 /// Background task name for daily quote updates
 const String dailyQuoteTaskName = 'dailyQuoteUpdate';
 
@@ -16,18 +18,25 @@ const String dailyQuoteTaskName = 'dailyQuoteUpdate';
 @pragma('vm:entry-point')
 void callbackDispatcher() {
   Workmanager().executeTask((taskName, inputData) async {
+    final prefs = await SharedPreferences.getInstance();
+    final logger = LocalLogService(prefs);
+
     try {
-      print('[WorkManager] Task started: $taskName');
+      await logger.info('Task started: $taskName', 'WorkManager');
 
       if (taskName == dailyQuoteTaskName) {
-        await updateDailyQuoteNotification();
-        print('[WorkManager] Daily quote updated successfully');
+        await updateDailyQuoteNotification(logger);
+        await logger.info('Daily quote updated successfully', 'WorkManager');
         return Future.value(true);
       }
 
       return Future.value(false);
-    } catch (e) {
-      print('[WorkManager] Task failed: $e');
+    } catch (e, stackTrace) {
+      await logger.error(
+        'Task failed: $e',
+        'WorkManager',
+        stackTrace: stackTrace.toString(),
+      );
       // Return true to prevent WorkManager from retrying endlessly
       return Future.value(true);
     }
@@ -35,9 +44,10 @@ void callbackDispatcher() {
 }
 
 /// Updates the daily quote notification content
-Future<void> updateDailyQuoteNotification() async {
+Future<void> updateDailyQuoteNotification(LocalLogService logger) async {
   try {
     // Initialize timezone
+    await logger.debug('Initializing timezone', 'DailyQuoteWorker');
     tz.initializeTimeZones();
     final offset = DateTime.now().timeZoneOffset;
     final offsetMinutes = offset.inMinutes;
@@ -69,12 +79,14 @@ Future<void> updateDailyQuoteNotification() async {
     // Get Supabase credentials from environment
     final supabaseUrl = dotenv.env['SUPABASE_URL'];
     final supabaseAnonKey = dotenv.env['SUPABASE_ANON_KEY'];
-    const int _dailyQuoteNotificationId = 0;
+    const int dailyQuoteNotificationId = 0;
 
     if (supabaseUrl == null || supabaseAnonKey == null) {
-      print('[WorkManager] Missing Supabase credentials');
+      await logger.error('Missing Supabase credentials', 'DailyQuoteWorker');
       return;
     }
+
+    await logger.debug('Supabase credentials loaded successfully', 'DailyQuoteWorker');
 
     // Initialize Supabase client
     final client = supabase.SupabaseClient(supabaseUrl, supabaseAnonKey);
@@ -98,6 +110,11 @@ Future<void> updateDailyQuoteNotification() async {
       const Duration(hours: 5, minutes: 30),
     );
 
+    await logger.debug(
+      'Querying quote for date range: ${utcStartOfDay.toIso8601String()} to ${utcEndOfDay.toIso8601String()}',
+      'DailyQuoteWorker',
+    );
+
     final response = await client
         .from('quotes')
         .select('*, authors(*), categories(*)')
@@ -107,7 +124,7 @@ Future<void> updateDailyQuoteNotification() async {
         .maybeSingle();
 
     if (response == null) {
-      print('[WorkManager] No daily quote found for today');
+      await logger.warning('No daily quote found for today', 'DailyQuoteWorker');
       return;
     }
 
@@ -115,6 +132,11 @@ Future<void> updateDailyQuoteNotification() async {
     final author = response['authors'] as Map<String, dynamic>?;
     final quoteText = response['text']?.toString() ?? '';
     final authorName = author?['name']?.toString() ?? 'Unknown';
+
+    await logger.info(
+      'Fetched quote: "$quoteText" - $authorName',
+      'DailyQuoteWorker',
+    );
 
     // Load user settings to get notification time
     final prefs = await SharedPreferences.getInstance();
@@ -134,7 +156,7 @@ Future<void> updateDailyQuoteNotification() async {
         notificationHour = decoded['notificationHour'] as int? ?? 8;
         notificationMinute = decoded['notificationMinute'] as int? ?? 0;
       } catch (e) {
-        print('[WorkManager] Error parsing settings JSON: $e');
+        await logger.error('Error parsing settings JSON: $e', 'DailyQuoteWorker');
       }
     } else {
       // Fallback for individual keys if JSON is missing (legacy support)
@@ -143,8 +165,13 @@ Future<void> updateDailyQuoteNotification() async {
       notificationMinute = prefs.getInt('notificationMinute') ?? 0;
     }
 
+    await logger.debug(
+      'Settings loaded: enabled=$notificationsEnabled, time=$notificationHour:${notificationMinute.toString().padLeft(2, '0')}',
+      'DailyQuoteWorker',
+    );
+
     if (!notificationsEnabled) {
-      print('[WorkManager] Notifications are disabled');
+      await logger.info('Notifications are disabled', 'DailyQuoteWorker');
       return;
     }
 
@@ -201,9 +228,9 @@ Future<void> updateDailyQuoteNotification() async {
     await notifications.cancel(0);
 
     await notifications.zonedSchedule(
-      _dailyQuoteNotificationId, // Daily quote notification ID
+      dailyQuoteNotificationId, // Daily quote notification ID
       'Quote of the Day ☀️',
-      '"$quoteText" - $authorName',
+      '$quoteText \n - $authorName',
       scheduledDate,
       NotificationDetails(
         android: AndroidNotificationDetails(
@@ -211,6 +238,10 @@ Future<void> updateDailyQuoteNotification() async {
           'Quote of the Day',
           channelDescription: 'Daily inspirational quote notification',
           importance: Importance.high,
+          styleInformation: BigTextStyleInformation(
+            '$quoteText \n - $authorName',
+            contentTitle: 'Quote of the Day ☀️',
+          ),
           priority: Priority.high,
         ),
         iOS: const DarwinNotificationDetails(),
@@ -221,8 +252,15 @@ Future<void> updateDailyQuoteNotification() async {
       matchDateTimeComponents: DateTimeComponents.time,
     );
 
-    print('[WorkManager] Notification rescheduled with quote: "$quoteText"');
-  } catch (e) {
-    print('[WorkManager] Error updating notification: $e');
+    await logger.info(
+      'Notification scheduled for ${scheduledDate.toIso8601String()} with quote: "$quoteText"',
+      'DailyQuoteWorker',
+    );
+  } catch (e, stackTrace) {
+    await logger.error(
+      'Error updating notification: $e',
+      'DailyQuoteWorker',
+      stackTrace: stackTrace.toString(),
+    );
   }
 }

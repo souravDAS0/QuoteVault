@@ -73,14 +73,14 @@ class NotificationSettings extends ConsumerWidget {
               },
               color: primaryColor,
             ),
-            const SizedBox(height: 12),
+            // const SizedBox(height: 12),
             // Test notification button
-            ElevatedButton(
-              onPressed: () {
-                // controller.showTestNotification();
-              },
-              child: const Text('Test Notification'),
-            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     // controller.showTestNotification();
+            //   },
+            //   child: const Text('Test Notification'),
+            // ),
           ],
         ],
       ),

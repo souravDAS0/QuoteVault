@@ -5,6 +5,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:quote_vault/core/config/theme/app_typography.dart';
 import 'package:quote_vault/core/constants/collections_constants.dart';
 import 'package:quote_vault/core/constants/settings_constants.dart';
+import 'package:quote_vault/core/constants/debug_constants.dart';
+import 'package:quote_vault/core/config/debug_config.dart';
 import 'package:quote_vault/features/auth/domain/entities/qv_user.dart';
 import 'package:quote_vault/features/settings/application/providers/settings_providers.dart';
 
@@ -157,6 +159,18 @@ class ProfileScreen extends ConsumerWidget {
           ),
 
           const SizedBox(height: 16),
+
+          // Debug Logs (only show if DEBUG=true in .env)
+          if (ref.watch(isDebugModeProvider))
+            AccountSettingsItem(
+              icon: Icons.bug_report,
+              title: DebugConstants.debugLogsMenuItem,
+              onTap: () {
+                context.push(DebugConstants.debugLogsRoute);
+              },
+            ),
+
+          if (ref.watch(isDebugModeProvider)) const SizedBox(height: 16),
 
           // Logout Button
           AccountSettingsItem(

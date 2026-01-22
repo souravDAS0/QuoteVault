@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:workmanager/workmanager.dart';
 
 import '../../../../core/providers/notification_manager_provider.dart';
+import '../../../../core/providers/log_service_provider.dart';
 import '../../../../core/services/daily_quote_worker.dart';
 import '../../domain/entities/user_settings.dart';
 import '../providers/settings_providers.dart';
@@ -140,15 +141,17 @@ class SettingsController extends _$SettingsController {
 
   /// Reschedule notifications based on new settings
   Future<void> _rescheduleNotifications(UserSettings settings) async {
+    final logger = await ref.read(logServiceProvider.future);
+
     try {
-      final notificationService = ref.read(notificationServiceProvider);
+      final notificationService = await ref.read(notificationServiceProvider.future);
 
       if (settings.notificationsEnabled) {
         // Request permission first
         final permissionGranted = await notificationService.requestPermission();
 
         if (!permissionGranted) {
-          print('Notification permission denied');
+          await logger.warning('Notification permission denied', 'SettingsController');
           return;
         }
 
@@ -162,10 +165,11 @@ class SettingsController extends _$SettingsController {
             hour: settings.notificationHour,
             minute: settings.notificationMinute,
             title: 'Quote of the Day ☀️',
-            body: '"${dailyQuote.text}" - ${dailyQuote.authorName}',
+            body: '${dailyQuote.text} \n - ${dailyQuote.authorName}',
           );
-          print(
-            'Notification scheduled for ${settings.notificationHour}:${settings.notificationMinute}',
+          await logger.info(
+            'Notification scheduled for ${settings.notificationHour}:${settings.notificationMinute.toString().padLeft(2, '0')}',
+            'SettingsController',
           );
         }
 
@@ -176,31 +180,49 @@ class SettingsController extends _$SettingsController {
 
         // Cancel WorkManager task when notifications are disabled
         await Workmanager().cancelByUniqueName(dailyQuoteTaskName);
-        print('WorkManager task cancelled');
+        await logger.info('WorkManager task cancelled', 'SettingsController');
       }
-    } catch (e) {
-      print('Error rescheduling notifications: $e');
+    } catch (e, stackTrace) {
+      await logger.error(
+        'Error rescheduling notifications: $e',
+        'SettingsController',
+        stackTrace: stackTrace.toString(),
+      );
     }
   }
 
   /// Register WorkManager periodic task to update daily quote at midnight
   Future<void> _registerDailyQuoteTask() async {
+    final logger = await ref.read(logServiceProvider.future);
+
     try {
       // Cancel any existing task first
       await Workmanager().cancelByUniqueName(dailyQuoteTaskName);
 
-      // Calculate time until next midnight
+      // Calculate time until next 00:30 IST
+      // IST is UTC+5:30, so 00:30 IST = 19:00 UTC (previous day)
       final nowUtc = DateTime.now().toUtc();
-      final nowIst = nowUtc.add(const Duration(hours: 5, minutes: 30));
-      final nextIstOneAm = DateTime(
-        nowIst.year,
-        nowIst.month,
-        nowIst.day + 1,
+
+      // Calculate next 00:30 IST in UTC terms
+      // 00:30 IST = 19:00 UTC (previous day)
+      var nextRunUtc = DateTime.utc(
+        nowUtc.year,
+        nowUtc.month,
+        nowUtc.day,
+        19, // 19:00 UTC = 00:30 IST next day
         0,
-        30,
         0,
       );
-      final initialDelay = nextIstOneAm.difference(nowIst);
+
+      // If we've already passed 19:00 UTC today, schedule for tomorrow
+      if (nextRunUtc.isBefore(nowUtc) || nextRunUtc.isAtSameMomentAs(nowUtc)) {
+        nextRunUtc = nextRunUtc.add(const Duration(days: 1));
+      }
+
+      final initialDelay = nextRunUtc.difference(nowUtc);
+
+      // Convert to IST for logging
+      final nextRunIst = nextRunUtc.add(const Duration(hours: 5, minutes: 30));
 
       // Register periodic task that runs daily at midnight
       await Workmanager().registerPeriodicTask(
@@ -213,9 +235,16 @@ class SettingsController extends _$SettingsController {
         ),
       );
 
-      print('WorkManager task registered. Next run at: $nextIstOneAm');
-    } catch (e) {
-      print('Error registering WorkManager task: $e');
+      await logger.info(
+        'WorkManager task registered. Next run at: $nextRunIst IST (${nextRunUtc} UTC) (initial delay: ${initialDelay.inMinutes} minutes)',
+        'SettingsController',
+      );
+    } catch (e, stackTrace) {
+      await logger.error(
+        'Error registering WorkManager task: $e',
+        'SettingsController',
+        stackTrace: stackTrace.toString(),
+      );
     }
   }
 

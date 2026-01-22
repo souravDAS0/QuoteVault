@@ -2,16 +2,22 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'notification_service.dart';
+import '../domain/services/log_service.dart';
 
 /// Concrete implementation of NotificationService using flutter_local_notifications
 class LocalNotificationService implements NotificationService {
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
+  final LogService _logger;
+
+  LocalNotificationService(this._logger);
 
   static const int _dailyQuoteNotificationId = 0;
 
   @override
   Future<void> initialize() async {
+    await _logger.debug('Initializing notification service', 'NotificationService');
+
     // Initialize timezone data
     tz.initializeTimeZones();
 
@@ -41,13 +47,22 @@ class LocalNotificationService implements NotificationService {
       } else {
         // Fallback: use UTC for unknown offsets
         locationName = 'UTC';
-        print('Unknown timezone offset: $offsetMinutes minutes, using UTC');
+        await _logger.warning(
+          'Unknown timezone offset: $offsetMinutes minutes, using UTC',
+          'NotificationService',
+        );
       }
 
       tz.setLocalLocation(tz.getLocation(locationName));
-      print('Timezone set to: ${tz.local.name} (offset: $offset)');
+      await _logger.debug(
+        'Timezone set to: ${tz.local.name} (offset: $offset)',
+        'NotificationService',
+      );
     } catch (e) {
-      print('Error setting timezone: $e, using UTC');
+      await _logger.error(
+        'Error setting timezone: $e, using UTC',
+        'NotificationService',
+      );
       tz.setLocalLocation(tz.getLocation('UTC'));
     }
 
@@ -89,6 +104,8 @@ class LocalNotificationService implements NotificationService {
 
   @override
   Future<bool> requestPermission() async {
+    await _logger.debug('Requesting notification permissions', 'NotificationService');
+
     // Request permissions on iOS
     final iosResult = await _notifications
         .resolvePlatformSpecificImplementation<
@@ -103,8 +120,14 @@ class LocalNotificationService implements NotificationService {
         >()
         ?.requestNotificationsPermission();
 
+    final granted = iosResult ?? androidResult ?? true;
+    await _logger.info(
+      'Notification permissions ${granted ? 'granted' : 'denied'}',
+      'NotificationService',
+    );
+
     // Return true if either returns true, or if both are null (older Android versions)
-    return iosResult ?? androidResult ?? true;
+    return granted;
   }
 
   @override
@@ -118,8 +141,9 @@ class LocalNotificationService implements NotificationService {
     await cancelDailyNotification();
 
     final scheduledTime = _nextInstanceOfTime(hour, minute);
-    print(
+    await _logger.debug(
       'Scheduling notification for: $scheduledTime (timezone: ${tz.local.name})',
+      'NotificationService',
     );
 
     // Schedule new notification
@@ -138,7 +162,7 @@ class LocalNotificationService implements NotificationService {
           styleInformation: BigTextStyleInformation(
             body,
             contentTitle: title,
-            summaryText: 'Quote of the Day',
+            // summaryText: 'Quote of the Day',
           ),
         ),
         iOS: const DarwinNotificationDetails(),
@@ -149,7 +173,7 @@ class LocalNotificationService implements NotificationService {
       matchDateTimeComponents: DateTimeComponents.time,
     );
 
-    print('Notification scheduled successfully');
+    await _logger.info('Notification scheduled successfully', 'NotificationService');
   }
 
   @override

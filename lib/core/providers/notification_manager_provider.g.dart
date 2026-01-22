@@ -18,11 +18,13 @@ const notificationServiceProvider = NotificationServiceProvider._();
 final class NotificationServiceProvider
     extends
         $FunctionalProvider<
+          AsyncValue<NotificationService>,
           NotificationService,
-          NotificationService,
-          NotificationService
+          FutureOr<NotificationService>
         >
-    with $Provider<NotificationService> {
+    with
+        $FutureModifier<NotificationService>,
+        $FutureProvider<NotificationService> {
   /// Provider for notification service instance
   const NotificationServiceProvider._()
     : super(
@@ -40,23 +42,15 @@ final class NotificationServiceProvider
 
   @$internal
   @override
-  $ProviderElement<NotificationService> $createElement(
+  $FutureProviderElement<NotificationService> $createElement(
     $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  ) => $FutureProviderElement(pointer);
 
   @override
-  NotificationService create(Ref ref) {
+  FutureOr<NotificationService> create(Ref ref) {
     return notificationService(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(NotificationService value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<NotificationService>(value),
-    );
   }
 }
 
 String _$notificationServiceHash() =>
-    r'1da6095f67bf95cedb2c5301b588ecd7589ec89b';
+    r'cab237d5f5b52d86aac366616eb40a43b9d7cb97';

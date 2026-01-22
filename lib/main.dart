@@ -55,7 +55,7 @@ class QuoteVaultApp extends ConsumerWidget {
     ref.watch(connectivityControllerProvider);
 
     // Initialize notification service (permissions will be requested when needed)
-    ref.read(notificationServiceProvider).initialize();
+    ref.watch(notificationServiceProvider);
 
     // Schedule notifications if enabled (after settings load)
     ref.listen(settingsControllerProvider, (previous, next) {

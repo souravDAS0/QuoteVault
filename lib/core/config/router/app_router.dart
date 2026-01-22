@@ -10,18 +10,28 @@ import '../../../features/home_feed/presentation/screens/main_shell.dart';
 import '../../../features/home_feed/presentation/screens/search_screen.dart';
 import '../../../features/collections/presentation/screens/collection_details_screen.dart';
 import '../../../features/settings/presentation/screens/personalization_screen.dart';
+import '../../../features/debug/presentation/screens/debug_logs_screen.dart';
 import '../../constants/auth_constants.dart';
 import '../../constants/home_feed_constants.dart';
 import '../../constants/collections_constants.dart';
 import '../../constants/settings_constants.dart';
+import '../../constants/debug_constants.dart';
+import '../debug_config.dart';
 
 /// Provider for go_router configuration
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateChangesProvider);
+  final isDebugMode = ref.watch(isDebugModeProvider);
 
   return GoRouter(
     initialLocation: AuthConstants.signInRoute,
     redirect: (context, state) {
+      // Block access to debug route if DEBUG=false
+      if (state.matchedLocation == DebugConstants.debugLogsRoute &&
+          !isDebugMode) {
+        return AuthConstants.homeRoute;
+      }
+
       // Check auth state for redirection
       return authState.when(
         data: (user) {
@@ -105,6 +115,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: SettingsConstants.personalizationRoute,
         builder: (context, state) => const PersonalizationScreen(),
+      ),
+      GoRoute(
+        path: DebugConstants.debugLogsRoute,
+        builder: (context, state) => const DebugLogsScreen(),
       ),
     ],
   );
