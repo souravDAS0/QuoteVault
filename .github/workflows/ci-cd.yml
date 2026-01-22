@@ -64,7 +64,21 @@ jobs:
           git commit -m "🔖 Bump version to ${{ steps.version.outputs.version }} [skip ci]"
           git push
 
-      # Step 9: Build APK (CD)
+      # Step 9: Create .env file from GitHub Secrets
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          # Supabase Configuration
+          # Generated from GitHub Secrets
+
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+          DEBUG=false
+          EOF
+          echo "✅ .env file created successfully"
+
+      # Step 10: Build APK (CD)
       - name: Build APK
         run: |
           flutter clean
@@ -74,14 +88,14 @@ jobs:
           flutter pub get
           flutter build apk --release
 
-      # Step 10: Rename APK with version
+      # Step 11: Rename APK with version
       - name: Rename APK
         run: |
           mkdir -p build/release
           cp build/app/outputs/flutter-apk/app-release.apk \
              build/release/QuoteVault-v${{ steps.version.outputs.version }}.apk
 
-      # Step 11: Create GitHub Release
+      # Step 12: Create GitHub Release
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
@@ -110,7 +124,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step 12: Summary
+      # Step 14: Summary
       - name: Build Summary
         run: |
           echo "### ✅ Build Successful!" >> $GITHUB_STEP_SUMMARY
