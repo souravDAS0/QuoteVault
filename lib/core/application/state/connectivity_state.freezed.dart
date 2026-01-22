@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ConnectivityState {
 
- bool get isConnected; ConnectionType get connectionType; bool get isInitialized; bool get wasOffline; DateTime? get lastOnlineTime;
+ bool get isConnected;// Default to offline until verified
+ ConnectionType get connectionType; bool get isInitialized; bool get wasOffline; DateTime? get lastOnlineTime;
 /// Create a copy of ConnectivityState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -210,10 +211,11 @@ return $default(_that.isConnected,_that.connectionType,_that.isInitialized,_that
 
 
 class _ConnectivityState implements ConnectivityState {
-  const _ConnectivityState({this.isConnected = true, this.connectionType = ConnectionType.unknown, this.isInitialized = false, this.wasOffline = false, this.lastOnlineTime});
+  const _ConnectivityState({this.isConnected = false, this.connectionType = ConnectionType.none, this.isInitialized = false, this.wasOffline = false, this.lastOnlineTime});
   
 
 @override@JsonKey() final  bool isConnected;
+// Default to offline until verified
 @override@JsonKey() final  ConnectionType connectionType;
 @override@JsonKey() final  bool isInitialized;
 @override@JsonKey() final  bool wasOffline;

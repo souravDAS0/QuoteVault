@@ -8,8 +8,8 @@ part 'connectivity_state.freezed.dart';
 @freezed
 abstract class ConnectivityState with _$ConnectivityState {
   const factory ConnectivityState({
-    @Default(true) bool isConnected,
-    @Default(ConnectionType.unknown) ConnectionType connectionType,
+    @Default(false) bool isConnected, // Default to offline until verified
+    @Default(ConnectionType.none) ConnectionType connectionType,
     @Default(false) bool isInitialized,
     @Default(false) bool wasOffline,
     DateTime? lastOnlineTime,

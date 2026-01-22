@@ -44,7 +44,7 @@ final class ProfileControllerProvider
   }
 }
 
-String _$profileControllerHash() => r'63915e869efa54c205687cb9d14957f93515f31d';
+String _$profileControllerHash() => r'20c4287099d6aa99b7e982575452f3bc9dcf5d8e';
 
 /// Controller for profile screen
 

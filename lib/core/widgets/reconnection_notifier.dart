@@ -19,7 +19,11 @@ class ReconnectionNotifier extends ConsumerWidget {
     ref.listen<ConnectivityState>(
       connectivityControllerProvider,
       (previous, next) {
-        if (next.wasOffline && next.isConnected) {
+        // Show reconnection snackbar when transitioning to online after being offline
+        if (previous != null &&
+            !previous.isConnected &&
+            next.isConnected &&
+            next.wasOffline) {
           _showReconnectionSnackbar(context, ref);
         }
       },

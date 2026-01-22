@@ -20,24 +20,12 @@ class HomeFeedController extends _$HomeFeedController {
 
   @override
   HomeFeedState build() {
-    // Load initial data
-    _loadInitialData();
+    // Schedule initial data load after build completes
+    Future.microtask(() => _loadInitialData());
     return const HomeFeedState(isLoading: true, isDailyQuoteLoading: true);
   }
 
   Future<void> _loadInitialData() async {
-    // Initial check for connectivity
-    if (!ref.offlineAware.isOnline) {
-      state = state.copyWith(
-        isLoading: false,
-        isDailyQuoteLoading: false,
-        errorMessage:
-            'No internet connection. Please check your network settings.',
-      );
-      // We return early but we could also load cached data if we had local storage implementation
-      return;
-    }
-
     try {
       final repository = ref.read(quoteRepositoryProvider);
 

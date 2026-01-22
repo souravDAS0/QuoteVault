@@ -11,21 +11,12 @@ part 'collections_controller.g.dart';
 class CollectionsController extends _$CollectionsController {
   @override
   CollectionsState build() {
-    _loadInitialData();
+    // Schedule initial data load after build completes
+    Future.microtask(() => _loadInitialData());
     return const CollectionsState(isLoading: true);
   }
 
   Future<void> _loadInitialData() async {
-    // Initial check for connectivity
-    if (!ref.offlineAware.isOnline) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage:
-            'No internet connection. Please check your network settings.',
-      );
-      return;
-    }
-
     try {
       final repository = ref.read(collectionRepositoryProvider);
 

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import '../../../../core/constants/home_feed_constants.dart';
 import '../../../auth/application/providers/auth_state_provider.dart';
 import '../../../collections/presentation/widgets/add_to_collection_sheet.dart';
 import '../../../sharing/presentation/screens/share_quote_sheet.dart';
+import '../../domain/entities/quote.dart';
 import '../../application/controllers/home_feed_controller.dart';
 import '../widgets/home_feed_header.dart';
 import '../widgets/search_bar_widget.dart';
@@ -109,9 +111,12 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: HomeFeedHeader(
-                    userName: userName,
-                    userPhotoUrl: userPhotoUrl,
+                  child: Skeletonizer(
+                    enabled: feedState.isLoading && feedState.quotes.isEmpty,
+                    child: HomeFeedHeader(
+                      userName: userName,
+                      userPhotoUrl: userPhotoUrl,
+                    ),
                   ),
                 ),
               ),
@@ -119,28 +124,31 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: SearchBarWidget(
-                          onTap: () {
-                            context.push(HomeFeedConstants.searchRoute);
-                          },
+                  child: Skeletonizer(
+                    enabled: feedState.isLoading && feedState.quotes.isEmpty,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: SearchBarWidget(
+                            onTap: () {
+                              context.push(HomeFeedConstants.searchRoute);
+                            },
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      // Author Filter Chip
-                      SizedBox(
-                        height: 48,
-                        child: CategoryChip(
-                          label: HomeFeedConstants.byAuthor,
-                          isSelected: feedState.selectedAuthorId != null,
-                          onTap: () {
-                            _showAuthorFilter();
-                          },
+                        const SizedBox(width: 8),
+                        // Author Filter Chip
+                        SizedBox(
+                          height: 48,
+                          child: CategoryChip(
+                            label: HomeFeedConstants.byAuthor,
+                            isSelected: feedState.selectedAuthorId != null,
+                            onTap: () {
+                              _showAuthorFilter();
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -150,34 +158,68 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: SizedBox(
                     height: 40,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: feedState.categories.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(width: 8),
-                      itemBuilder: (context, index) {
-                        final category = feedState.categories[index];
-                        return CategoryChip(
-                          label: category.name,
-                          isSelected: category.isSelected,
-                          onTap: () {
-                            ref
-                                .read(homeFeedControllerProvider.notifier)
-                                .selectCategory(category.id);
-                          },
-                        );
-                      },
+                    child: Skeletonizer(
+                      enabled:
+                          feedState.categories.isEmpty && feedState.isLoading,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: feedState.categories.isEmpty
+                            ? 5 // Show 5 skeleton chips when loading
+                            : feedState.categories.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          if (feedState.categories.isEmpty) {
+                            // Show skeleton chips
+                            return CategoryChip(
+                              label: 'Categ_${index + 1}',
+                              isSelected: index == 0,
+                              onTap: () {},
+                            );
+                          }
+                          final category = feedState.categories[index];
+                          return CategoryChip(
+                            label: category.name,
+                            isSelected: category.isSelected,
+                            onTap: () {
+                              ref
+                                  .read(homeFeedControllerProvider.notifier)
+                                  .selectCategory(category.id);
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
               ),
               // Daily Quote Section
               if (feedState.isDailyQuoteLoading)
-                const SliverToBoxAdapter(
+                SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Center(child: CircularProgressIndicator()),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Skeletonizer(
+                      enabled: true,
+                      child: DailyQuoteCard(
+                        quote: Quote(
+                          id: 'skeleton',
+                          text: 'This is a placeholder quote text.',
+                          authorId: 'skeleton-author',
+                          authorName: 'Author Name',
+                          categoryId: 'skeleton-category',
+                          categoryName: 'Category',
+                          isFavorite: false,
+                          isBookmarked: false,
+                          likesCount: 0,
+                          createdAt: DateTime.now(),
+                        ),
+                        onFavorite: () {},
+                        onShare: () {},
+                        onCopy: () {},
+                        onAddToCollection: () {},
+                      ),
+                    ),
                   ),
                 )
               else if (feedState.dailyQuote != null)
@@ -214,12 +256,44 @@ class _HomeFeedScreenState extends ConsumerState<HomeFeedScreen> {
                     ),
                   ),
                 ),
-              if (feedState.dailyQuote != null)
-                const SliverToBoxAdapter(child: SizedBox(height: 16)),
+              // if (feedState.dailyQuote != null)
+              const SliverToBoxAdapter(child: SizedBox(height: 16)),
               // Loading state
               if (feedState.isLoading && feedState.quotes.isEmpty)
-                const SliverFillRemaining(
-                  child: Center(child: CircularProgressIndicator()),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Skeletonizer(
+                            enabled: true,
+                            child: QuoteCard(
+                              quote: Quote(
+                                id: 'skeleton-$index',
+                                text:
+                                    'This is a placeholder quote text that will be replaced with actual content once it loads from the server.',
+                                authorId: 'skeleton-author',
+                                authorName: '',
+                                categoryId: 'skeleton-category',
+                                categoryName: 'Category',
+                                isFavorite: false,
+                                isBookmarked: false,
+                                likesCount: 0,
+                                createdAt: DateTime.now(),
+                              ),
+                              onFavorite: () {},
+                              onShare: () {},
+                              onCopy: () {},
+                              onAddToCollection: () {},
+                            ),
+                          ),
+                        );
+                      },
+                      childCount: 3, // Show 3 skeleton cards
+                    ),
+                  ),
                 )
               // Error state
               else if (feedState.errorMessage != null &&

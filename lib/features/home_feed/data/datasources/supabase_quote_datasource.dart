@@ -376,8 +376,24 @@ class SupabaseQuoteDatasource {
       final quote = _mapToQuoteDto(response);
       return quote.copyWith(isFavorite: userFavorites.contains(quote.id));
     } catch (e) {
-      print('Error fetching daily quote: $e');
+      // Don't log network errors - they're expected when offline
+      if (!_isNetworkError(e)) {
+        print('Error fetching daily quote: $e');
+      }
       return null;
     }
+  }
+
+  /// Check if an error is a network-related error
+  bool _isNetworkError(dynamic error) {
+    final errorString = error.toString().toLowerCase();
+    return errorString.contains('socketexception') ||
+        errorString.contains('clientexception') ||
+        errorString.contains('connection') ||
+        errorString.contains('network') ||
+        errorString.contains('timeout') ||
+        errorString.contains('unreachable') ||
+        errorString.contains('no address') ||
+        errorString.contains('failed host lookup');
   }
 }

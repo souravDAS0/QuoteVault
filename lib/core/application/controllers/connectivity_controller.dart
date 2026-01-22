@@ -16,32 +16,38 @@ class ConnectivityController extends _$ConnectivityController {
 
   @override
   ConnectivityState build() {
-    _initializeConnectivity();
+    final service = ref.read(connectivityServiceProvider);
+
+    // Listen for changes immediately
+    _subscription = service.onConnectivityChanged.listen(
+      (status) => _updateFromStatus(status, isInitial: false),
+    );
 
     ref.onDispose(() {
       _subscription?.cancel();
     });
 
-    return const ConnectivityState();
+    // Check initial status asynchronously but mark as initialized immediately
+    _checkInitialConnectivity();
+
+    // Start with default offline state, will be updated immediately by the check
+    return const ConnectivityState(isInitialized: true);
   }
 
-  Future<void> _initializeConnectivity() async {
+  Future<void> _checkInitialConnectivity() async {
     final service = ref.read(connectivityServiceProvider);
-
-    // Check initial status
     final status = await service.checkConnectivity();
     _updateFromStatus(status, isInitial: true);
-
-    // Listen for changes
-    _subscription = service.onConnectivityChanged.listen(
-      (status) => _updateFromStatus(status, isInitial: false),
-    );
-
-    state = state.copyWith(isInitialized: true);
   }
 
   void _updateFromStatus(ConnectivityStatus status, {required bool isInitial}) {
     final wasConnected = state.isConnected;
+    final bool hasChanged = status.isConnected != wasConnected;
+
+    // Only update if the status actually changed or it's the initial check
+    if (!hasChanged && !isInitial) {
+      return;
+    }
 
     status.when(
       connected: (type) {
@@ -61,6 +67,7 @@ class ConnectivityController extends _$ConnectivityController {
         state = state.copyWith(
           isConnected: false,
           connectionType: ConnectionType.none,
+          wasOffline: false, // Reset when going offline
         );
       },
     );

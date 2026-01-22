@@ -24,22 +24,14 @@ class OfflineAwareOperations {
     String? operationId,
     void Function()? onQueued,
   }) async {
-    if (!isOnline) {
-      // Queue for retry
-      _enqueueOperation(
-        operationId: operationId ?? _uuid.v4(),
-        type: operationType,
-        payload: payload,
-      );
-      onQueued?.call();
-      return false;
-    }
-
+    // Try to execute the operation - don't pre-check connectivity
+    // This allows operations to succeed during the initial connectivity check
     try {
       await operation();
       return true;
     } catch (e) {
       if (_isNetworkError(e)) {
+        // Only queue if it's actually a network error
         _enqueueOperation(
           operationId: operationId ?? _uuid.v4(),
           type: operationType,

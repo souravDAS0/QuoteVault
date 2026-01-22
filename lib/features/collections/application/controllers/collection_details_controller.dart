@@ -19,21 +19,12 @@ class CollectionDetailsController extends _$CollectionDetailsController {
 
   @override
   CollectionDetailsState build(String collectionId) {
-    _loadCollectionDetails(collectionId);
+    // Schedule initial data load after build completes
+    Future.microtask(() => _loadCollectionDetails(collectionId));
     return const CollectionDetailsState(isLoading: true);
   }
 
   Future<void> _loadCollectionDetails(String collectionId) async {
-    // Initial check for connectivity
-    if (!ref.offlineAware.isOnline) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage:
-            'No internet connection. Please check your network settings.',
-      );
-      return;
-    }
-
     try {
       final repository = ref.read(collectionRepositoryProvider);
 
@@ -281,21 +272,12 @@ class FavoritesController extends _$FavoritesController {
 
   @override
   FavoritesState build() {
-    _loadFavorites();
+    // Schedule initial data load after build completes
+    Future.microtask(() => _loadFavorites());
     return const FavoritesState(isLoading: true);
   }
 
   Future<void> _loadFavorites() async {
-    // Initial check for connectivity
-    if (!ref.offlineAware.isOnline) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage:
-            'No internet connection. Please check your network settings.',
-      );
-      return;
-    }
-
     try {
       final repository = ref.read(collectionRepositoryProvider);
 

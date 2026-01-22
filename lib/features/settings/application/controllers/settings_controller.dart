@@ -15,8 +15,8 @@ part 'settings_controller.g.dart';
 class SettingsController extends _$SettingsController {
   @override
   SettingsState build() {
-    // Load settings from local storage (local-first approach)
-    _loadSettings();
+    // Schedule initial data load after build completes
+    Future.microtask(() => _loadSettings());
     return const SettingsState(isLoading: true);
   }
 

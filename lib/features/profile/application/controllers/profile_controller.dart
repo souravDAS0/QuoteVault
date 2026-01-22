@@ -10,7 +10,8 @@ part 'profile_controller.g.dart';
 class ProfileController extends _$ProfileController {
   @override
   ProfileState build() {
-    _loadStatistics();
+    // Schedule initial data load after build completes
+    Future.microtask(() => _loadStatistics());
     return const ProfileState(isLoading: true);
   }
 

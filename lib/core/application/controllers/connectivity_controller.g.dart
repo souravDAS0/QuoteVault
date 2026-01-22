@@ -45,7 +45,7 @@ final class ConnectivityControllerProvider
 }
 
 String _$connectivityControllerHash() =>
-    r'461f5cfff362bf8152055568876f8df1063d0abb';
+    r'd2f207f7a367056b73e07794c0f4b4e06dbdcc75';
 
 /// Controller for managing connectivity state across the app
 

@@ -24,5 +24,6 @@ bool isOnline(Ref ref) {
 @riverpod
 bool showOfflineBanner(Ref ref) {
   final state = ref.watch(connectivityControllerProvider);
+  // Only show banner after initialization to avoid false positives
   return state.isInitialized && !state.isConnected;
 }
