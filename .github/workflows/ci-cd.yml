@@ -33,38 +33,7 @@ jobs:
           channel: "stable"
           cache: true
 
-      # Step 4: Verify Flutter installation
-      - name: Verify Flutter installation
-        run: |
-          flutter --version
-          flutter doctor -v
-
-      # Step 5: Code Analysis (CI)
-      - name: Run Flutter Analyze
-        run: flutter analyze
-        continue-on-error: false
-
-      # Step 6: Increment build number
-      - name: Increment build number
-        id: version
-        run: |
-          chmod +x .github/scripts/increment_version.sh
-          .github/scripts/increment_version.sh
-
-      # Step 7: Configure Git for commit
-      - name: Configure Git
-        run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
-
-      # Step 8: Commit version bump
-      - name: Commit version bump
-        run: |
-          git add pubspec.yaml
-          git commit -m "🔖 Bump version to ${{ steps.version.outputs.version }} [skip ci]"
-          git push
-
-      # Step 9: Create .env file from GitHub Secrets
+      # Step 4: Create .env file from GitHub Secrets
       - name: Create .env file
         run: |
           cat > .env << EOF
@@ -77,6 +46,37 @@ jobs:
           DEBUG=false
           EOF
           echo "✅ .env file created successfully"
+
+      # Step 5: Verify Flutter installation
+      - name: Verify Flutter installation
+        run: |
+          flutter --version
+          flutter doctor -v
+
+      # Step 6: Code Analysis (CI)
+      - name: Run Flutter Analyze
+        run: flutter analyze
+        continue-on-error: false
+
+      # Step 7: Increment build number
+      - name: Increment build number
+        id: version
+        run: |
+          chmod +x .github/scripts/increment_version.sh
+          .github/scripts/increment_version.sh
+
+      # Step 8: Configure Git for commit
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      # Step 9: Commit version bump
+      - name: Commit version bump
+        run: |
+          git add pubspec.yaml
+          git commit -m "🔖 Bump version to ${{ steps.version.outputs.version }} [skip ci]"
+          git push
 
       # Step 10: Build APK (CD)
       - name: Build APK
