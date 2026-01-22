@@ -14,9 +14,9 @@ QuoteVault is a modern Flutter application designed for discovering, collecting,
 
 ## 📲 Download APK
 
-Scan the QR code below to download the latest APK from Google Drive:
+Scan the QR code below to download the latest APK from App landing page:
 
-![Download APK QR Code](assets/images/qr-code.png)
+![Download APK QR Code](assets/images/quotevault_landing_page.png)
 
 ## 🛠️ Architecture
 
