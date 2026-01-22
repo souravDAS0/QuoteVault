@@ -93,7 +93,7 @@ jobs:
         run: |
           mkdir -p build/release
           cp build/app/outputs/flutter-apk/app-release.apk \
-             build/release/QuoteVault-v${{ steps.version.outputs.version }}.apk
+             build/release/QuoteVault-latest.apk
 
       # Step 12: Create GitHub Release
       - name: Create GitHub Release
@@ -118,7 +118,7 @@ jobs:
 
             ---
             Built automatically with GitHub Actions ⚡
-          files: build/release/QuoteVault-v${{ steps.version.outputs.version }}.apk
+          files: build/release/QuoteVault-latest.apk
           draft: false
           prerelease: false
         env:
@@ -131,7 +131,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "**Build Number:** ${{ steps.version.outputs.build_number }}" >> $GITHUB_STEP_SUMMARY
-          echo "**APK:** QuoteVault-v${{ steps.version.outputs.version }}.apk" >> $GITHUB_STEP_SUMMARY
+          echo "**APK:** QuoteVault-latest.apk" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "🎉 Release created successfully!" >> $GITHUB_STEP_SUMMARY
           echo "Check the [Releases page](https://github.com/${{ github.repository }}/releases) to download the APK." >> $GITHUB_STEP_SUMMARY
