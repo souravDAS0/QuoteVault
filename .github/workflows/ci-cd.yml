@@ -1,0 +1,123 @@
+name: CI/CD - Build and Release APK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      # Step 2: Setup Java (required for Android builds)
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      # Step 3: Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.0"
+          channel: "stable"
+          cache: true
+
+      # Step 4: Verify Flutter installation
+      - name: Verify Flutter installation
+        run: |
+          flutter --version
+          flutter doctor -v
+
+      # Step 5: Code Analysis (CI)
+      - name: Run Flutter Analyze
+        run: flutter analyze
+        continue-on-error: false
+
+      # Step 6: Increment build number
+      - name: Increment build number
+        id: version
+        run: |
+          chmod +x .github/scripts/increment_version.sh
+          .github/scripts/increment_version.sh
+
+      # Step 7: Configure Git for commit
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      # Step 8: Commit version bump
+      - name: Commit version bump
+        run: |
+          git add pubspec.yaml
+          git commit -m "🔖 Bump version to ${{ steps.version.outputs.version }} [skip ci]"
+          git push
+
+      # Step 9: Build APK (CD)
+      - name: Build APK
+        run: |
+          flutter clean
+          cd android
+          ./gradlew clean
+          cd ../
+          flutter pub get
+          flutter build apk --release
+
+      # Step 10: Rename APK with version
+      - name: Rename APK
+        run: |
+          mkdir -p build/release
+          cp build/app/outputs/flutter-apk/app-release.apk \
+             build/release/QuoteVault-v${{ steps.version.outputs.version }}.apk
+
+      # Step 11: Create GitHub Release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: QuoteVault v${{ steps.version.outputs.version }}
+          body: |
+            ## 🚀 QuoteVault v${{ steps.version.outputs.version }}
+
+            **Build Number:** ${{ steps.version.outputs.build_number }}
+            **Version Name:** ${{ steps.version.outputs.version_name }}
+
+            ### 📦 Download
+            Download the APK below and install on your Android device.
+
+            ### 📝 Changes
+            ${{ github.event.head_commit.message }}
+
+            ### 🔗 Commit
+            Commit: ${{ github.sha }}
+
+            ---
+            Built automatically with GitHub Actions ⚡
+          files: build/release/QuoteVault-v${{ steps.version.outputs.version }}.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 12: Summary
+      - name: Build Summary
+        run: |
+          echo "### ✅ Build Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Build Number:** ${{ steps.version.outputs.build_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**APK:** QuoteVault-v${{ steps.version.outputs.version }}.apk" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🎉 Release created successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "Check the [Releases page](https://github.com/${{ github.repository }}/releases) to download the APK." >> $GITHUB_STEP_SUMMARY
